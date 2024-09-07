@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: ess
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ess
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
