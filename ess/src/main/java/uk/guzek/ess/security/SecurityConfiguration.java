@@ -25,8 +25,8 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             authorize -> authorize
                 .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/event/**").hasRole("STAFF")
-                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/event/**").hasAuthority("STAFF")
+                .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
                 .anyRequest().denyAll())
         .sessionManagement(sesMan -> sesMan.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)

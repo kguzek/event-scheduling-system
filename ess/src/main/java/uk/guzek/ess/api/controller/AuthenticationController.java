@@ -4,10 +4,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import uk.guzek.ess.api.model.AuthenticationRequest;
-import uk.guzek.ess.api.model.AuthenticationResponse;
 import uk.guzek.ess.api.model.ErrorResponse;
-import uk.guzek.ess.api.model.RegistrationRequest;
+import uk.guzek.ess.api.model.body.AuthenticationRequest;
+import uk.guzek.ess.api.model.body.AuthenticationResponse;
+import uk.guzek.ess.api.model.body.RegistrationRequest;
 import uk.guzek.ess.api.repo.UserRepository;
 import uk.guzek.ess.api.service.AuthenticationService;
 
@@ -29,10 +29,12 @@ public class AuthenticationController {
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody RegistrationRequest request) {
     if (!passwordPattern.matcher(request.getPassword()).matches()) {
-      return ErrorResponse.generate("Password doesn't match regex");
+      return ErrorResponse
+          .generate("Password must be minimum 8 characters long, and contain a capital letter and a special character");
     }
-    if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-      return ErrorResponse.generate("Username is taken");
+    String username = request.getUsername();
+    if (userRepository.findByUsername(username).isPresent()) {
+      return ErrorResponse.generate(String.format("Username '%s' is taken", username));
     }
     return ResponseEntity.ok(authenticationService.register(request));
   }

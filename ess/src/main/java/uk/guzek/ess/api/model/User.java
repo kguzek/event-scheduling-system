@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,12 +32,14 @@ public class User implements UserDetails {
   private Long id;
   private String username;
   private String email;
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
 
   @Enumerated(EnumType.STRING)
   private Role role;
 
   @Override
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.name()));
   }

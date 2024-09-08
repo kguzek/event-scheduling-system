@@ -1,4 +1,4 @@
-package uk.guzek.ess.api.model;
+package uk.guzek.ess.api.model.body;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -6,11 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import uk.guzek.ess.api.model.AuthenticationRequest;
-import uk.guzek.ess.api.model.AuthenticationResponse;
-import uk.guzek.ess.api.model.RegistrationRequest;
 import uk.guzek.ess.api.model.Role;
 import uk.guzek.ess.api.model.User;
+import uk.guzek.ess.api.model.body.AuthenticationRequest;
+import uk.guzek.ess.api.model.body.AuthenticationResponse;
+import uk.guzek.ess.api.model.body.RegistrationRequest;
 import uk.guzek.ess.api.repo.UserRepository;
 
 @Service

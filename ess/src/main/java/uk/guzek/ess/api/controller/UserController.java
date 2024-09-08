@@ -1,11 +1,13 @@
 package uk.guzek.ess.api.controller;
 
 import uk.guzek.ess.api.model.ErrorResponse;
+import uk.guzek.ess.api.model.Role;
 import uk.guzek.ess.api.model.User;
 import uk.guzek.ess.api.repo.UserRepository;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/admin/user")
 public class UserController {
 
   @Autowired
@@ -28,10 +30,12 @@ public class UserController {
 
   @GetMapping
   public ResponseEntity<List<User>> getAllUsers() {
-    // List<User> users = new ArrayList<>();
-    // userRepo.findAll().forEach(users::add);
-    // return ResponseEntity.ok(users);
-    return ResponseEntity.ok(userRepo.findAll());
+    List<User> users = new ArrayList<>();
+    userRepo.findAll().forEach(user -> {
+      ResponseEntity.ok(user);
+      users.add(user);
+    });
+    return ResponseEntity.ok(users);
   }
 
   @GetMapping("/{id}")
@@ -50,9 +54,15 @@ public class UserController {
       return ErrorResponse.generate("User not found", HttpStatus.NOT_FOUND);
     }
     User userObj = userData.get();
-    userObj.setEmail(user.getEmail());
-    userObj = userRepo.save(userObj);
-    return ResponseEntity.ok(userObj);
+    String email = user.getEmail();
+    if (email == null)
+      return ErrorResponse.generate("User email not provided in request body");
+    Role role = user.getRole();
+    if (role == null)
+      return ErrorResponse.generate("User role not provided in request body");
+    userObj.setEmail(email);
+    userObj.setRole(role);
+    return ResponseEntity.ok(userRepo.save(userObj));
   }
 
   @DeleteMapping("/{id}")
@@ -60,5 +70,4 @@ public class UserController {
     userRepo.deleteById(id);
     return ResponseEntity.noContent().build();
   }
-
 }

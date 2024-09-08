@@ -1,4 +1,4 @@
-package uk.guzek.ess.api.model;
+package uk.guzek.ess.api.model.body;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegistrationRequest {
-  private String username;
-  private String email;
-  private String password;
+public class AuthenticationResponse {
+  private String token;
+  private Long userId;
 }
