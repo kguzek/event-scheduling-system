@@ -2,6 +2,7 @@ package uk.guzek.ess.api.controller;
 
 import java.io.InvalidObjectException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,15 +28,8 @@ import uk.guzek.ess.api.model.body.EventCreationRequest;
 import uk.guzek.ess.api.repo.EventRepository;
 import uk.guzek.ess.api.repo.UserRepository;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PostMapping;
-
 @RestController
-@RequestMapping("/api/v1/event")
+@RequestMapping("/api/v1/staff/event")
 public class EventController {
   @Autowired
   private EventRepository eventRepository;
@@ -54,15 +54,20 @@ public class EventController {
   private Event mergeEvents(Event oldEvent, EventCreationRequest newEvent) throws InvalidObjectException {
     String title = newEvent.getTitle();
     String organiser = newEvent.getOrganiserName();
-    Date datetime = newEvent.getDatetime();
+    Date startTime = newEvent.getStartTime();
+    Date endTime = newEvent.getEndTime();
     Frequency frequency = newEvent.getFrequency();
     Location location = newEvent.getLocation();
-    if (title == null || organiser == null || datetime == null || location == null) {
+    if (title == null || organiser == null || startTime == null || location == null) {
       throw new InvalidObjectException("Request payload event structure is incomplete");
+    }
+    if (endTime != null && startTime.compareTo(endTime) >= 0) {
+      throw new InvalidObjectException("Event end time must be `null` or after the start time");
     }
     oldEvent.setTitle(title);
     oldEvent.setOrganiserName(organiser);
-    oldEvent.setDatetime(datetime);
+    oldEvent.setStartTime(startTime);
+    oldEvent.setEndTime(endTime);
     oldEvent.setFrequency(frequency);
     oldEvent.setLocation(location);
     return oldEvent;
@@ -72,14 +77,18 @@ public class EventController {
   public ResponseEntity<?> createEvent(@RequestBody EventCreationRequest event, Principal principal) {
     Optional<User> creator = userRepository.findByUsername(principal.getName());
     if (creator.isEmpty()) {
-      return ErrorResponse.generate("Authenticated as non-existing user. Cannot create event.",
+      return ErrorResponse.generate("Authenticated as non-existing user; cannot create event",
           HttpStatus.UNAUTHORIZED);
     }
     Event savedEvent;
     try {
       Event eventObj = mergeEvents(new Event(), event);
       eventObj.setCreator(creator.get());
+      eventObj.setAttendees(Collections.emptySet());
+      eventObj.setExpenses(Collections.emptySet());
       savedEvent = eventRepository.save(eventObj);
+    } catch (InvalidObjectException e) {
+      return ErrorResponse.generate(e.getMessage());
     } catch (Exception e) {
       return ErrorResponse.generate(e.getMessage());
     }

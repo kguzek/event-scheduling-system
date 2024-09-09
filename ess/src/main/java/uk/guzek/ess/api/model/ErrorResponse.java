@@ -18,6 +18,6 @@ public class ErrorResponse {
   }
 
   public static ResponseEntity<ErrorResponse> generate(String message, HttpStatus code) {
-    return new ResponseEntity<ErrorResponse>(new ErrorResponse(message), code);
+    return new ResponseEntity<>(new ErrorResponse(message), code);
   }
 }

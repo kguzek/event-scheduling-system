@@ -12,7 +12,8 @@ import uk.guzek.ess.api.model.Location;
 public class EventCreationRequest {
   private String title;
   private String organiserName;
-  private Date datetime;
+  private Date startTime;
+  private Date endTime;
   private Location location;
   private Frequency frequency;
 }

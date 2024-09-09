@@ -11,8 +11,7 @@
       "driver": "PostgreSQL",
       "name": "ESS Database",
       "database": "ess",
-      "username": "konrad",
-      "password": "zgaslo"
+      "username": "konrad"
     }
   ]
 }
