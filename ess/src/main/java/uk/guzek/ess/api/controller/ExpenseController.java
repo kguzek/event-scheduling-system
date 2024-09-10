@@ -57,10 +57,11 @@ public class ExpenseController {
     }
     Expense expense = Expense.builder().title(request.getTitle()).costCents(request.getCostCents()).datetime(request.getDatetime()).event(event).build();
     List<Expense> expenses = event.getExpenses();
-    expenses.add(expense);
+    Expense savedExpense = expenseRepository.save(expense);
+    expenses.add(savedExpense);
     event.setExpenses(expenses);
     eventRepository.save(event);
-    return ResponseEntity.ok(expenseRepository.save(expense));
+    return ResponseEntity.ok(savedExpense);
   }
 
   @PutMapping("/{id}")

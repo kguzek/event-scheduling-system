@@ -54,6 +54,9 @@ public class Event {
   private List<Expense> expenses;
   @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
   @OneToMany(fetch = FetchType.LAZY)
+  private List<Resource> resources;
+  @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+  @OneToMany(fetch = FetchType.LAZY)
   private List<Task> tasks;
   private Date reminderTime;
   private String feedbackMessage;

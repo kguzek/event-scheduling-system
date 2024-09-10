@@ -46,7 +46,7 @@ public class TaskController {
   public ResponseEntity<?> getTask(@PathVariable Long id) {
     Optional<Task> taskData = taskRepository.findById(id);
     if (taskData.isEmpty()) {
-      return ErrorResponse.generate("Expense not found", HttpStatus.NOT_FOUND);
+      return ErrorResponse.generate("Task not found", HttpStatus.NOT_FOUND);
     }
     return ResponseEntity.ok(taskData.get());
   }
@@ -70,7 +70,11 @@ public class TaskController {
 
   @PostMapping
   public ResponseEntity<?> createTask(@RequestBody TaskCreationRequest request) {
-    Optional<Event> eventData = eventRepository.findById(request.getEventId());
+    Long eventId = request.getEventId();
+    if (eventId == null) {
+      return ErrorResponse.generate("Request body must contain parent event id");
+    }
+    Optional<Event> eventData = eventRepository.findById(eventId);    
     if (eventData.isEmpty()) {
       return ErrorResponse.generate("Event not found", HttpStatus.NOT_FOUND);
     }
@@ -80,11 +84,12 @@ public class TaskController {
       return ErrorResponse.generate("Invalid assignee user id");
     }
     task.setEvent(event);
+    Task savedTask = taskRepository.save(task);
     List<Task> tasks = event.getTasks();
-    tasks.add(task);
+    tasks.add(savedTask);
     event.setTasks(tasks);
     eventRepository.save(event);
-    return ResponseEntity.ok(taskRepository.save(task));
+    return ResponseEntity.ok(savedTask);
   }
 
   @PutMapping("/{id}")
