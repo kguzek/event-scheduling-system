@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ess
+    name: ess-server
   datasource:
     url: jdbc:postgresql://localhost:5432/ess
     driver-class-name: org.postgresql.Driver
