@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import uk.guzek.ess.api.model.ErrorResponse;
 import uk.guzek.ess.api.model.Event;
+import uk.guzek.ess.api.model.EventStatus;
 import uk.guzek.ess.api.model.Frequency;
 import uk.guzek.ess.api.model.Location;
 import uk.guzek.ess.api.model.User;
@@ -58,6 +59,7 @@ public class EventController {
     Date endTime = newEvent.getEndTime();
     Frequency frequency = newEvent.getFrequency();
     Location location = newEvent.getLocation();
+    EventStatus status = newEvent.getStatus() == null ? EventStatus.PLANNED : newEvent.getStatus();  
     if (title == null || organiser == null || startTime == null || location == null) {
       throw new InvalidObjectException("Request payload event structure is incomplete");
     }
@@ -70,6 +72,7 @@ public class EventController {
     oldEvent.setEndTime(endTime);
     oldEvent.setFrequency(frequency);
     oldEvent.setLocation(location);
+    oldEvent.setStatus(status);
     return oldEvent;
   }
 
@@ -85,7 +88,7 @@ public class EventController {
       Event eventObj = mergeEvents(new Event(), event);
       eventObj.setCreator(creator.get());
       eventObj.setAttendees(Collections.emptySet());
-      eventObj.setExpenses(Collections.emptySet());
+      eventObj.setExpenses(Collections.emptyList());
       savedEvent = eventRepository.save(eventObj);
     } catch (InvalidObjectException e) {
       return ErrorResponse.generate(e.getMessage());
@@ -111,8 +114,15 @@ public class EventController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
-    eventRepository.deleteById(id);
+  public ResponseEntity<?> deleteEvent(@PathVariable Long id, Principal principal) {
+    Optional<Event> eventData = eventRepository.findById(id);
+    if (eventData.isPresent()) {
+      Event event = eventData.get();
+      if (!event.getCreator().getUsername().equals(principal.getName())) {
+        return ErrorResponse.generate("You cannot delete an event that was not created by you", HttpStatus.FORBIDDEN);
+      }
+      eventRepository.delete(event);
+    }
     return ResponseEntity.noContent().build();
   }
 

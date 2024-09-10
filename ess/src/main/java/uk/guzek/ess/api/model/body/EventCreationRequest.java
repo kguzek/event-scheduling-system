@@ -4,6 +4,7 @@ import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import uk.guzek.ess.api.model.EventStatus;
 import uk.guzek.ess.api.model.Frequency;
 import uk.guzek.ess.api.model.Location;
 
@@ -16,4 +17,5 @@ public class EventCreationRequest {
   private Date endTime;
   private Location location;
   private Frequency frequency;
+  private EventStatus status;
 }

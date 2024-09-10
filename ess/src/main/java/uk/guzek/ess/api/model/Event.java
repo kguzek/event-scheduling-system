@@ -1,6 +1,7 @@
 package uk.guzek.ess.api.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -44,14 +45,17 @@ public class Event {
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
     name = "event_attendance", 
-    joinColumns = @JoinColumn(name = "event_id"), 
+    joinColumns = @JoinColumn(name = "event_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
   private Set<User> attendees;
   private int budgetCents;
   @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
   @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "expense.id")
-  private Set<Expense> expenses;
+  private List<Expense> expenses;
+  @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+  @OneToMany(fetch = FetchType.LAZY)
+  private List<Task> tasks;
   private Date reminderTime;
   private String feedbackMessage;
+  private EventStatus status;
 }
