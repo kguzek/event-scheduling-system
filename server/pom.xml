@@ -9,10 +9,10 @@
     <version>3.3.3</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
-  <groupId>uk.guzek</groupId>
-  <artifactId>ess</artifactId>
+  <groupId>uk.guzek.ess</groupId>
+  <artifactId>server</artifactId>
   <version>0.0.1</version>
-  <name>ess</name>
+  <name>ess-server</name>
   <description>RESTful backend API for the Event Scheduling System (ESS).</description>
   <url />
   <licenses>
