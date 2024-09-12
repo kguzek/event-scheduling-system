@@ -6,9 +6,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ResourceCreationRequest {
-  private Long eventId;
-  private int goal;
-  private int currentAmount;
-  private String name;
-  private String imageUrl;
+
+    private Long eventId;
+    private int goal;
+    private int currentAmount;
+    private String name;
+    private String imageUrl;
 }

@@ -18,19 +18,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @Builder
-@Table(name="tasks")
+@Table(name = "tasks")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Task {
-  @Id
-  @GeneratedValue
-  private Long id;
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JsonIgnore
-  private Event event;
-  private String description;
-  private User assignee;
-  private Date deadline;
-  private TaskStatus status;
-  private String additionalInformation;
+
+    @Id
+    @GeneratedValue
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Event event;
+    private String description;
+    private User assignee;
+    private Date deadline;
+    private TaskStatus status;
+    private String additionalInformation;
 }

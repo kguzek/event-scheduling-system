@@ -11,11 +11,12 @@ import uk.guzek.ess.server.api.model.Location;
 @Data
 @AllArgsConstructor
 public class EventCreationRequest {
-  private String title;
-  private String organiserName;
-  private Date startTime;
-  private Date endTime;
-  private Location location;
-  private Frequency frequency;
-  private EventStatus status;
+
+    private String title;
+    private String organiserName;
+    private Date startTime;
+    private Date endTime;
+    private Location location;
+    private Frequency frequency;
+    private EventStatus status;
 }

@@ -26,75 +26,76 @@ import uk.guzek.ess.server.api.repo.ExpenseRepository;
 @RestController
 @RequestMapping("/api/v1/staff/expense")
 public class ExpenseController {
-  @Autowired
-  private ExpenseRepository expenseRepository;
-  @Autowired
-  private EventRepository eventRepository;
 
-  @GetMapping
-  public ResponseEntity<List<Expense>> getAllExpenses() {
-    return ResponseEntity.ok(expenseRepository.findAll());
-  }
+    @Autowired
+    private ExpenseRepository expenseRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
-  @GetMapping("/{id}")
-  public ResponseEntity<?> getExpense(@PathVariable Long id) {
-    Optional<Expense> expenseData = expenseRepository.findById(id);
-    if (expenseData.isEmpty()) {
-      return ErrorResponse.generate("Expense not found", HttpStatus.NOT_FOUND);
+    @GetMapping
+    public ResponseEntity<List<Expense>> getAllExpenses() {
+        return ResponseEntity.ok(expenseRepository.findAll());
     }
-    return ResponseEntity.ok(expenseData.get());
-  }
 
-  @PostMapping
-  public ResponseEntity<?> request(@RequestBody ExpenseCreationRequest request, Principal principal) {
-    Optional<Event> eventData = eventRepository.findById(request.getEventId());
-    if (eventData.isEmpty()) {
-      return ErrorResponse.generate("Invalid event id");
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getExpense(@PathVariable Long id) {
+        Optional<Expense> expenseData = expenseRepository.findById(id);
+        if (expenseData.isEmpty()) {
+            return ErrorResponse.generate("Expense not found", HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(expenseData.get());
     }
-    Event event = eventData.get();
-    if (!event.getCreator().getUsername().equals(principal.getName())) {
-      return ErrorResponse.generate("You cannot create expenses for events that were not created by you", HttpStatus.FORBIDDEN);
-    }
-    Expense expense = Expense.builder().title(request.getTitle()).costCents(request.getCostCents()).datetime(request.getDatetime()).event(event).build();
-    List<Expense> expenses = event.getExpenses();
-    Expense savedExpense = expenseRepository.save(expense);
-    expenses.add(savedExpense);
-    event.setExpenses(expenses);
-    eventRepository.save(event);
-    return ResponseEntity.ok(savedExpense);
-  }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<?> updateExpense(@PathVariable Long id, @RequestBody ExpenseCreationRequest expense, Principal principal) {
-    Optional<Expense> expenseData = expenseRepository.findById(id);
-    if (expenseData.isEmpty()) {
-      return ErrorResponse.generate("Expense not found", HttpStatus.NOT_FOUND);
+    @PostMapping
+    public ResponseEntity<?> request(@RequestBody ExpenseCreationRequest request, Principal principal) {
+        Optional<Event> eventData = eventRepository.findById(request.getEventId());
+        if (eventData.isEmpty()) {
+            return ErrorResponse.generate("Invalid event id");
+        }
+        Event event = eventData.get();
+        if (!event.getCreator().getUsername().equals(principal.getName())) {
+            return ErrorResponse.generate("You cannot create expenses for events that were not created by you", HttpStatus.FORBIDDEN);
+        }
+        Expense expense = Expense.builder().title(request.getTitle()).costCents(request.getCostCents()).datetime(request.getDatetime()).event(event).build();
+        List<Expense> expenses = event.getExpenses();
+        Expense savedExpense = expenseRepository.save(expense);
+        expenses.add(savedExpense);
+        event.setExpenses(expenses);
+        eventRepository.save(event);
+        return ResponseEntity.ok(savedExpense);
     }
-    Expense oldExpense = expenseData.get();
-    if (!oldExpense.getEvent().getCreator().getUsername().equals(principal.getName())) {
-      return ErrorResponse.generate("You cannot modify expenses for events that were not created by you", HttpStatus.FORBIDDEN);
-    }
-    oldExpense.setCostCents(expense.getCostCents());
-    oldExpense.setTitle(expense.getTitle());
-    oldExpense.setDatetime(expense.getDatetime());
-    return ResponseEntity.ok(expenseRepository.save(oldExpense));
-  }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteExpense(@PathVariable Long id, Principal principal) {
-    Optional<Expense> expenseData = expenseRepository.findById(id);
-    if (expenseData.isPresent()) {
-      Expense expense = expenseData.get();
-      Event event = expense.getEvent();
-      if (!event.getCreator().getUsername().equals(principal.getName())) {
-        return ErrorResponse.generate("You cannot remove expenses for events that were not created by you", HttpStatus.FORBIDDEN);
-      }
-      List<Expense> expenses = event.getExpenses();
-      expenses.removeAll(List.of(expense));
-      event.setExpenses(expenses);
-      eventRepository.save(event);
-      expenseRepository.delete(expense);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateExpense(@PathVariable Long id, @RequestBody ExpenseCreationRequest expense, Principal principal) {
+        Optional<Expense> expenseData = expenseRepository.findById(id);
+        if (expenseData.isEmpty()) {
+            return ErrorResponse.generate("Expense not found", HttpStatus.NOT_FOUND);
+        }
+        Expense oldExpense = expenseData.get();
+        if (!oldExpense.getEvent().getCreator().getUsername().equals(principal.getName())) {
+            return ErrorResponse.generate("You cannot modify expenses for events that were not created by you", HttpStatus.FORBIDDEN);
+        }
+        oldExpense.setCostCents(expense.getCostCents());
+        oldExpense.setTitle(expense.getTitle());
+        oldExpense.setDatetime(expense.getDatetime());
+        return ResponseEntity.ok(expenseRepository.save(oldExpense));
     }
-    return ResponseEntity.noContent().build(); 
-  }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteExpense(@PathVariable Long id, Principal principal) {
+        Optional<Expense> expenseData = expenseRepository.findById(id);
+        if (expenseData.isPresent()) {
+            Expense expense = expenseData.get();
+            Event event = expense.getEvent();
+            if (!event.getCreator().getUsername().equals(principal.getName())) {
+                return ErrorResponse.generate("You cannot remove expenses for events that were not created by you", HttpStatus.FORBIDDEN);
+            }
+            List<Expense> expenses = event.getExpenses();
+            expenses.removeAll(List.of(expense));
+            event.setExpenses(expenses);
+            eventRepository.save(event);
+            expenseRepository.delete(expense);
+        }
+        return ResponseEntity.noContent().build();
+    }
 }

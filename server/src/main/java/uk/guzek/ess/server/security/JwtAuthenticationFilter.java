@@ -29,65 +29,71 @@ import uk.guzek.ess.server.api.service.JwtService;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final JwtService jwtService;
+    private final JwtService jwtService;
 
-  private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-  private String getDenialMessage(@NonNull HttpServletRequest request) {
-    final String authHeader = request.getHeader("Authorization");
-    if (authHeader == null)
-      return null;
-    if (!authHeader.startsWith("Bearer "))
-      return "Non-Bearer or otherwise malformed access token";
-    final String token = authHeader.substring(7);
-    String username;
-    try {
-      username = jwtService.extractUsername(token);
-    } catch (Exception e) {
-      return e.getMessage();
+    private String getDenialMessage(@NonNull HttpServletRequest request) {
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null) {
+            return null;
+        }
+        if (!authHeader.startsWith("Bearer ")) {
+            return "Non-Bearer or otherwise malformed access token";
+        }
+        final String token = authHeader.substring(7);
+        String username;
+        try {
+            username = jwtService.extractUsername(token);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        if (username == null) {
+            return "Malformed access token payload";
+        }
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        if (securityContext.getAuthentication() != null) {
+            return "Request is already authenticated";
+        }
+        UserDetails userDetails;
+        try {
+            userDetails = userDetailsService.loadUserByUsername(username);
+        } catch (UsernameNotFoundException e) {
+            return "Access token payload contains invalid user credentials";
+        }
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            return "Access token is invalid";
+        }
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                username,
+                null,
+                userDetails.getAuthorities());
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        securityContext.setAuthentication(authToken);
+        return null;
     }
-    if (username == null)
-      return "Malformed access token payload";
-    final SecurityContext securityContext = SecurityContextHolder.getContext();
-    if (securityContext.getAuthentication() != null)
-      return "Request is already authenticated";
-    UserDetails userDetails;
-    try {
-      userDetails = userDetailsService.loadUserByUsername(username);
-    } catch (UsernameNotFoundException e) {
-      return "Access token payload contains invalid user credentials";
-    }
-    if (!jwtService.isTokenValid(token, userDetails))
-      return "Access token is invalid";
-    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-        username,
-        null,
-        userDetails.getAuthorities());
-    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    securityContext.setAuthentication(authToken);
-    return null;
-  }
 
-  @Override
-  protected void doFilterInternal(
-      @NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull FilterChain filterChain) throws ServletException, IOException {
-    final String denialMessage = getDenialMessage(request);
-    if (denialMessage == null) {
-      filterChain.doFilter(request, response);
-      return;
+    @Override
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        final String denialMessage = getDenialMessage(request);
+        if (denialMessage == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json");
+        response.setHeader("WWW-Authenticate", "Bearer realm=/api/v1/auth/");
+        response.getWriter().write(convertObjectToJson(new ErrorResponse(denialMessage)));
     }
-    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-    response.setContentType("application/json");
-    response.setHeader("WWW-Authenticate", "Bearer realm=/api/v1/auth/");
-    response.getWriter().write(convertObjectToJson(new ErrorResponse(denialMessage)));
-  }
 
-  public String convertObjectToJson(Object object) throws JsonProcessingException {
-    if (object == null)
-      return null;
-    return new ObjectMapper().writeValueAsString(object);
-  }
+    public String convertObjectToJson(Object object) throws JsonProcessingException {
+        if (object == null) {
+            return null;
+        }
+        return new ObjectMapper().writeValueAsString(object);
+    }
 
 }

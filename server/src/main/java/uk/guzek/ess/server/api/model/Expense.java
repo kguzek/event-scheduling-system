@@ -18,17 +18,18 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @Builder
-@Table(name="expenses")
+@Table(name = "expenses")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Expense {
-  @Id
-  @GeneratedValue
-  private Long id;
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JsonIgnore
-  private Event event;
-  private String title;
-  private int costCents;
-  private Date datetime;
+
+    @Id
+    @GeneratedValue
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Event event;
+    private String title;
+    private int costCents;
+    private Date datetime;
 }

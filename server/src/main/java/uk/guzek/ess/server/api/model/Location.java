@@ -6,9 +6,10 @@ import lombok.Data;
 
 @Data
 public class Location implements Serializable {
-  private String street;
-  private String city;
-  private String code;
-  private String country;
-  private String additionalInformation;
+
+    private String street;
+    private String city;
+    private String code;
+    private String country;
+    private String additionalInformation;
 }

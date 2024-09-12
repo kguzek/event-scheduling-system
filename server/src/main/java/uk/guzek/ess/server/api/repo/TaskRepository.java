@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import uk.guzek.ess.server.api.model.Task;
 
 @Repository
-public interface TaskRepository extends  JpaRepository<Task, Long>{
+public interface TaskRepository extends JpaRepository<Task, Long> {
 
 }

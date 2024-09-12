@@ -21,25 +21,25 @@ import uk.guzek.ess.server.api.service.AuthenticationService;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-  private final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[#?!@$ %^&*-]).{8,}$");
-  private final AuthenticationService authenticationService;
-  private final UserRepository userRepository;
+    private final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[#?!@$ %^&*-]).{8,}$");
+    private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
 
-  @PostMapping("/register")
-  public ResponseEntity<?> register(@RequestBody RegistrationRequest request) {
-    if (!passwordPattern.matcher(request.getPassword()).matches()) {
-      return ErrorResponse
-          .generate("Password must be minimum 8 characters long, and contain a capital letter and a special character");
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegistrationRequest request) {
+        if (!passwordPattern.matcher(request.getPassword()).matches()) {
+            return ErrorResponse
+                    .generate("Password must be minimum 8 characters long, and contain a capital letter and a special character");
+        }
+        String username = request.getUsername();
+        if (userRepository.findByUsername(username).isPresent()) {
+            return ErrorResponse.generate(String.format("Username '%s' is taken", username));
+        }
+        return ResponseEntity.ok(authenticationService.register(request));
     }
-    String username = request.getUsername();
-    if (userRepository.findByUsername(username).isPresent()) {
-      return ErrorResponse.generate(String.format("Username '%s' is taken", username));
-    }
-    return ResponseEntity.ok(authenticationService.register(request));
-  }
 
-  @PostMapping("/login")
-  public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-    return ResponseEntity.ok(authenticationService.authenticate(request));
-  }
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
 }

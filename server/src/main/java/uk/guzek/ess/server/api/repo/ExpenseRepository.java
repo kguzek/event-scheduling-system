@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import uk.guzek.ess.server.api.model.Expense;
 
 @Repository
-public interface ExpenseRepository extends JpaRepository<Expense, Long>{
+public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
 }

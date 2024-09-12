@@ -7,5 +7,6 @@ import uk.guzek.ess.server.api.model.TaskStatus;
 @Data
 @AllArgsConstructor
 public class TaskStatusUpdateRequest {
-  private TaskStatus status;
+
+    private TaskStatus status;
 }

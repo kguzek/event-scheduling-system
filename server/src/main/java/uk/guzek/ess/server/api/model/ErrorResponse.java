@@ -7,17 +7,18 @@ import lombok.Data;
 
 @Data
 public class ErrorResponse {
-  private String message;
 
-  public ErrorResponse(String message) {
-    this.message = message;
-  }
+    private String message;
 
-  public static ResponseEntity<ErrorResponse> generate(String message) {
-    return generate(message, HttpStatus.BAD_REQUEST);
-  }
+    public ErrorResponse(String message) {
+        this.message = message;
+    }
 
-  public static ResponseEntity<ErrorResponse> generate(String message, HttpStatus code) {
-    return new ResponseEntity<>(new ErrorResponse(message), code);
-  }
+    public static ResponseEntity<ErrorResponse> generate(String message) {
+        return generate(message, HttpStatus.BAD_REQUEST);
+    }
+
+    public static ResponseEntity<ErrorResponse> generate(String message, HttpStatus code) {
+        return new ResponseEntity<>(new ErrorResponse(message), code);
+    }
 }

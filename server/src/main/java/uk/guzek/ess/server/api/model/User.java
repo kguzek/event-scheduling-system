@@ -27,22 +27,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
-  @Id
-  @GeneratedValue
-  private Long id;
-  private String username;
-  private String email;
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-  private String password;
-  @Enumerated(EnumType.STRING)
-  private Role role;
-  // @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-  // @ManyToMany(fetch = FetchType.LAZY)
-  // @JsonManagedReference
-  // private Set<Event> attendedEvents;
-  @Override
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(role.name()));
-  }
+
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String username;
+    private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    // @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JsonManagedReference
+    // private Set<Event> attendedEvents;
+
+    @Override
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
 }

@@ -9,9 +9,10 @@ import uk.guzek.ess.server.api.model.TaskStatus;
 @Data
 @AllArgsConstructor
 public class TaskCreationRequest {
-  private String description;
-  private Date deadline;
-  private Long assigneeId;
-  private Long eventId;
-  private TaskStatus status;
+
+    private String description;
+    private Date deadline;
+    private Long assigneeId;
+    private Long eventId;
+    private TaskStatus status;
 }

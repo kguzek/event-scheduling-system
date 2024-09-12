@@ -8,8 +8,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ExpenseCreationRequest {
-  private String title;
-  private int costCents;
-  private Date datetime;
-  private Long eventId;
+
+    private String title;
+    private int costCents;
+    private Date datetime;
+    private Long eventId;
 }

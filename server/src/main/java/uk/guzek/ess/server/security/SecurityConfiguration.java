@@ -15,23 +15,24 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-  private final AuthenticationProvider authenticationProvider;
 
-  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationProvider authenticationProvider;
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(
-            authorize -> authorize
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/private/**").authenticated()
-                .requestMatchers("/api/v1/staff/**").hasAuthority("STAFF")
-                .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
-                .anyRequest().denyAll())
-        .sessionManagement(sesMan -> sesMan.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-    return httpSecurity.build();
-  }
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/private/**").authenticated()
+                                .requestMatchers("/api/v1/staff/**").hasAuthority("STAFF")
+                                .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
+                                .anyRequest().denyAll())
+                .sessionManagement(sesMan -> sesMan.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        return httpSecurity.build();
+    }
 }
