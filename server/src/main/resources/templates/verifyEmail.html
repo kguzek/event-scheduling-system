@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Confirmation</title>
+    <style>
+      html {
+        background-color: #333;
+        display: flex;
+        justify-content: center;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #222;
+        color: #ccc;
+        margin: 0 40px;
+        height: 100vh;
+        padding: 30px 20px;
+        max-width: 500px;
+      }
+
+      .title {
+        margin-top: 0;
+      }
+
+      div {
+        display: flex;
+        justify-content: center;
+      }
+
+      .link-styled {
+        outline: 1px solid #222;
+        background-color: teal;
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: flex;
+      }
+
+      .link-standard {
+        color: white;
+      }
+    </style>
+  </head>
+    <h2 class="title">Welcome to Event Scheduling System!</h2>
+
+    <p>Please verify your email address by clicking the button below.</p>
+    <div>
+      <a class="link-styled" href="{API_URL}/api/v1/auth/email/verify/{TOKEN}"
+        >VERIFY</a
+      >
+    </div>
+    <p>
+      If that doesn't work, simply copy and paste the following link into your
+      browser:
+    </p>
+    <div>
+      <u class="link-standard">{API_URL}/api/v1/auth/email/verify/{TOKEN}</u>
+    </div>
+    <br />
+    <small
+      >Didn't sign up for an account? Simply ignore this email and the link will
+      expire in 30 minutes.</small
+    >
+    <hr />
+    <div>
+      <footer>2024 &copy; Konrad Guzek</footer>
+    </div>
+  </body>
+</html>

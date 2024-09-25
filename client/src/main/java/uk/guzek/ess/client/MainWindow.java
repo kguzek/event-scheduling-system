@@ -4,8 +4,6 @@
  */
 package uk.guzek.ess.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;
 import java.io.IOException;
 import java.net.URI;
@@ -14,10 +12,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import javax.swing.JComponent;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import uk.guzek.ess.client.error.LoginException;
 import uk.guzek.ess.client.error.web.body.ErrorResponse;
 import uk.guzek.ess.client.error.web.body.LoginResponse;
@@ -29,15 +30,15 @@ import uk.guzek.ess.client.error.web.body.LoginResponse;
 public class MainWindow extends javax.swing.JFrame {
 
     private final String API_URL = "http://localhost:8080/api/v1";
-    
+
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    
+
     private final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[#?!@$ %^&*-]).{8,}$");
-    
+
     private final Pattern emailPattern = Pattern.compile("^[^@]+@[^@]+$");
-    
+
     private String accessToken = null;
-    
+
     /**
      * Creates new form MainWindow
      */
@@ -130,12 +131,6 @@ public class MainWindow extends javax.swing.JFrame {
         lblLogInBody.setText("Welcome to ESS! Please sign in.");
 
         lblLogInUsername.setText("Username");
-
-        iptLogInUsername.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                iptLogInUsernameActionPerformed(evt);
-            }
-        });
 
         lblLogInPassword.setText("Password");
 
@@ -359,28 +354,11 @@ public class MainWindow extends javax.swing.JFrame {
 
         lblForgotPasswordUsername.setText("Username");
 
-        iptForgotPasswordUsername.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                iptForgotPasswordUsernameActionPerformed(evt);
-            }
-        });
-
         lblForgotPasswordEmail.setText("Email address");
-
-        iptForgotPasswordEmail.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                iptForgotPasswordEmailActionPerformed(evt);
-            }
-        });
 
         btnForgotPasswordNext.setFont(new java.awt.Font("Cantarell", 0, 18)); // NOI18N
         btnForgotPasswordNext.setText("NEXT");
         btnForgotPasswordNext.setToolTipText("");
-        btnForgotPasswordNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnForgotPasswordNextActionPerformed(evt);
-            }
-        });
 
         lblPromptLogIn2.setFont(new java.awt.Font("Cantarell", 2, 15)); // NOI18N
         lblPromptLogIn2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -407,7 +385,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(iptForgotPasswordEmail)
                     .addComponent(btnForgotPasswordNext, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblForgotPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblForgotPasswordBody, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                    .addComponent(lblForgotPasswordBody, javax.swing.GroupLayout.PREFERRED_SIZE, 288, Short.MAX_VALUE)
                     .addComponent(iptForgotPasswordUsername)
                     .addComponent(lblPromptLogIn2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnShowLogIn2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -478,10 +456,10 @@ public class MainWindow extends javax.swing.JFrame {
             throw new LoginException("Request JSON parsing error");
         }
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_URL + endpoint))
-            .POST(HttpRequest.BodyPublishers.ofString(json))
-            .setHeader("Content-Type", "application/json")
-            .build();
+                .uri(URI.create(API_URL + endpoint))
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .setHeader("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response;
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -507,13 +485,12 @@ public class MainWindow extends javax.swing.JFrame {
             throw new LoginException("Response JSON parsing error");
         }
     }
-    
-    
+
     private void showLayoutCard(JComponent parent, String cardName) {
         CardLayout layout = (CardLayout) parent.getLayout();
         layout.show(parent, cardName);
     }
-    
+
     private void btnShowLogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowLogInActionPerformed
         showLayoutCard(pnlMain, "logIn");
     }//GEN-LAST:event_btnShowLogInActionPerformed
@@ -543,7 +520,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
         lblSignUpError.setText("");
         btnSignUp.setEnabled(false);
-        Map<String, String> body = new HashMap();
+        Map<String, String> body = new HashMap<>();
         body.put("username", username);
         body.put("password", password);
         body.put("email", email);
@@ -567,7 +544,7 @@ public class MainWindow extends javax.swing.JFrame {
     private void btnLogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogInActionPerformed
         lblLogInError.setText("");
         btnLogIn.setEnabled(false);
-        Map<String, String> body = new HashMap();
+        Map<String, String> body = new HashMap<>();
         body.put("username", iptLogInUsername.getText());
         body.put("password", new String(iptLogInPassword.getPassword()));
         LoginResponse response;
@@ -583,18 +560,6 @@ public class MainWindow extends javax.swing.JFrame {
         System.out.println("Logged in as user #" + response.getUserId().toString());
     }//GEN-LAST:event_btnLogInActionPerformed
 
-    private void iptLogInUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iptLogInUsernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_iptLogInUsernameActionPerformed
-
-    private void iptForgotPasswordUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iptForgotPasswordUsernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_iptForgotPasswordUsernameActionPerformed
-
-    private void btnForgotPasswordNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnForgotPasswordNextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnForgotPasswordNextActionPerformed
-
     private void btnShowLogIn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowLogIn2ActionPerformed
         showLayoutCard(pnlMain, "logIn");
     }//GEN-LAST:event_btnShowLogIn2ActionPerformed
@@ -602,10 +567,6 @@ public class MainWindow extends javax.swing.JFrame {
     private void btnForgotPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnForgotPasswordActionPerformed
         showLayoutCard(pnlMain, "forgotPassword");
     }//GEN-LAST:event_btnForgotPasswordActionPerformed
-
-    private void iptForgotPasswordEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iptForgotPasswordEmailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_iptForgotPasswordEmailActionPerformed
 
     /**
      * @param args the command line arguments
@@ -618,28 +579,21 @@ public class MainWindow extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                System.out.println(info);
                 if ("Metal".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainWindow().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new MainWindow().setVisible(true);
         });
     }
 

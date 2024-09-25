@@ -198,9 +198,6 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="iptLogInUsername">
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="iptLogInUsernameActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblLogInPassword">
                   <Properties>
@@ -562,9 +559,6 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="iptForgotPasswordUsername">
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="iptForgotPasswordUsernameActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblForgotPasswordEmail">
                   <Properties>
@@ -572,9 +566,6 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="iptForgotPasswordEmail">
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="iptForgotPasswordEmailActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="btnForgotPasswordNext">
                   <Properties>
@@ -584,9 +575,6 @@
                     <Property name="text" type="java.lang.String" value="NEXT"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnForgotPasswordNextActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblPromptLogIn2">
                   <Properties>

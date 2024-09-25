@@ -1,7 +1,5 @@
 package uk.guzek.ess.server.api.model.body;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExpenseCreationRequest {
+public class EmailChallengeRequest {
 
-    private String title;
-    private int costCents;
-    private Date datetime;
-    private Long eventId;
+    private String email;
+    private String token;
 }

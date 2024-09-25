@@ -54,6 +54,11 @@ public class JwtService {
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
+    public boolean isEmailTokenValid(String token, String email) {
+        final String encodedEmail = extractUsername(token);
+        return (encodedEmail.equals(email) && !isTokenExpired(token));
+    }
+
     public String generateToken(User user) {
         return generateToken(new HashMap<>(), user);
     }
@@ -62,6 +67,13 @@ public class JwtService {
         final long currentTime = System.currentTimeMillis();
         final long expiryTime = currentTime + 1000 * 60 * 60 * 12; // Expires in 12 hours
         return Jwts.builder().claims(extraClaims).subject(user.getUsername()).issuedAt(new Date(currentTime))
+                .expiration(new Date(expiryTime)).signWith(getSigningKey(), Jwts.SIG.HS256).compact();
+    }
+
+    public String generateEmailToken(String email) {
+        final long currentTime = System.currentTimeMillis();
+        final long expiryTime = currentTime + 1000 * 60 * 30; // Expires in 30 minutes
+        return Jwts.builder().subject(email).issuedAt(new Date(currentTime))
                 .expiration(new Date(expiryTime)).signWith(getSigningKey(), Jwts.SIG.HS256).compact();
     }
 }

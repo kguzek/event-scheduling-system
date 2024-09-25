@@ -4,12 +4,14 @@ import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import uk.guzek.ess.server.api.model.EventStatus;
 import uk.guzek.ess.server.api.model.Frequency;
 import uk.guzek.ess.server.api.model.Location;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class EventCreationRequest {
 
     private String title;
