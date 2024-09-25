@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,6 +21,7 @@ import uk.guzek.ess.server.api.model.Event;
 import uk.guzek.ess.server.api.model.Task;
 import uk.guzek.ess.server.api.model.TaskStatus;
 import uk.guzek.ess.server.api.model.User;
+import uk.guzek.ess.server.api.model.body.PermissionsResponse;
 import uk.guzek.ess.server.api.model.body.TaskStatusUpdateRequest;
 import uk.guzek.ess.server.api.repo.EventRepository;
 import uk.guzek.ess.server.api.repo.TaskRepository;
@@ -80,14 +82,14 @@ public class PrivateController {
         Task task = taskData.get();
         User user = userData.get();
         User previousAssignee = task.getAssignee();
-        if ((previousAssignee != null) == volunteering) {
-            // case when user is volunteering but someone is already assigned
-            // or when user is not volunteering (i.e. quitting) but nobody is assigned
-            return ErrorResponse.generate(volunteering ? "This task already has an assignee" : "There was already nobody assigned to this task", HttpStatus.CONFLICT);
-        }
         if (volunteering) {
+            if (previousAssignee != null) {
+                return ErrorResponse.generate("This task already has an assignee", HttpStatus.CONFLICT);
+            }
             task.setAssignee(user);
             task.setStatus(TaskStatus.ASSIGNED);
+        } else if (previousAssignee == null) {
+            return ErrorResponse.generate("There was already nobody assigned to this task", HttpStatus.CONFLICT);
         } else if (previousAssignee.getId().equals(user.getId())) {
             task.setAssignee(null);
             task.setStatus(TaskStatus.OPEN);
@@ -95,6 +97,21 @@ public class PrivateController {
             return ErrorResponse.generate("You are not the user that the task is assigned to", HttpStatus.FORBIDDEN);
         }
         return ResponseEntity.ok(taskRepository.save(task));
+    }
+
+    @GetMapping("/permissions")
+    public ResponseEntity<?> getUserPermissions(Principal principal) {
+        if (principal == null)
+            return ErrorResponse.generate("You are not logged in", HttpStatus.UNAUTHORIZED);
+        Optional<User> userData = userRepository.findByUsername(principal.getName());
+        if (userData.isEmpty()) {
+            return ErrorResponse.generate("Invalid logged in username", HttpStatus.UNAUTHORIZED);
+        }
+        User user = userData.get();
+        PermissionsResponse response = PermissionsResponse.builder().id(user.getId()).email(user.getEmail())
+                .username(user.getUsername()).role(user.getRole().name()).build();
+        return ResponseEntity.ok(response);
+
     }
 
     @PostMapping("/event/{id}/attendee")
@@ -118,18 +135,21 @@ public class PrivateController {
     }
 
     @PutMapping("/task/{id}/status")
-    public ResponseEntity<?> updateTaskStatus(@PathVariable Long id, Principal principal, @RequestBody TaskStatusUpdateRequest request) {
+    public ResponseEntity<?> updateTaskStatus(@PathVariable Long id, Principal principal,
+            @RequestBody TaskStatusUpdateRequest request) {
         Optional<Task> taskData = taskRepository.findById(id);
         if (taskData.isEmpty()) {
             return ErrorResponse.generate("Task not found", HttpStatus.NOT_FOUND);
         }
         Task task = taskData.get();
         if (!task.getAssignee().getUsername().equals(principal.getName())) {
-            return ErrorResponse.generate("You can only modify the status of tasks which you are assigned to", HttpStatus.FORBIDDEN);
+            return ErrorResponse.generate("You can only modify the status of tasks which you are assigned to",
+                    HttpStatus.FORBIDDEN);
         }
         TaskStatus status = request.getStatus();
         if (status == TaskStatus.OPEN) {
-            return ErrorResponse.generate("Cannot manually set task status to OPEN; instead, unassign yourself from the task");
+            return ErrorResponse
+                    .generate("Cannot manually set task status to OPEN; instead, unassign yourself from the task");
         }
         task.setStatus(status);
         return ResponseEntity.ok(taskRepository.save(task));
