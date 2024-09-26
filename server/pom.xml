@@ -9,7 +9,7 @@
     <version>3.3.3</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
-  <groupId>uk.guzek.ess</groupId>
+  <groupId>pl.papuda.ess</groupId>
   <artifactId>server</artifactId>
   <version>0.0.1</version>
   <name>ess-server</name>
