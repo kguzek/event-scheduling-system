@@ -5,6 +5,7 @@
 package pl.papuda.ess.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;
 import java.io.IOException;
@@ -15,15 +16,17 @@ import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.Timer;
 import pl.papuda.ess.client.error.LoginException;
 import pl.papuda.ess.client.error.web.body.ErrorResponse;
 import pl.papuda.ess.client.error.web.body.LoginResponse;
+import pl.papuda.ess.client.model.Event;
 
 /**
  *
@@ -45,6 +48,10 @@ public class MainWindow extends javax.swing.JFrame {
     
     private Timer timer;
     private Timer resendButtonEnableTimer;
+    
+    public static Event[] events = null;
+    
+    private final Preferences prefs = Preferences.userNodeForPackage(pl.papuda.ess.client.MainWindow.class);
 
     /**
      * Creates new form MainWindow
@@ -53,6 +60,60 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         // Custom code
         this.getContentPane().setBackground(this.getBackground());
+        loadSettings();
+    }
+    
+    private class GetEvents extends Thread {
+        public void run() {
+            HttpResponse response;
+            try {
+                response = sendRequest("/private/event");
+            } catch (IOException | InterruptedException ex) {
+                System.err.println(ex);
+                return;
+            }
+            if (response.statusCode() != 200) {
+                System.out.println("Response code " + response.statusCode());
+                return;
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            String body = response.body().toString();
+            try {
+                objectMapper.readValue(body, new TypeReference<List<Event>>(){});
+            } catch (Exception ex) {
+                System.out.println("Could not parse request body");
+                System.err.println(ex);
+            }
+        }
+    }
+    
+    private void showHome() {
+        showLayoutCard(pnlMain, "home");
+        new GetEvents().start();
+    }
+    
+    private void loadSettings() {
+        String token = prefs.get("accessToken", "");
+        String tokenGenerationDate = prefs.get("tokenGenerationDate", "");
+        if ("".equals(token) || "".equals(tokenGenerationDate)) {
+            return;
+        }
+        Long generationDate;
+        try {
+            generationDate = Long.parseLong(tokenGenerationDate);
+        } catch (NumberFormatException ex) {
+            System.out.println("Removing malformatted token generation date " + tokenGenerationDate);
+            prefs.remove("tokenGenerationDate");
+            return;
+        }
+        if (generationDate <= 0) return;
+        Date now = new Date();
+        long diff = now.getTime() - generationDate;
+        if (diff < 12 * 3600 * 1000) {
+            // Token generated less than 12 hours ago
+            accessToken = token;
+            showHome();
+        }
     }
 
     /**
@@ -123,6 +184,7 @@ public class MainWindow extends javax.swing.JFrame {
         lblVerifyEmailError = new javax.swing.JTextArea();
         pnlHome = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        calendarCustom1 = new pl.papuda.ess.client.CalendarCustom();
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -552,6 +614,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         pnlHome.setBackground(new java.awt.Color(0, 102, 102));
 
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("HOME WELCOME");
 
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
@@ -559,16 +622,18 @@ public class MainWindow extends javax.swing.JFrame {
         pnlHomeLayout.setHorizontalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlHomeLayout.createSequentialGroup()
-                .addGap(374, 374, 374)
+                .addComponent(calendarCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addContainerGap(389, Short.MAX_VALUE))
+                .addGap(36, 36, 36))
         );
         pnlHomeLayout.setVerticalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlHomeLayout.createSequentialGroup()
-                .addGap(185, 185, 185)
+                .addGap(24, 24, 24)
                 .addComponent(jLabel1)
-                .addContainerGap(299, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(calendarCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
         );
 
         pnlMain.add(pnlHome, "home");
@@ -678,16 +743,21 @@ public class MainWindow extends javax.swing.JFrame {
     }
     // GEN-LAST:event_btnVerifyEmailResendActionPerformed
 
+    private HttpRequest.Builder createRequest(String endpoint) {
+        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(API_URL + endpoint));
+        if (endpoint.startsWith("/auth/")) {
+            return builder;
+        }
+        return builder.setHeader("Authorization", "Bearer " + accessToken);
+    }
+    
     private HttpResponse sendRequest(String endpoint) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + endpoint))
-                .GET().build();
+        HttpRequest request = createRequest(endpoint).GET().build();
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse sendRequest(String endpoint, String json) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + endpoint))
+        HttpRequest request = createRequest(endpoint)
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .setHeader("Content-Type", "application/json")
                 .build();
@@ -815,8 +885,14 @@ public class MainWindow extends javax.swing.JFrame {
             btnLogIn.setEnabled(true);
         }
         accessToken = response.getToken();
+        if (cbxRememberPassword.isSelected()) {
+            System.out.println("Saving access token to preferences");
+            prefs.put("accessToken", accessToken);
+            String generationDate = new Date().getTime() + "";
+            prefs.put("tokenGenerationDate", generationDate);
+        }
         System.out.println("Logged in as user #" + response.getUserId().toString());
-        showLayoutCard(pnlMain, "home");
+        showHome();
     }// GEN-LAST:event_btnLogInActionPerformed
 
     private void btnShowLogIn2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnShowLogIn2ActionPerformed
@@ -877,6 +953,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnSignUp;
     private javax.swing.JButton btnVerifyEmailGoBack;
     private javax.swing.JButton btnVerifyEmailResend;
+    private pl.papuda.ess.client.CalendarCustom calendarCustom1;
     private javax.swing.JCheckBox cbxRememberPassword;
     private javax.swing.JTextField iptForgotPasswordEmail;
     private javax.swing.JTextField iptForgotPasswordUsername;

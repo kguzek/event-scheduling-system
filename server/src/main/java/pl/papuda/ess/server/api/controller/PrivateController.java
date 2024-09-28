@@ -1,6 +1,7 @@
 package pl.papuda.ess.server.api.controller;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -37,6 +38,20 @@ public class PrivateController {
     private UserRepository userRepository;
     @Autowired
     private TaskRepository taskRepository;
+
+    @GetMapping("/event")
+    public ResponseEntity<List<Event>> getAllEvents() {
+        return ResponseEntity.ok(eventRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEvent(@PathVariable Long id) {
+        Optional<Event> eventData = eventRepository.findById(id);
+        if (eventData.isEmpty()) {
+            return ErrorResponse.generate("Event not found", HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(eventData.get());
+    }
 
     private ResponseEntity<?> setAttendanceStatus(Long eventId, Principal principal, boolean attending) {
         Optional<Event> eventData = eventRepository.findById(eventId);
