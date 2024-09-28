@@ -1,13 +1,24 @@
 package pl.papuda.ess.server.api.service;
 
-import org.springframework.http.ResponseEntity;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UncheckedIOException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import pl.papuda.ess.server.api.model.ErrorResponse;
 import pl.papuda.ess.server.api.model.Role;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.AuthenticationRequest;
@@ -23,6 +34,13 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final String API_URL = "http://localhost:8080";
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Value("classpath:/templates/verifyEmail.html")
+    private Resource verifyEmailTemplate;
 
     private AuthenticationResponse getResponseFromUser(User user) {
         String token = jwtService.generateToken(user);
@@ -46,4 +64,30 @@ public class AuthenticationService {
         return getResponseFromUser(user);
     }
 
+    private void sendEmail(String recipientAddress, String subject, String content) {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        try {
+            helper.setTo(recipientAddress);
+            helper.setSubject(subject + " | Event Scheduling System");
+            helper.setText(content.replace("{API_URL}", API_URL), true);
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            System.err.println(e);
+        }
+    }
+
+    private String readResource(Resource resource) {
+        try (Reader reader = new InputStreamReader(resource.getInputStream(), "utf8")) {
+            return FileCopyUtils.copyToString(reader);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public void sendChallengeEmail(String recipientAddress, String token) {
+        String template = readResource(verifyEmailTemplate);
+        String content = template.replace("{EMAIL}", recipientAddress).replace("{TOKEN}", token);
+        sendEmail(recipientAddress, "Account Verification", content);
+    }
 }

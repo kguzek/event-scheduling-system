@@ -6,17 +6,18 @@ import java.util.regex.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import lombok.RequiredArgsConstructor;
 import pl.papuda.ess.server.api.model.ErrorResponse;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.AuthenticationRequest;
-import pl.papuda.ess.server.api.model.body.AuthenticationResponse;
 import pl.papuda.ess.server.api.model.body.EmailChallengeRequest;
 import pl.papuda.ess.server.api.model.body.RegistrationRequest;
 import pl.papuda.ess.server.api.repo.UserRepository;
@@ -63,18 +64,35 @@ public class AuthenticationController {
     public ResponseEntity<?> createEmailChallenge(@RequestBody EmailChallengeRequest request) {
         String email = request.getEmail();
         String token = jwtService.generateEmailToken(email);
-        // TODO: send email with token
+        authenticationService.sendChallengeEmail(email, token);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping
-    public ResponseEntity<?> verifyEmail(@RequestBody EmailChallengeRequest request) {
-        String token = request.getToken();
-        String email = request.getEmail();
-        if (!jwtService.isEmailTokenValid(token, email)) {
-            return ErrorResponse.generate("Invalid email token");
+    @GetMapping("/email/verify/{email}/{token}")
+    public RedirectView verifyEmail(@PathVariable String email, @PathVariable String token) {
+        RedirectView redirectView = new RedirectView("/invalidEmailToken.html");
+        System.out.println("REQUEST for verification " + email);
+        try {
+            if (!jwtService.isEmailTokenValid(token, email)) {
+                return redirectView;
+            }
+        } catch (Exception ex) {
+            return redirectView;
         }
-        return ResponseEntity.ok("Verified");
+        Optional<User> userData = userRepository.findByEmail(email);
+        if (userData.isEmpty()) {
+            return redirectView;
+        }
+        User user = userData.get();
+        if (user.isEmailVerified()) {
+            return redirectView;
+        }
+        user.setEmailVerified(true);
+        System.out.println("UPDATING USER EMAIL VERIFIED STATE TO TRUE");
+        userRepository.save(user);
+        System.out.println("SAVED NEW USER PROPERTIES");
+        redirectView.setUrl("/verificationSuccessful.html");
+        return redirectView;
     }
 
     @GetMapping("/email/poll")

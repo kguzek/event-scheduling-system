@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email Confirmation</title>
+    <title>Invalid Token | Event Scheduling System</title>
     <style>
       html {
         background-color: #333;
@@ -18,7 +18,6 @@
         margin: 0 40px;
         height: 100vh;
         padding: 30px 20px;
-        max-width: 500px;
       }
 
       .ess-title {
@@ -47,33 +46,16 @@
     </style>
   </head>
   <body class="ess-body">
-    <h2 class="ess-title">Welcome to Event Scheduling System!</h2>
-
-    <p>Please verify your email address by clicking the button below.</p>
-    <div class="ess-container">
-      <a
-        class="link-styled"
-        href="{API_URL}/api/v1/auth/email/verify/{EMAIL}/{TOKEN}"
-        >VERIFY</a
-      >
-    </div>
+    <h2 class="ess-title">400 Bad Request</h2>
+    <h4>Invalid Token</h4>
     <p>
-      If that doesn't work, simply copy and paste the following link into your
-      browser:
+      Unfortunately, the email verification token is invalid. If you are trying
+      to verify your email address, perform the operation again.
     </p>
-    <div class="ess-container">
-      <u class="link-standard"
-        >{API_URL}/api/v1/auth/email/verify/{EMAIL}/{TOKEN}</u
-      >
-    </div>
-    <br />
-    <small
-      >Didn't sign up for an account? Simply ignore this email and the link will
-      expire in 30 minutes.</small
-    >
     <hr />
     <div class="ess-container">
       <footer>2024 &copy; Event Scheduling System</footer>
     </div>
   </body>
 </html>
+

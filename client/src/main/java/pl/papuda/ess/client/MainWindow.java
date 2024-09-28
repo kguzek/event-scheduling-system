@@ -12,12 +12,15 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 import pl.papuda.ess.client.error.LoginException;
 import pl.papuda.ess.client.error.web.body.ErrorResponse;
 import pl.papuda.ess.client.error.web.body.LoginResponse;
@@ -37,8 +40,11 @@ public class MainWindow extends javax.swing.JFrame {
     private final Pattern emailPattern = Pattern.compile("^[^@]+@[^@]+$");
 
     private String accessToken = null;
-
+    
     private String userEmail = null;
+    
+    private Timer timer;
+    private Timer resendButtonEnableTimer;
 
     /**
      * Creates new form MainWindow
@@ -57,7 +63,7 @@ public class MainWindow extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jComboBox1 = new javax.swing.JComboBox<>();
@@ -110,12 +116,15 @@ public class MainWindow extends javax.swing.JFrame {
         lblVerifyEmailDescription = new javax.swing.JLabel();
         lblPromptLogIn1 = new javax.swing.JLabel();
         btnVerifyEmailGoBack = new javax.swing.JButton();
-        lblVerifyEmailError = new javax.swing.JLabel();
         lblVerifyEmailDescription2 = new javax.swing.JLabel();
-        btnVerifyEmailNext = new javax.swing.JButton();
+        btnVerifyEmailResend = new javax.swing.JButton();
+        lblVerifyEmailDescription3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lblVerifyEmailError = new javax.swing.JTextArea();
+        pnlHome = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
-        jComboBox1.setModel(
-                new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Event Scheduling System");
@@ -182,68 +191,58 @@ public class MainWindow extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlLogInLayout = new javax.swing.GroupLayout(pnlLogIn);
         pnlLogIn.setLayout(pnlLogInLayout);
         pnlLogInLayout.setHorizontalGroup(
-                pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlLogInLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblLogInHeader, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblLogInBody, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(iptLogInUsername)
-                                        .addComponent(iptLogInPassword)
-                                        .addComponent(lblPromptSignUp, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnShowSignUp, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblLogInError, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(pnlLogInLayout.createSequentialGroup()
-                                                .addGroup(pnlLogInLayout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(lblLogInUsername)
-                                                        .addComponent(lblLogInPassword))
-                                                .addGap(0, 0, Short.MAX_VALUE))
-                                        .addGroup(pnlLogInLayout.createSequentialGroup()
-                                                .addComponent(cbxRememberPassword)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(btnForgotPassword)))
-                                .addContainerGap()));
+            pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlLogInLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblLogInHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblLogInBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(iptLogInUsername)
+                    .addComponent(iptLogInPassword)
+                    .addComponent(lblPromptSignUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnShowSignUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblLogInError, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlLogInLayout.createSequentialGroup()
+                        .addGroup(pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblLogInUsername)
+                            .addComponent(lblLogInPassword))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pnlLogInLayout.createSequentialGroup()
+                        .addComponent(cbxRememberPassword)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnForgotPassword)))
+                .addContainerGap())
+        );
         pnlLogInLayout.setVerticalGroup(
-                pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlLogInLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(lblLogInHeader)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblLogInBody)
-                                .addGap(56, 56, 56)
-                                .addComponent(lblLogInUsername)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptLogInUsername, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblLogInPassword)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptLogInPassword, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(cbxRememberPassword)
-                                        .addComponent(btnForgotPassword))
-                                .addGap(18, 18, 18)
-                                .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 37,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblLogInError)
-                                .addGap(18, 18, Short.MAX_VALUE)
-                                .addComponent(lblPromptSignUp)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnShowSignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlLogInLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(lblLogInHeader)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblLogInBody)
+                .addGap(56, 56, 56)
+                .addComponent(lblLogInUsername)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptLogInUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblLogInPassword)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptLogInPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlLogInLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbxRememberPassword)
+                    .addComponent(btnForgotPassword))
+                .addGap(18, 18, 18)
+                .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblLogInError)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(lblPromptSignUp)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnShowSignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         pnlLogInContainer.add(pnlLogIn, new java.awt.GridBagConstraints());
 
@@ -299,72 +298,61 @@ public class MainWindow extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlSignUpLayout = new javax.swing.GroupLayout(pnlSignUp);
         pnlSignUp.setLayout(pnlSignUpLayout);
         pnlSignUpLayout.setHorizontalGroup(
-                pnlSignUpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlSignUpLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(pnlSignUpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lblSignUpPassword2)
-                                        .addComponent(lblSignUpPassword)
-                                        .addComponent(lblSignUpEmail)
-                                        .addComponent(lblSignUpUsername)
-                                        .addComponent(btnSignUp, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblSignUpHeader, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblSignUpDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 288,
-                                                Short.MAX_VALUE)
-                                        .addComponent(iptSignUpPassword)
-                                        .addGroup(pnlSignUpLayout.createSequentialGroup()
-                                                .addGap(67, 67, 67)
-                                                .addComponent(lblPromptLogIn, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addComponent(btnShowLogIn, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(iptSignUpPassword2)
-                                        .addComponent(iptSignUpEmail)
-                                        .addComponent(iptSignUpUsername)
-                                        .addComponent(lblSignUpError, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap()));
+            pnlSignUpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSignUpLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlSignUpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblSignUpPassword2)
+                    .addComponent(lblSignUpPassword)
+                    .addComponent(lblSignUpEmail)
+                    .addComponent(lblSignUpUsername)
+                    .addComponent(btnSignUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblSignUpHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblSignUpDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                    .addComponent(iptSignUpPassword)
+                    .addGroup(pnlSignUpLayout.createSequentialGroup()
+                        .addGap(67, 67, 67)
+                        .addComponent(lblPromptLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnShowLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(iptSignUpPassword2)
+                    .addComponent(iptSignUpEmail)
+                    .addComponent(iptSignUpUsername)
+                    .addComponent(lblSignUpError, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
         pnlSignUpLayout.setVerticalGroup(
-                pnlSignUpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlSignUpLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(lblSignUpHeader)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblSignUpDescription)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblSignUpEmail)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptSignUpEmail, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblSignUpPassword)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptSignUpPassword, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(12, 12, 12)
-                                .addComponent(lblSignUpPassword2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptSignUpPassword2, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblSignUpUsername)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptSignUpUsername, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnSignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 37,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblSignUpError)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29,
-                                        Short.MAX_VALUE)
-                                .addComponent(lblPromptLogIn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnShowLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            pnlSignUpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSignUpLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(lblSignUpHeader)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblSignUpDescription)
+                .addGap(18, 18, 18)
+                .addComponent(lblSignUpEmail)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptSignUpEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblSignUpPassword)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptSignUpPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(lblSignUpPassword2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptSignUpPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblSignUpUsername)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptSignUpUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnSignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblSignUpError)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(lblPromptLogIn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnShowLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         pnlSignUpContainer.add(pnlSignUp, new java.awt.GridBagConstraints());
 
@@ -411,62 +399,50 @@ public class MainWindow extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlForgotPasswordLayout = new javax.swing.GroupLayout(pnlForgotPassword);
         pnlForgotPassword.setLayout(pnlForgotPasswordLayout);
         pnlForgotPasswordLayout.setHorizontalGroup(
-                pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlForgotPasswordLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(pnlForgotPasswordLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(iptForgotPasswordEmail)
-                                        .addComponent(btnForgotPasswordNext, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblForgotPassword, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblForgotPasswordBody, javax.swing.GroupLayout.DEFAULT_SIZE, 288,
-                                                Short.MAX_VALUE)
-                                        .addComponent(iptForgotPasswordUsername)
-                                        .addComponent(lblPromptLogIn2, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnShowLogIn2, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblForgotPasswordError, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(pnlForgotPasswordLayout.createSequentialGroup()
-                                                .addGroup(pnlForgotPasswordLayout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(lblForgotPasswordUsername)
-                                                        .addComponent(lblForgotPasswordEmail))
-                                                .addGap(0, 0, Short.MAX_VALUE)))
-                                .addContainerGap()));
+            pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlForgotPasswordLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(iptForgotPasswordEmail)
+                    .addComponent(btnForgotPasswordNext, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblForgotPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblForgotPasswordBody, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                    .addComponent(iptForgotPasswordUsername)
+                    .addComponent(lblPromptLogIn2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnShowLogIn2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblForgotPasswordError, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlForgotPasswordLayout.createSequentialGroup()
+                        .addGroup(pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblForgotPasswordUsername)
+                            .addComponent(lblForgotPasswordEmail))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
         pnlForgotPasswordLayout.setVerticalGroup(
-                pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlForgotPasswordLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(lblForgotPassword)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblForgotPasswordBody)
-                                .addGap(56, 56, 56)
-                                .addComponent(lblForgotPasswordUsername)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptForgotPasswordUsername, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblForgotPasswordEmail)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(iptForgotPasswordEmail, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblForgotPasswordError, javax.swing.GroupLayout.PREFERRED_SIZE, 20,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnForgotPasswordNext, javax.swing.GroupLayout.PREFERRED_SIZE, 37,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87,
-                                        Short.MAX_VALUE)
-                                .addComponent(lblPromptLogIn2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnShowLogIn2, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlForgotPasswordLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(lblForgotPassword)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblForgotPasswordBody)
+                .addGap(56, 56, 56)
+                .addComponent(lblForgotPasswordUsername)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptForgotPasswordUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblForgotPasswordEmail)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(iptForgotPasswordEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblForgotPasswordError, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnForgotPasswordNext, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                .addComponent(lblPromptLogIn2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnShowLogIn2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         pnlForgotPasswordContainer.add(pnlForgotPassword, new java.awt.GridBagConstraints());
 
@@ -485,13 +461,14 @@ public class MainWindow extends javax.swing.JFrame {
         lblVerifyEmailHeader.setText("Verify Email");
 
         lblVerifyEmailDescription.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblVerifyEmailDescription.setText("Press the button below to send an activation email");
+        lblVerifyEmailDescription.setText("An activation email has been sent to your address at");
 
         lblPromptLogIn1.setFont(new java.awt.Font("Cantarell", 2, 15)); // NOI18N
         lblPromptLogIn1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblPromptLogIn1.setText("Wrong account?");
 
         btnVerifyEmailGoBack.setText("GO BACK");
+        btnVerifyEmailGoBack.setToolTipText("Return to the login page");
         btnVerifyEmailGoBack.setBorder(btnLogIn.getBorder());
         btnVerifyEmailGoBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -499,81 +476,113 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        lblVerifyEmailError.setForeground(new java.awt.Color(255, 51, 51));
-        lblVerifyEmailError.setToolTipText("");
-
         lblVerifyEmailDescription2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblVerifyEmailDescription2.setText("to your address at somebody@example.com.");
+        lblVerifyEmailDescription2.setText("somebody@example.com");
 
-        btnVerifyEmailNext.setFont(new java.awt.Font("Cantarell", 0, 18)); // NOI18N
-        btnVerifyEmailNext.setText("NEXT");
-        btnVerifyEmailNext.setToolTipText("");
-        btnVerifyEmailNext.addActionListener(new java.awt.event.ActionListener() {
+        btnVerifyEmailResend.setFont(new java.awt.Font("Cantarell", 0, 18)); // NOI18N
+        btnVerifyEmailResend.setText("RESEND");
+        btnVerifyEmailResend.setToolTipText("Resend the verification email");
+        btnVerifyEmailResend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVerifyEmailNextActionPerformed(evt);
+                btnVerifyEmailResendActionPerformed(evt);
             }
         });
+
+        lblVerifyEmailDescription3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblVerifyEmailDescription3.setText("Still haven't received it? Press the button below.");
+
+        jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        lblVerifyEmailError.setEditable(false);
+        lblVerifyEmailError.setBackground(new java.awt.Color(255, 255, 255));
+        lblVerifyEmailError.setColumns(20);
+        lblVerifyEmailError.setForeground(new java.awt.Color(255, 51, 51));
+        lblVerifyEmailError.setLineWrap(true);
+        lblVerifyEmailError.setRows(5);
+        lblVerifyEmailError.setToolTipText("");
+        lblVerifyEmailError.setWrapStyleWord(true);
+        lblVerifyEmailError.setFocusable(false);
+        lblVerifyEmailError.setRequestFocusEnabled(false);
+        jScrollPane1.setViewportView(lblVerifyEmailError);
 
         javax.swing.GroupLayout pnlVerifyEmailLayout = new javax.swing.GroupLayout(pnlVerifyEmail);
         pnlVerifyEmail.setLayout(pnlVerifyEmailLayout);
         pnlVerifyEmailLayout.setHorizontalGroup(
-                pnlVerifyEmailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlVerifyEmailLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(pnlVerifyEmailLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lblVerifyEmailDescription2, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblPromptLogIn1, javax.swing.GroupLayout.Alignment.TRAILING,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblVerifyEmailHeader, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblVerifyEmailDescription, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                288, Short.MAX_VALUE)
-                                        .addComponent(btnVerifyEmailGoBack, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(lblVerifyEmailError, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnVerifyEmailNext, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap()));
+            pnlVerifyEmailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlVerifyEmailLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlVerifyEmailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblVerifyEmailDescription2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblVerifyEmailHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblVerifyEmailDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                    .addComponent(btnVerifyEmailGoBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnVerifyEmailResend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblVerifyEmailDescription3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblPromptLogIn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
         pnlVerifyEmailLayout.setVerticalGroup(
-                pnlVerifyEmailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlVerifyEmailLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(lblVerifyEmailHeader)
-                                .addGap(86, 86, 86)
-                                .addComponent(lblVerifyEmailDescription)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblVerifyEmailDescription2)
-                                .addGap(53, 53, 53)
-                                .addComponent(btnVerifyEmailNext, javax.swing.GroupLayout.PREFERRED_SIZE, 37,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(103, 103, 103)
-                                .addComponent(lblVerifyEmailError)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19,
-                                        Short.MAX_VALUE)
-                                .addComponent(lblPromptLogIn1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnVerifyEmailGoBack, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            pnlVerifyEmailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlVerifyEmailLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(lblVerifyEmailHeader)
+                .addGap(61, 61, 61)
+                .addComponent(lblVerifyEmailDescription)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblVerifyEmailDescription2)
+                .addGap(50, 50, 50)
+                .addComponent(lblVerifyEmailDescription3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnVerifyEmailResend, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblPromptLogIn1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnVerifyEmailGoBack, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         pnlVerifyEmailContainer.add(pnlVerifyEmail, new java.awt.GridBagConstraints());
 
         pnlMain.add(pnlVerifyEmailContainer, "verifyEmail");
 
+        pnlHome.setBackground(new java.awt.Color(0, 102, 102));
+
+        jLabel1.setText("HOME WELCOME");
+
+        javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
+        pnlHome.setLayout(pnlHomeLayout);
+        pnlHomeLayout.setHorizontalGroup(
+            pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlHomeLayout.createSequentialGroup()
+                .addGap(374, 374, 374)
+                .addComponent(jLabel1)
+                .addContainerGap(389, Short.MAX_VALUE))
+        );
+        pnlHomeLayout.setVerticalGroup(
+            pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlHomeLayout.createSequentialGroup()
+                .addGap(185, 185, 185)
+                .addComponent(jLabel1)
+                .addContainerGap(299, Short.MAX_VALUE))
+        );
+
+        pnlMain.add(pnlHome, "home");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         pack();
         setLocationRelativeTo(null);
@@ -581,45 +590,93 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void btnVerifyEmailGoBackActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnVerifyEmailGoBackActionPerformed
         showLayoutCard(pnlMain, "logIn");
+        timer.stop();
     }// GEN-LAST:event_btnVerifyEmailGoBackActionPerformed
 
-    private void btnVerifyEmailNextActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnVerifyEmailNextActionPerformed
-        // TODO add your handling code here:
+    private void pollEmailVerification() {
+        String errorMessage = "An error occurred while checking the verification state.";
         HttpResponse response;
-        btnVerifyEmailNext.setEnabled(false);
         try {
-            response = sendRequest("/auth/email/challenge", "");
+            response = sendRequest("/auth/email/poll?email=" + userEmail);
         } catch (IOException | InterruptedException ex) {
-            lblVerifyEmailError.setText("Could not send verification email. Try again later.");
+            lblVerifyEmailError.setText(errorMessage);
             return;
-        } finally {
-            btnVerifyEmailNext.setEnabled(true);
         }
-        wait(10000);
-        String endpoint = "/auth/email/poll?email=" + userEmail;
-        // TODO: allow app closing
-        while (true) {
-            try {
-                response = sendRequest(endpoint);
-            } catch (IOException | InterruptedException ex) {
-                lblVerifyEmailError.setText("An error occurred while checking the verification state.");
-                continue;
-            }
-            if (response.statusCode() == 200) {
-                break;
-            }
-            wait(4000);
+        if (lblVerifyEmailError.getText().equals(errorMessage)) {
+            lblVerifyEmailError.setText("");
         }
+        if (response.statusCode() != 200) {
+            return;
+        }        
         // Email is verified, continue
-    }// GEN-LAST:event_btnVerifyEmailNextActionPerformed
-
-    public static void wait(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+        timer.stop();
+        showLayoutCard(pnlMain, "home");
+    }
+    
+    private void enableResendButton() {
+        resendButtonEnableTimer.stop();
+        btnVerifyEmailResend.setEnabled(true);
+        btnVerifyEmailResend.setText("RESEND");
+    }
+    
+    public class EmailChallenge extends Thread {
+        public void run() {
+            HttpResponse response;
+            try {
+                response = sendRequest("/auth/email/challenge", "{\"email\": \"" + userEmail + "\"}");
+            } catch (IOException | InterruptedException ex) {
+                lblVerifyEmailError.setText("Could not send verification email. Try again later.");
+                enableResendButton();
+                return;
+            }
+            if (response.statusCode() == 201) {
+                return;
+            }
+            enableResendButton();
+            lblVerifyEmailError.setText("An unknown error occurred while sending the verification email. Try again later.");
         }
     }
+    
+    private void sendVerificationEmail() {
+        DecimalFormat df = new DecimalFormat("#.#");
+        btnVerifyEmailResend.setEnabled(false);
+        lblVerifyEmailError.setText("");
+        Date cooldownStart = new Date();
+        resendButtonEnableTimer = new Timer(1000, e -> {
+            Date now = new Date();
+            Long elapsed = now.getTime() - cooldownStart.getTime();
+
+            if (elapsed >= 60000) {
+                enableResendButton();
+                return;
+            }
+            float remaining = Math.round(60000 - elapsed) / 1000;
+            btnVerifyEmailResend.setText(df.format(remaining) + " s");
+        });
+        resendButtonEnableTimer.start();
+        
+        new EmailChallenge().start();
+    }
+    
+    private void verifyEmail() {
+        showLayoutCard(pnlMain, "verifyEmail");
+        btnVerifyEmailResend.setEnabled(false);
+        sendVerificationEmail();
+        Timer preTimer = new Timer(10000, ev -> {
+            timer = new Timer(4000, e -> {
+                pollEmailVerification();
+            });
+            timer.start();
+        });
+        preTimer.setRepeats(false);
+        preTimer.start();
+    }
+    
+    private void btnVerifyEmailResendActionPerformed(java.awt.event.ActionEvent evt) {
+    // GEN-FIRST:event_btnVerifyEmailResendActionPerformed
+        sendVerificationEmail();
+    }
+    // GEN-LAST:event_btnVerifyEmailResendActionPerformed
 
     private HttpResponse sendRequest(String endpoint) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
@@ -725,8 +782,8 @@ public class MainWindow extends javax.swing.JFrame {
         }
         accessToken = response.getToken();
         System.out.println("Successfully created user #" + response.getUserId().toString());
-        showLayoutCard(pnlMain, "verifyEmail");
         userEmail = email;
+        verifyEmail();
         lblVerifyEmailDescription2.setText("to your address at '" + email + "'.");
     }// GEN-LAST:event_btnSignUpActionPerformed
 
@@ -746,9 +803,9 @@ public class MainWindow extends javax.swing.JFrame {
         } catch (LoginException ex) {
             String message = ex.getMessage();
             if (message.contains("email address is not verified")) {
-                showLayoutCard(pnlMain, "verifyEmail");
-                String email = message.split(" ", 2)[0];
+                String email = message.split("'", 3)[1];
                 userEmail = email;
+                verifyEmail();
                 lblVerifyEmailDescription2.setText("to your address at " + email + ".");
             } else {
                 lblLogInError.setText(message);
@@ -759,6 +816,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
         accessToken = response.getToken();
         System.out.println("Logged in as user #" + response.getUserId().toString());
+        showLayoutCard(pnlMain, "home");
     }// GEN-LAST:event_btnLogInActionPerformed
 
     private void btnShowLogIn2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnShowLogIn2ActionPerformed
@@ -818,7 +876,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnShowSignUp;
     private javax.swing.JButton btnSignUp;
     private javax.swing.JButton btnVerifyEmailGoBack;
-    private javax.swing.JButton btnVerifyEmailNext;
+    private javax.swing.JButton btnVerifyEmailResend;
     private javax.swing.JCheckBox cbxRememberPassword;
     private javax.swing.JTextField iptForgotPasswordEmail;
     private javax.swing.JTextField iptForgotPasswordUsername;
@@ -829,6 +887,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPasswordField iptSignUpPassword2;
     private javax.swing.JTextField iptSignUpUsername;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblForgotPassword;
     private javax.swing.JLabel lblForgotPasswordBody;
     private javax.swing.JLabel lblForgotPasswordEmail;
@@ -852,10 +912,12 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblSignUpUsername;
     private javax.swing.JLabel lblVerifyEmailDescription;
     private javax.swing.JLabel lblVerifyEmailDescription2;
-    private javax.swing.JLabel lblVerifyEmailError;
+    private javax.swing.JLabel lblVerifyEmailDescription3;
+    private javax.swing.JTextArea lblVerifyEmailError;
     private javax.swing.JLabel lblVerifyEmailHeader;
     private javax.swing.JPanel pnlForgotPassword;
     private javax.swing.JPanel pnlForgotPasswordContainer;
+    private javax.swing.JPanel pnlHome;
     private javax.swing.JPanel pnlLogIn;
     private javax.swing.JPanel pnlLogInContainer;
     private javax.swing.JPanel pnlMain;
