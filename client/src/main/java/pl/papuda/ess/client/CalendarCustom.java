@@ -5,14 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- *
- * @author konrad
- */
+import pl.papuda.ess.client.model.Event;
+
 public class CalendarCustom extends javax.swing.JPanel {
 
     private int month;
     private int year;
+    private Event[] events = null;
     
     /**
      * Creates new form Calendar
@@ -30,6 +29,16 @@ public class CalendarCustom extends javax.swing.JPanel {
         scrollCalendar();
     }
     
+    public void updateCalendar(Event[] events) {
+        this.events = events;
+        update();
+    }
+    
+    private void update() {
+        pnlCalendarContainer.removeAll();
+        pnlCalendarContainer.add(new CalendarPanel(month, year, events), BorderLayout.CENTER);
+    }
+    
     private void scrollCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH, month);
@@ -37,8 +46,7 @@ public class CalendarCustom extends javax.swing.JPanel {
         calendar.set(Calendar.DATE, 1);
         SimpleDateFormat df  = new SimpleDateFormat("MMMM yyyy");
         lblCalendarInfo.setText(df.format(calendar.getTime()));
-        pnlCalendarContainer.removeAll();
-        pnlCalendarContainer.add(new CalendarPanel(month, year), BorderLayout.CENTER);
+        update();
     }
 
     /**

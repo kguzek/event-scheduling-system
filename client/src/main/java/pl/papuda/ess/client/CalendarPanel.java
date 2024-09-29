@@ -5,7 +5,10 @@
 package pl.papuda.ess.client;
 
 import java.awt.Component;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import pl.papuda.ess.client.model.Event;
 
@@ -17,41 +20,60 @@ public class CalendarPanel extends javax.swing.JPanel {
 
     private int month;
     private int year;
+    private Event[] events;
+    private final ZoneId zone = ZoneId.systemDefault();
     
-    /**
-     * Creates new form CalendarPanel
-     */
-    public CalendarPanel(int month, int year) {
+    public CalendarPanel(int month, int year, Event[] events) {
         initComponents();
         this.month = month;
         this.year = year;
+        this.events = events;
         init();
     }
     
     private void init() {
-       setDate();
+       updateCells();
     }
     
-    private boolean hasEvent(int day) {
-        if (MainWindow.events == null) {
+    private boolean occursOn(Event event, LocalDate date) {
+        LocalDate eventDate = Instant.parse(event.getStartTime()).atZone(zone).toLocalDate();
+        if (date.equals(eventDate)) {
+            return true;
+        }
+        if (eventDate.isAfter(date)) {
             return false;
         }
-        
-        Calendar dayStart = Calendar.getInstance();
-        dayStart.set(year, month, day);
-        Calendar dayEnd = Calendar.getInstance();
-        dayEnd.set(year, month, day + 1);
-        
-        for (Event event : MainWindow.events) {
-            LocalDate eventDate = LocalDate.parse(event.getStartTime());
-            if (dayStart.before(eventDate) && dayEnd.after(eventDate)) {
+        switch (event.getFrequency()) {
+            case "DAILY":
                 return true;
-            }
+            case "WEEKLY":
+               return eventDate.getDayOfWeek().equals(date.getDayOfWeek());
+            case "FORTNIGHTLY":
+                long daysBetween = ChronoUnit.DAYS.between(eventDate, date);
+                return daysBetween % 14 == 0;
+            case "MONTHLY":
+                return eventDate.getDayOfMonth() == date.getDayOfMonth();
+            case "YEARLY":
+                return eventDate.getDayOfYear() == date.getDayOfYear();
+            case null:
+            default:
+                return false;
         }
-        return false;
     }
     
-    private void setDate() {
+    private Long getEventId(LocalDate date) {
+        if (events == null) {
+            return null;
+        }
+        for (Event event : events) {
+            if (occursOn(event, date)) {
+                return event.getId();
+            }
+        }
+        return null;
+    }
+    
+    private void updateCells() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
@@ -59,13 +81,26 @@ public class CalendarPanel extends javax.swing.JPanel {
         int startDay = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % 7;
         calendar.add(Calendar.DATE, -startDay);
         Component[] components = getComponents();
-        for (int i = 7; i < components.length; i++) {
+        for (int i = 0; i < components.length; i++) {
             CalendarCell calendarCell = (CalendarCell) components[i];
+            if (i < 7) {
+                calendarCell.markAsTitleCell();
+                continue;
+            }
             int day = calendar.get(Calendar.DATE);
-            String text = hasEvent(day) ? ("* " + day + " *") : (day + "");
+            LocalDate date = calendar.toInstant().atZone(zone).toLocalDate();
+            String text = (day + "");
+            Long eventId = getEventId(date);
+            if (eventId != null) {
+                calendarCell.setEventId(eventId);    
+            }
             calendarCell.setText(text);
             calendarCell.setDate(calendar.getTime());
-            calendarCell.currentMonth(calendar.get(Calendar.MONTH) == month);
+            boolean isCurrentMonth = calendar.get(Calendar.MONTH) == month;
+            calendarCell.updateColor(isCurrentMonth);
+            if (isCurrentMonth && date.equals(LocalDate.now())) {
+                calendarCell.markAsToday();
+            }
             calendar.add(Calendar.DATE, 1);
         }
     }
@@ -167,17 +202,10 @@ public class CalendarPanel extends javax.swing.JPanel {
 
         calendarCell8.setBackground(new java.awt.Color(255, 255, 255));
         calendarCell8.setForeground(new java.awt.Color(51, 51, 51));
-        calendarCell8.setText("* 2 *");
-        calendarCell8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                calendarCell8ActionPerformed(evt);
-            }
-        });
         add(calendarCell8);
 
         calendarCell9.setBackground(new java.awt.Color(255, 255, 255));
         calendarCell9.setForeground(new java.awt.Color(51, 51, 51));
-        calendarCell9.setText("3");
         add(calendarCell9);
 
         calendarCell10.setBackground(new java.awt.Color(255, 255, 255));
@@ -328,10 +356,6 @@ public class CalendarPanel extends javax.swing.JPanel {
         calendarCell49.setForeground(new java.awt.Color(51, 51, 51));
         add(calendarCell49);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void calendarCell8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calendarCell8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_calendarCell8ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

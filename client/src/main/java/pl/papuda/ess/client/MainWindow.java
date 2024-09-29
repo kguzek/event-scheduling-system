@@ -16,7 +16,6 @@ import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
@@ -49,7 +48,7 @@ public class MainWindow extends javax.swing.JFrame {
     private Timer timer;
     private Timer resendButtonEnableTimer;
     
-    public static Event[] events = null;
+    private Event[] events = null;
     
     private final Preferences prefs = Preferences.userNodeForPackage(pl.papuda.ess.client.MainWindow.class);
 
@@ -79,11 +78,15 @@ public class MainWindow extends javax.swing.JFrame {
             ObjectMapper objectMapper = new ObjectMapper();
             String body = response.body().toString();
             try {
-                objectMapper.readValue(body, new TypeReference<List<Event>>(){});
+                events = objectMapper.readValue(body, new TypeReference<Event[]>(){});
             } catch (Exception ex) {
                 System.out.println("Could not parse request body");
                 System.err.println(ex);
+                return;
             }
+            // repaint to reflect event data
+            calendarCustom1.updateCalendar(events);
+            eventsList1.update(events);
         }
     }
     
@@ -127,7 +130,6 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox<>();
         pnlMain = new javax.swing.JPanel();
         pnlLogInContainer = new javax.swing.JPanel();
         pnlLogIn = new javax.swing.JPanel();
@@ -183,10 +185,8 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         lblVerifyEmailError = new javax.swing.JTextArea();
         pnlHome = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         calendarCustom1 = new pl.papuda.ess.client.CalendarCustom();
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        eventsList1 = new pl.papuda.ess.client.EventsList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Event Scheduling System");
@@ -614,26 +614,22 @@ public class MainWindow extends javax.swing.JFrame {
 
         pnlHome.setBackground(new java.awt.Color(0, 102, 102));
 
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("HOME WELCOME");
-
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
         pnlHome.setLayout(pnlHomeLayout);
         pnlHomeLayout.setHorizontalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlHomeLayout.createSequentialGroup()
                 .addComponent(calendarCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(36, 36, 36))
+                .addGap(0, 0, 0)
+                .addComponent(eventsList1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         pnlHomeLayout.setVerticalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlHomeLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(calendarCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(eventsList1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pnlMain.add(pnlHome, "home");
@@ -955,6 +951,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnVerifyEmailResend;
     private pl.papuda.ess.client.CalendarCustom calendarCustom1;
     private javax.swing.JCheckBox cbxRememberPassword;
+    private pl.papuda.ess.client.EventsList eventsList1;
     private javax.swing.JTextField iptForgotPasswordEmail;
     private javax.swing.JTextField iptForgotPasswordUsername;
     private javax.swing.JPasswordField iptLogInPassword;
@@ -963,8 +960,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPasswordField iptSignUpPassword;
     private javax.swing.JPasswordField iptSignUpPassword2;
     private javax.swing.JTextField iptSignUpUsername;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblForgotPassword;
     private javax.swing.JLabel lblForgotPasswordBody;
