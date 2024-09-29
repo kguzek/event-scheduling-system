@@ -44,7 +44,7 @@ public class PrivateController {
         return ResponseEntity.ok(eventRepository.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/event/{id}")
     public ResponseEntity<?> getEvent(@PathVariable Long id) {
         Optional<Event> eventData = eventRepository.findById(id);
         if (eventData.isEmpty()) {
@@ -126,7 +126,6 @@ public class PrivateController {
         PermissionsResponse response = PermissionsResponse.builder().id(user.getId()).email(user.getEmail())
                 .username(user.getUsername()).role(user.getRole().name()).build();
         return ResponseEntity.ok(response);
-
     }
 
     @PostMapping("/event/{id}/attendee")

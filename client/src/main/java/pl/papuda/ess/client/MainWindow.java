@@ -26,6 +26,7 @@ import pl.papuda.ess.client.error.LoginException;
 import pl.papuda.ess.client.error.web.body.ErrorResponse;
 import pl.papuda.ess.client.error.web.body.LoginResponse;
 import pl.papuda.ess.client.model.Event;
+import pl.papuda.ess.client.model.User;
 
 /**
  *
@@ -44,6 +45,7 @@ public class MainWindow extends javax.swing.JFrame {
     private String accessToken = null;
     
     private String userEmail = null;
+    static User user;
     
     private Timer timer;
     private Timer resendButtonEnableTimer;
@@ -62,6 +64,20 @@ public class MainWindow extends javax.swing.JFrame {
         loadSettings();
     }
     
+    private <T> T readResponseBody(HttpResponse response, Class<T> cls) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String body = response.body().toString();
+        T obj;
+        try {
+            obj = objectMapper.readValue(body, cls);
+        } catch (Exception ex) {
+            System.out.println("Could not parse request body");
+            System.err.println(ex);
+            return null;
+        }
+        return obj;
+    }
+    
     private class GetEvents extends Thread {
         public void run() {
             HttpResponse response;
@@ -75,22 +91,34 @@ public class MainWindow extends javax.swing.JFrame {
                 System.out.println("Response code " + response.statusCode());
                 return;
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            String body = response.body().toString();
-            try {
-                events = objectMapper.readValue(body, new TypeReference<Event[]>(){});
-            } catch (Exception ex) {
-                System.out.println("Could not parse request body");
-                System.err.println(ex);
-                return;
-            }
+            events = readResponseBody(response, Event[].class);
             // repaint to reflect event data
             calendarCustom1.updateCalendar(events);
             eventsList1.update(events);
         }
     }
     
-    private void showHome() {
+    private class GetUserPermissions extends Thread {
+        public void run() {
+            HttpResponse response;
+            try {
+                response = sendRequest("/private/permissions");
+            } catch (IOException | InterruptedException ex) {
+                user = null;
+                return;
+            }
+            user = readResponseBody(response, User.class);
+            System.out.println("User permissions: " + user);
+        }
+    }
+    
+    private void afterRegister(String token) {
+        accessToken = token;
+        new GetUserPermissions().start();
+    }
+    
+    private void afterLogin(String token) {
+        afterRegister(token);
         showLayoutCard(pnlMain, "home");
         new GetEvents().start();
     }
@@ -103,7 +131,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
         Long generationDate;
         try {
-            generationDate = Long.parseLong(tokenGenerationDate);
+            generationDate = Long.valueOf(tokenGenerationDate);
         } catch (NumberFormatException ex) {
             System.out.println("Removing malformatted token generation date " + tokenGenerationDate);
             prefs.remove("tokenGenerationDate");
@@ -114,8 +142,7 @@ public class MainWindow extends javax.swing.JFrame {
         long diff = now.getTime() - generationDate;
         if (diff < 12 * 3600 * 1000) {
             // Token generated less than 12 hours ago
-            accessToken = token;
-            showHome();
+            afterLogin(token);
         }
     }
 
@@ -846,7 +873,7 @@ public class MainWindow extends javax.swing.JFrame {
         } finally {
             btnSignUp.setEnabled(true);
         }
-        accessToken = response.getToken();
+        afterRegister(response.getToken());
         System.out.println("Successfully created user #" + response.getUserId().toString());
         userEmail = email;
         verifyEmail();
@@ -880,15 +907,14 @@ public class MainWindow extends javax.swing.JFrame {
         } finally {
             btnLogIn.setEnabled(true);
         }
-        accessToken = response.getToken();
+        System.out.println("Logged in as user #" + response.getUserId().toString());
+        afterLogin(response.getToken());
         if (cbxRememberPassword.isSelected()) {
             System.out.println("Saving access token to preferences");
             prefs.put("accessToken", accessToken);
             String generationDate = new Date().getTime() + "";
             prefs.put("tokenGenerationDate", generationDate);
         }
-        System.out.println("Logged in as user #" + response.getUserId().toString());
-        showHome();
     }// GEN-LAST:event_btnLogInActionPerformed
 
     private void btnShowLogIn2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnShowLogIn2ActionPerformed

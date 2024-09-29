@@ -16,6 +16,12 @@ public class CalendarEvent extends javax.swing.JPanel {
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("E, dd'/'MM'/'yyyy");
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
 
+    public CalendarEvent(Event event) {
+        initComponents();
+        this.event = event;
+        initEvent();
+    }
+
     public static String ordinal(int i) {
         String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
         switch (i % 100) {
@@ -49,12 +55,6 @@ public class CalendarEvent extends javax.swing.JPanel {
         }
     }
 
-    public CalendarEvent(Event event) {
-        initComponents();
-        this.event = event;
-        initEvent();
-    }
-
     private String formatTime(String timestamp) {
         Instant instant = Instant.parse(timestamp);
         return timeFormat.format(instant.atZone(zone));
@@ -84,6 +84,9 @@ public class CalendarEvent extends javax.swing.JPanel {
         }
         lblEventTime.setText(timeText);
         lblEventAddress.setText(formatLocation(event.getLocation()));
+        if (MainWindow.user == null || "USER".equals(MainWindow.user.getRole())) {
+            btnEventOptions.setVisible(false);
+        }
     }
 
     /**

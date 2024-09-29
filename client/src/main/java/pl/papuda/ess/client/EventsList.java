@@ -29,14 +29,38 @@ public class EventsList extends javax.swing.JPanel {
     private void initComponents() {
 
         scpEventsContainer = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
         pnlEventsContainer = new javax.swing.JPanel();
 
         scpEventsContainer.setBackground(new java.awt.Color(204, 204, 204));
+        scpEventsContainer.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scpEventsContainer.setViewportView(null);
 
         pnlEventsContainer.setBackground(new java.awt.Color(204, 204, 204));
-        pnlEventsContainer.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-        scpEventsContainer.setViewportView(pnlEventsContainer);
+        pnlEventsContainer.setLayout(new javax.swing.BoxLayout(pnlEventsContainer, javax.swing.BoxLayout.Y_AXIS));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 521, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(pnlEventsContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(515, Short.MAX_VALUE)))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 396, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(pnlEventsContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(390, Short.MAX_VALUE)))
+        );
+
+        scpEventsContainer.setViewportView(jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -44,8 +68,8 @@ public class EventsList extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scpEventsContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(scpEventsContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -58,6 +82,7 @@ public class EventsList extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel pnlEventsContainer;
     private javax.swing.JScrollPane scpEventsContainer;
     // End of variables declaration//GEN-END:variables
