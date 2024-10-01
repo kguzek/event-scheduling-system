@@ -9,19 +9,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
-import javax.swing.JComponent;
 import javax.swing.Timer;
+
+import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.error.LoginException;
 import pl.papuda.ess.client.error.web.body.ErrorResponse;
 import pl.papuda.ess.client.error.web.body.LoginResponse;
@@ -34,25 +32,16 @@ import pl.papuda.ess.client.model.User;
  */
 public class MainWindow extends javax.swing.JFrame {
 
-    private final String API_URL = "http://localhost:8080/api/v1";
-
-    private final HttpClient httpClient = HttpClient.newHttpClient();
-
     private final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[#?!@$ %^&*-]).{8,}$");
 
     private final Pattern emailPattern = Pattern.compile("^[^@]+@[^@]+$");
 
-    private String accessToken = null;
-    
     private String userEmail = null;
-    static User user;
     
     private Timer timer;
     private Timer resendButtonEnableTimer;
     
-    private Event[] events = null;
-    
-    private final Preferences prefs = Preferences.userNodeForPackage(pl.papuda.ess.client.MainWindow.class);
+    private static List<Event> events = null;
 
     /**
      * Creates new form MainWindow
@@ -64,25 +53,27 @@ public class MainWindow extends javax.swing.JFrame {
         loadSettings();
     }
     
-    private <T> T readResponseBody(HttpResponse response, Class<T> cls) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String body = response.body().toString();
-        T obj;
-        try {
-            obj = objectMapper.readValue(body, cls);
-        } catch (Exception ex) {
-            System.out.println("Could not parse request body");
-            System.err.println(ex);
-            return null;
-        }
-        return obj;
+    void addEvent(Event event) {
+        events.add(event);
+        updateEvents();
+    }
+    
+    void removeEvent(Long eventId) {
+        events.removeIf(event -> event.getId().equals(eventId));
+        updateEvents();
+    }
+    
+    private void updateEvents() {
+        // repaint to reflect event data
+        calendarCustom1.updateCalendar(events);
+        eventsList1.updateEventsList(events);
     }
     
     private class GetEvents extends Thread {
         public void run() {
             HttpResponse response;
             try {
-                response = sendRequest("/private/event");
+                response = Web.sendGetRequest("/private/event");
             } catch (IOException | InterruptedException ex) {
                 System.err.println(ex);
                 return;
@@ -91,10 +82,8 @@ public class MainWindow extends javax.swing.JFrame {
                 System.out.println("Response code " + response.statusCode());
                 return;
             }
-            events = readResponseBody(response, Event[].class);
-            // repaint to reflect event data
-            calendarCustom1.updateCalendar(events);
-            eventsList1.update(events);
+            events = Web.readResponseBody(response, new TypeReference<List<Event>>(){});
+            updateEvents();
         }
     }
     
@@ -102,30 +91,31 @@ public class MainWindow extends javax.swing.JFrame {
         public void run() {
             HttpResponse response;
             try {
-                response = sendRequest("/private/permissions");
+                response = Web.sendGetRequest("/private/permissions");
             } catch (IOException | InterruptedException ex) {
-                user = null;
+                Web.unsetAccessToken();
+                showLayoutCard("logIn");
                 return;
             }
-            user = readResponseBody(response, User.class);
-            System.out.println("User permissions: " + user);
+            Web.user = Web.readResponseBody(response, new TypeReference<User>(){});
+            System.out.println("User permissions: " + Web.user);
         }
     }
     
     private void afterRegister(String token) {
-        accessToken = token;
+        Web.setAccessToken(token, cbxRememberPassword.isSelected());
         new GetUserPermissions().start();
     }
     
     private void afterLogin(String token) {
         afterRegister(token);
-        showLayoutCard(pnlMain, "home");
+        showLayoutCard("home");
         new GetEvents().start();
     }
     
     private void loadSettings() {
-        String token = prefs.get("accessToken", "");
-        String tokenGenerationDate = prefs.get("tokenGenerationDate", "");
+        String token = Web.prefs.get("accessToken", "");
+        String tokenGenerationDate = Web.prefs.get("tokenGenerationDate", "");
         if ("".equals(token) || "".equals(tokenGenerationDate)) {
             return;
         }
@@ -134,7 +124,7 @@ public class MainWindow extends javax.swing.JFrame {
             generationDate = Long.valueOf(tokenGenerationDate);
         } catch (NumberFormatException ex) {
             System.out.println("Removing malformatted token generation date " + tokenGenerationDate);
-            prefs.remove("tokenGenerationDate");
+            Web.prefs.remove("tokenGenerationDate");
             return;
         }
         if (generationDate <= 0) return;
@@ -208,12 +198,13 @@ public class MainWindow extends javax.swing.JFrame {
         btnVerifyEmailGoBack = new javax.swing.JButton();
         lblVerifyEmailDescription2 = new javax.swing.JLabel();
         btnVerifyEmailResend = new javax.swing.JButton();
-        lblVerifyEmailDescription3 = new javax.swing.JLabel();
+        lblVerifyEmailResend = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lblVerifyEmailError = new javax.swing.JTextArea();
         pnlHome = new javax.swing.JPanel();
         calendarCustom1 = new pl.papuda.ess.client.CalendarCustom();
         eventsList1 = new pl.papuda.ess.client.EventsList();
+        btnLogOut = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Event Scheduling System");
@@ -244,6 +235,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         lblLogInPassword.setText("Password");
 
+        cbxRememberPassword.setSelected(true);
         cbxRememberPassword.setText("Remember me");
 
         btnForgotPassword.setText("Forgot password?");
@@ -577,8 +569,8 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        lblVerifyEmailDescription3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblVerifyEmailDescription3.setText("Still haven't received it? Press the button below.");
+        lblVerifyEmailResend.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblVerifyEmailResend.setText("Still haven't received it? Press the button below.");
 
         jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setBorder(null);
@@ -608,7 +600,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(lblVerifyEmailDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
                     .addComponent(btnVerifyEmailGoBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnVerifyEmailResend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblVerifyEmailDescription3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblVerifyEmailResend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPromptLogIn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -623,7 +615,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblVerifyEmailDescription2)
                 .addGap(50, 50, 50)
-                .addComponent(lblVerifyEmailDescription3)
+                .addComponent(lblVerifyEmailResend)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnVerifyEmailResend, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -641,22 +633,34 @@ public class MainWindow extends javax.swing.JFrame {
 
         pnlHome.setBackground(new java.awt.Color(0, 102, 102));
 
+        btnLogOut.setText("Log out");
+        btnLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogOutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
         pnlHome.setLayout(pnlHomeLayout);
         pnlHomeLayout.setHorizontalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlHomeLayout.createSequentialGroup()
                 .addComponent(calendarCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(eventsList1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(eventsList1, javax.swing.GroupLayout.PREFERRED_SIZE, 443, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 361, Short.MAX_VALUE)
+                        .addComponent(btnLogOut)
+                        .addContainerGap())))
         );
         pnlHomeLayout.setVerticalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(calendarCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(eventsList1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(pnlHomeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnLogOut)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(eventsList1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pnlMain.add(pnlHome, "home");
@@ -676,8 +680,15 @@ public class MainWindow extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogOutActionPerformed
+        showLayoutCard("logIn");
+        Web.unsetAccessToken();
+        Web.prefs.remove("accessToken");
+        Web.prefs.remove("tokenGenerationDate");
+    }//GEN-LAST:event_btnLogOutActionPerformed
+
     private void btnVerifyEmailGoBackActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnVerifyEmailGoBackActionPerformed
-        showLayoutCard(pnlMain, "logIn");
+        showLayoutCard("logIn");
         timer.stop();
     }// GEN-LAST:event_btnVerifyEmailGoBackActionPerformed
 
@@ -685,7 +696,7 @@ public class MainWindow extends javax.swing.JFrame {
         String errorMessage = "An error occurred while checking the verification state.";
         HttpResponse response;
         try {
-            response = sendRequest("/auth/email/poll?email=" + userEmail);
+            response = Web.sendGetRequest("/auth/email/poll?email=" + userEmail);
         } catch (IOException | InterruptedException ex) {
             lblVerifyEmailError.setText(errorMessage);
             return;
@@ -698,7 +709,7 @@ public class MainWindow extends javax.swing.JFrame {
         }        
         // Email is verified, continue
         timer.stop();
-        showLayoutCard(pnlMain, "home");
+        showLayoutCard("home");
     }
     
     private void enableResendButton() {
@@ -711,7 +722,7 @@ public class MainWindow extends javax.swing.JFrame {
         public void run() {
             HttpResponse response;
             try {
-                response = sendRequest("/auth/email/challenge", "{\"email\": \"" + userEmail + "\"}");
+                response = Web.sendPostRequest("/auth/email/challenge", "{\"email\": \"" + userEmail + "\"}");
             } catch (IOException | InterruptedException ex) {
                 lblVerifyEmailError.setText("Could not send verification email. Try again later.");
                 enableResendButton();
@@ -747,7 +758,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     private void verifyEmail() {
-        showLayoutCard(pnlMain, "verifyEmail");
+        showLayoutCard("verifyEmail");
         btnVerifyEmailResend.setEnabled(false);
         sendVerificationEmail();
         Timer preTimer = new Timer(10000, ev -> {
@@ -766,27 +777,6 @@ public class MainWindow extends javax.swing.JFrame {
     }
     // GEN-LAST:event_btnVerifyEmailResendActionPerformed
 
-    private HttpRequest.Builder createRequest(String endpoint) {
-        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(API_URL + endpoint));
-        if (endpoint.startsWith("/auth/")) {
-            return builder;
-        }
-        return builder.setHeader("Authorization", "Bearer " + accessToken);
-    }
-    
-    private HttpResponse sendRequest(String endpoint) throws IOException, InterruptedException {
-        HttpRequest request = createRequest(endpoint).GET().build();
-        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private HttpResponse sendRequest(String endpoint, String json) throws IOException, InterruptedException {
-        HttpRequest request = createRequest(endpoint)
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .setHeader("Content-Type", "application/json")
-                .build();
-        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
     private LoginResponse logIn(String endpoint, Map<String, String> body) throws LoginException {
         ObjectMapper objectMapper = new ObjectMapper();
         String json;
@@ -799,7 +789,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         HttpResponse<String> response;
         try {
-            response = sendRequest(endpoint, json);
+            response = Web.sendPostRequest(endpoint, json);
         } catch (IOException | InterruptedException ex) {
             throw new LoginException("Network error, try again later");
         }
@@ -823,15 +813,15 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
 
-    private void showLayoutCard(JComponent parent, String cardName) {
-        CardLayout layout = (CardLayout) parent.getLayout();
-        layout.show(parent, cardName);
+    private void showLayoutCard(String cardName) {
+        CardLayout layout = (CardLayout) pnlMain.getLayout();
+        layout.show(pnlMain, cardName);
         lblLogInError.setText("");
         lblSignUpError.setText("");
     }
 
     private void btnShowLogInActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnShowLogInActionPerformed
-        showLayoutCard(pnlMain, "logIn");
+        showLayoutCard("logIn");
     }// GEN-LAST:event_btnShowLogInActionPerformed
 
     private void btnSignUpActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnSignUpActionPerformed
@@ -881,7 +871,7 @@ public class MainWindow extends javax.swing.JFrame {
     }// GEN-LAST:event_btnSignUpActionPerformed
 
     private void btnShowSignUpActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnShowSignUpActionPerformed
-        showLayoutCard(pnlMain, "signUp");
+        showLayoutCard("signUp");
     }// GEN-LAST:event_btnShowSignUpActionPerformed
 
     private void btnLogInActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnLogInActionPerformed
@@ -909,20 +899,14 @@ public class MainWindow extends javax.swing.JFrame {
         }
         System.out.println("Logged in as user #" + response.getUserId().toString());
         afterLogin(response.getToken());
-        if (cbxRememberPassword.isSelected()) {
-            System.out.println("Saving access token to preferences");
-            prefs.put("accessToken", accessToken);
-            String generationDate = new Date().getTime() + "";
-            prefs.put("tokenGenerationDate", generationDate);
-        }
     }// GEN-LAST:event_btnLogInActionPerformed
 
     private void btnShowLogIn2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnShowLogIn2ActionPerformed
-        showLayoutCard(pnlMain, "logIn");
+        showLayoutCard("logIn");
     }// GEN-LAST:event_btnShowLogIn2ActionPerformed
 
     private void btnForgotPasswordActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnForgotPasswordActionPerformed
-        showLayoutCard(pnlMain, "forgotPassword");
+        showLayoutCard("forgotPassword");
     }// GEN-LAST:event_btnForgotPasswordActionPerformed
 
     /**
@@ -969,6 +953,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnForgotPassword;
     private javax.swing.JButton btnForgotPasswordNext;
     private javax.swing.JButton btnLogIn;
+    private javax.swing.JButton btnLogOut;
     private javax.swing.JButton btnShowLogIn;
     private javax.swing.JButton btnShowLogIn2;
     private javax.swing.JButton btnShowSignUp;
@@ -1010,9 +995,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblSignUpUsername;
     private javax.swing.JLabel lblVerifyEmailDescription;
     private javax.swing.JLabel lblVerifyEmailDescription2;
-    private javax.swing.JLabel lblVerifyEmailDescription3;
     private javax.swing.JTextArea lblVerifyEmailError;
     private javax.swing.JLabel lblVerifyEmailHeader;
+    private javax.swing.JLabel lblVerifyEmailResend;
     private javax.swing.JPanel pnlForgotPassword;
     private javax.swing.JPanel pnlForgotPasswordContainer;
     private javax.swing.JPanel pnlHome;

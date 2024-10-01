@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.List;
 import pl.papuda.ess.client.model.Event;
 
 /**
@@ -20,10 +21,10 @@ public class CalendarPanel extends javax.swing.JPanel {
 
     private int month;
     private int year;
-    private Event[] events;
+    private List<Event> events;
     private final ZoneId zone = ZoneId.systemDefault();
     
-    public CalendarPanel(int month, int year, Event[] events) {
+    public CalendarPanel(int month, int year, List<Event> events) {
         initComponents();
         this.month = month;
         this.year = year;

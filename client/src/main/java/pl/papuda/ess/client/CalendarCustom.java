@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import pl.papuda.ess.client.model.Event;
 
@@ -11,7 +12,7 @@ public class CalendarCustom extends javax.swing.JPanel {
 
     private int month;
     private int year;
-    private Event[] events = null;
+    private List<Event> events = null;
     
     /**
      * Creates new form Calendar
@@ -29,7 +30,7 @@ public class CalendarCustom extends javax.swing.JPanel {
         scrollCalendar();
     }
     
-    public void updateCalendar(Event[] events) {
+    public void updateCalendar(List<Event> events) {
         this.events = events;
         update();
     }
@@ -37,6 +38,8 @@ public class CalendarCustom extends javax.swing.JPanel {
     private void update() {
         pnlCalendarContainer.removeAll();
         pnlCalendarContainer.add(new CalendarPanel(month, year, events), BorderLayout.CENTER);
+        repaint();
+        revalidate();
     }
     
     private void scrollCalendar() {

@@ -20,6 +20,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Delete event"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pmiEventDeleteActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="pmiEventBudget">
           <Properties>
@@ -40,6 +43,9 @@
     </Property>
     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="0" green="0" red="0" type="rgb"/>
+    </Property>
+    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[32767, 120]"/>
     </Property>
   </Properties>
   <AuxValues>
@@ -76,7 +82,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="ckbToggleParticipation" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbxToggleParticipation" min="-2" max="-2" attributes="0"/>
                           <Component id="btnEventOptions" alignment="1" min="-2" pref="19" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -97,12 +103,12 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblEventTitle" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="20" max="32767" attributes="0"/>
               <Component id="lblEventAddress" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="lblEventFrequency" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="ckbToggleParticipation" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cbxToggleParticipation" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -184,7 +190,7 @@
         <Property name="text" type="java.lang.String" value="&#x2022;"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="ckbToggleParticipation">
+    <Component class="javax.swing.JCheckBox" name="cbxToggleParticipation">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -195,7 +201,7 @@
         <Property name="text" type="java.lang.String" value="Participating"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ckbToggleParticipationActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbxToggleParticipationActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

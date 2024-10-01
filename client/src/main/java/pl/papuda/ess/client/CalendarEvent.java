@@ -1,13 +1,19 @@
 package pl.papuda.ess.client;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
+import pl.papuda.ess.client.model.User;
 
 public class CalendarEvent extends javax.swing.JPanel {
 
@@ -69,6 +75,43 @@ public class CalendarEvent extends javax.swing.JPanel {
         }
         return text;
     }
+    
+    private class DeleteEvent extends Thread {
+        @Override
+        public void run() {
+            delete();
+        }
+        
+        private void showErrorDialog(String message) {
+            JOptionPane.showMessageDialog(null, message, "Problem deleting event", JOptionPane.ERROR_MESSAGE);
+            System.out.println("closed dialog");
+        }
+        
+        private void delete() {
+            HttpResponse response;
+            Long eventId = event.getId();
+            String endpoint = "/staff/event/" + eventId;
+            try {
+                response = Web.sendDeleteRequest(endpoint);
+            } catch (IOException | InterruptedException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                showErrorDialog("A network error occurred while deleting that event. Please try again later.");
+                return;
+            }
+            int code = response.statusCode();
+            if (code == 403) {
+                showErrorDialog("You do not have permission to delete this event.");
+                return;
+            }
+            if (code != 204) {
+                String errorMessage = Web.getErrorMessage(response);
+                showErrorDialog(errorMessage);
+                return;
+            }
+            MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
+            mainWindow.removeEvent(eventId);
+        }
+    }
 
     private void initEvent() {
         LocalDate eventDate = Instant.parse(event.getStartTime()).atZone(zone).toLocalDate();
@@ -84,8 +127,12 @@ public class CalendarEvent extends javax.swing.JPanel {
         }
         lblEventTime.setText(timeText);
         lblEventAddress.setText(formatLocation(event.getLocation()));
-        if (MainWindow.user == null || "USER".equals(MainWindow.user.getRole())) {
+        if (Web.user == null || !"STAFF".equals(Web.user.getRole())) {
             btnEventOptions.setVisible(false);
+        }
+        for (User participant : event.getAttendees()) {
+            if (participant.getId() == Web.user.getId())
+            cbxToggleParticipation.setSelected(false);
         }
     }
 
@@ -110,7 +157,7 @@ public class CalendarEvent extends javax.swing.JPanel {
         lblEventAddress = new javax.swing.JLabel();
         lblEventFrequency = new javax.swing.JLabel();
         lblDateTimeSeparator = new javax.swing.JLabel();
-        ckbToggleParticipation = new javax.swing.JCheckBox();
+        cbxToggleParticipation = new javax.swing.JCheckBox();
 
         pmiEventEdit.setText("Edit event");
         pmiEventEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -121,6 +168,11 @@ public class CalendarEvent extends javax.swing.JPanel {
         pmEventOptions.add(pmiEventEdit);
 
         pmiEventDelete.setText("Delete event");
+        pmiEventDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pmiEventDeleteActionPerformed(evt);
+            }
+        });
         pmEventOptions.add(pmiEventDelete);
 
         pmiEventBudget.setText("View budget");
@@ -129,6 +181,7 @@ public class CalendarEvent extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         setForeground(new java.awt.Color(0, 0, 0));
+        setMaximumSize(new java.awt.Dimension(32767, 120));
 
         lblEventDate.setForeground(new java.awt.Color(102, 102, 102));
         lblEventDate.setText("Mon, 12.09.2024");
@@ -163,12 +216,12 @@ public class CalendarEvent extends javax.swing.JPanel {
         lblDateTimeSeparator.setForeground(new java.awt.Color(132, 132, 132));
         lblDateTimeSeparator.setText("•");
 
-        ckbToggleParticipation.setBackground(new java.awt.Color(255, 255, 255));
-        ckbToggleParticipation.setForeground(new java.awt.Color(51, 51, 51));
-        ckbToggleParticipation.setText("Participating");
-        ckbToggleParticipation.addActionListener(new java.awt.event.ActionListener() {
+        cbxToggleParticipation.setBackground(new java.awt.Color(255, 255, 255));
+        cbxToggleParticipation.setForeground(new java.awt.Color(51, 51, 51));
+        cbxToggleParticipation.setText("Participating");
+        cbxToggleParticipation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ckbToggleParticipationActionPerformed(evt);
+                cbxToggleParticipationActionPerformed(evt);
             }
         });
 
@@ -193,7 +246,7 @@ public class CalendarEvent extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ckbToggleParticipation)
+                            .addComponent(cbxToggleParticipation)
                             .addComponent(btnEventOptions, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
@@ -208,15 +261,19 @@ public class CalendarEvent extends javax.swing.JPanel {
                     .addComponent(lblDateTimeSeparator))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblEventTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addComponent(lblEventAddress)
                 .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEventFrequency)
-                    .addComponent(ckbToggleParticipation))
+                    .addComponent(cbxToggleParticipation))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void pmiEventDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pmiEventDeleteActionPerformed
+        new DeleteEvent().start();
+    }//GEN-LAST:event_pmiEventDeleteActionPerformed
 
     private void btnEventOptionsActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnEventOptionsActionPerformed
         pmEventOptions.show(btnEventOptions, 20, 0);
@@ -226,13 +283,19 @@ public class CalendarEvent extends javax.swing.JPanel {
         // TODO add your handling code here:
     }// GEN-LAST:event_pmiEventEditActionPerformed
 
-    private void ckbToggleParticipationActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
+    private void cbxToggleParticipationActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCheckBox1ActionPerformed
+        HttpResponse response;
+        String endpoint = "/private/event/" + event.getId() + "/attendee";
+        try {
+            response = cbxToggleParticipation.isSelected() ? Web.sendPostRequest(endpoint) : Web.sendDeleteRequest(endpoint);
+        } catch (IOException | InterruptedException ex) {
+            Logger.getLogger(CalendarEvent.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }// GEN-LAST:event_jCheckBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEventOptions;
-    private javax.swing.JCheckBox ckbToggleParticipation;
+    private javax.swing.JCheckBox cbxToggleParticipation;
     private javax.swing.JLabel lblDateTimeSeparator;
     private javax.swing.JLabel lblEventAddress;
     private javax.swing.JLabel lblEventDate;

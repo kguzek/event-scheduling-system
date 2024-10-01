@@ -182,6 +182,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="cbxRememberPassword">
                   <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Remember me"/>
                   </Properties>
                 </Component>
@@ -623,7 +624,7 @@
                               <Component id="lblVerifyEmailDescription" alignment="0" pref="288" max="32767" attributes="0"/>
                               <Component id="btnVerifyEmailGoBack" alignment="0" max="32767" attributes="0"/>
                               <Component id="btnVerifyEmailResend" alignment="0" max="32767" attributes="0"/>
-                              <Component id="lblVerifyEmailDescription3" alignment="0" max="32767" attributes="0"/>
+                              <Component id="lblVerifyEmailResend" alignment="0" max="32767" attributes="0"/>
                               <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
                               <Component id="lblPromptLogIn1" max="32767" attributes="0"/>
                           </Group>
@@ -641,7 +642,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="lblVerifyEmailDescription2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
-                          <Component id="lblVerifyEmailDescription3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblVerifyEmailResend" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="btnVerifyEmailResend" min="-2" pref="37" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -713,7 +714,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVerifyEmailResendActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JLabel" name="lblVerifyEmailDescription3">
+                <Component class="javax.swing.JLabel" name="lblVerifyEmailResend">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Still haven&apos;t received it? Press the button below."/>
@@ -776,18 +777,25 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="calendarCustom1" min="-2" pref="535" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="eventsList1" pref="443" max="32767" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="eventsList1" pref="443" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace pref="361" max="32767" attributes="0"/>
+                              <Component id="btnLogOut" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="calendarCustom1" pref="518" max="32767" attributes="0"/>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="eventsList1" min="-2" pref="408" max="-2" attributes="0"/>
+                  <Component id="calendarCustom1" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnLogOut" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="eventsList1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -796,6 +804,14 @@
             <Component class="pl.papuda.ess.client.CalendarCustom" name="calendarCustom1">
             </Component>
             <Component class="pl.papuda.ess.client.EventsList" name="eventsList1">
+            </Component>
+            <Component class="javax.swing.JButton" name="btnLogOut">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Log out"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLogOutActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
