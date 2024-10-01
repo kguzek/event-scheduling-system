@@ -22,22 +22,25 @@ public class CalendarEvent extends javax.swing.JPanel {
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("E, dd'/'MM'/'yyyy");
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
 
-    public CalendarEvent(Event event) {
+    private final EditEvent editEvent;
+    
+    public interface EditEvent {
+        public void call(Event event);
+    }
+    
+    public CalendarEvent(Event event, EditEvent editEvent) {
         initComponents();
         this.event = event;
+        this.editEvent = editEvent;
         initEvent();
     }
 
     public static String ordinal(int i) {
         String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
-        switch (i % 100) {
-            case 11:
-            case 12:
-            case 13:
-                return i + "th";
-            default:
-                return i + suffixes[i % 10];
-        }
+        return switch (i % 100) {
+            case 11, 12, 13 -> i + "th";
+            default -> i + suffixes[i % 10];
+        };
     }
 
     private String getEventFrequency(LocalDate date, String frequency) {
@@ -84,7 +87,6 @@ public class CalendarEvent extends javax.swing.JPanel {
         
         private void showErrorDialog(String message) {
             JOptionPane.showMessageDialog(null, message, "Problem deleting event", JOptionPane.ERROR_MESSAGE);
-            System.out.println("closed dialog");
         }
         
         private void delete() {
@@ -131,7 +133,7 @@ public class CalendarEvent extends javax.swing.JPanel {
             btnEventOptions.setVisible(false);
         }
         for (User participant : event.getAttendees()) {
-            if (participant.getId() == Web.user.getId())
+            if (participant.getId().equals(Web.user.getId()))
             cbxToggleParticipation.setSelected(false);
         }
     }
@@ -280,17 +282,30 @@ public class CalendarEvent extends javax.swing.JPanel {
     }// GEN-LAST:event_btnEventOptionsActionPerformed
 
     private void pmiEventEditActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pmiEventEditActionPerformed
-        // TODO add your handling code here:
+        editEvent.call(event);
     }// GEN-LAST:event_pmiEventEditActionPerformed
 
+    void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(null, message, "Problem updating attendance status", JOptionPane.ERROR_MESSAGE);
+        cbxToggleParticipation.setSelected(!cbxToggleParticipation.isSelected());
+    }
+    
     private void cbxToggleParticipationActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCheckBox1ActionPerformed
-        HttpResponse response;
-        String endpoint = "/private/event/" + event.getId() + "/attendee";
-        try {
-            response = cbxToggleParticipation.isSelected() ? Web.sendPostRequest(endpoint) : Web.sendDeleteRequest(endpoint);
-        } catch (IOException | InterruptedException ex) {
-            Logger.getLogger(CalendarEvent.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        new Thread(() -> {
+            HttpResponse response;
+            String endpoint = "/private/event/" + event.getId() + "/attendee";
+            try {
+                response = cbxToggleParticipation.isSelected() ? Web.sendPostRequest(endpoint) : Web.sendDeleteRequest(endpoint);
+            } catch (IOException | InterruptedException ex) {
+                Web.logException(ex);
+                showErrorMessage("A network error occurred while changing the attendance status for that event. Please try again later.");
+                return;
+            }
+            if (response.statusCode() != 200) {
+                String errorMessage = Web.getErrorMessage(response);
+                showErrorMessage(errorMessage);
+            }
+        }).start();
     }// GEN-LAST:event_jCheckBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.Timer;
 
-import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.error.LoginException;
 import pl.papuda.ess.client.error.web.body.ErrorResponse;
 import pl.papuda.ess.client.error.web.body.LoginResponse;
@@ -60,6 +59,11 @@ public class MainWindow extends javax.swing.JFrame {
     
     void removeEvent(Long eventId) {
         events.removeIf(event -> event.getId().equals(eventId));
+        updateEvents();
+    }
+    
+    void updateEvent(Event event) {
+        events.replaceAll(e -> e.getId().equals(event.getId()) ? event : e);
         updateEvents();
     }
     

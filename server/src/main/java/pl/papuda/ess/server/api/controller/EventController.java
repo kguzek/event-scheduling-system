@@ -42,6 +42,8 @@ public class EventController {
         String organiser = newEvent.getOrganiserName();
         Date startTime = newEvent.getStartTime();
         Date endTime = newEvent.getEndTime();
+        Date reminderTime = newEvent.getReminderTime();
+        String feedbackMessage = newEvent.getFeedbackMessage();
         Frequency frequency = newEvent.getFrequency();
         Location location = newEvent.getLocation();
         EventStatus status = newEvent.getStatus() == null ? EventStatus.PLANNED : newEvent.getStatus();
@@ -58,6 +60,8 @@ public class EventController {
         oldEvent.setFrequency(frequency);
         oldEvent.setLocation(location);
         oldEvent.setStatus(status);
+        oldEvent.setReminderTime(reminderTime);
+        oldEvent.setFeedbackMessage(feedbackMessage);
         return oldEvent;
     }
 

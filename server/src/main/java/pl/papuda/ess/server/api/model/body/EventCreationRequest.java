@@ -13,7 +13,6 @@ import pl.papuda.ess.server.api.model.Location;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventCreationRequest {
-
     private String title;
     private String organiserName;
     private Date startTime;
@@ -21,4 +20,6 @@ public class EventCreationRequest {
     private Location location;
     private Frequency frequency;
     private EventStatus status;
+    private Date reminderTime;
+    private String feedbackMessage;
 }
