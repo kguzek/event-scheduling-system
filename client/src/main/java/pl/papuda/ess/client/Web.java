@@ -50,7 +50,7 @@ public class Web {
         }
     }
 
-    static <T> T readResponseBody(HttpResponse response, TypeReference<T> cls) {
+    static <T> T readResponseBody(HttpResponse<String> response, TypeReference<T> cls) {
         ObjectMapper objectMapper = new ObjectMapper();
         String body = response.body().toString();
         T obj;
@@ -85,20 +85,20 @@ public class Web {
         return builder.setHeader("Authorization", "Bearer " + accessToken);
     }
 
-    private static HttpResponse sendRequest(HttpRequest request) throws IOException, InterruptedException {
+    private static HttpResponse<String> sendRequest(HttpRequest request) throws IOException, InterruptedException {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    static HttpResponse sendGetRequest(String endpoint) throws IOException, InterruptedException {
+    static HttpResponse<String> sendGetRequest(String endpoint) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint).GET().build();
         return sendRequest(request);
     }
 
-    static HttpResponse sendPostRequest(String endpoint) throws IOException, InterruptedException {
+    static HttpResponse<String> sendPostRequest(String endpoint) throws IOException, InterruptedException {
         return sendPostRequest(endpoint, "{}");
     }
 
-    static HttpResponse sendPostRequest(String endpoint, String json) throws IOException, InterruptedException {
+    static HttpResponse<String> sendPostRequest(String endpoint, String json) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint)
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .setHeader("Content-Type", "application/json")
@@ -106,7 +106,7 @@ public class Web {
         return sendRequest(request);
     }
 
-    static HttpResponse sendPutRequest(String endpoint, String json) throws IOException, InterruptedException {
+    static HttpResponse<String> sendPutRequest(String endpoint, String json) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint)
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .setHeader("Content-Type", "application/json")
@@ -114,7 +114,7 @@ public class Web {
         return sendRequest(request);
     }
 
-    static HttpResponse sendDeleteRequest(String endpoint) throws IOException, InterruptedException {
+    static HttpResponse<String> sendDeleteRequest(String endpoint) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint).DELETE().build();
         return sendRequest(request);
     }

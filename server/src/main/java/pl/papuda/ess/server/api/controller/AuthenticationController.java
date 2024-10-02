@@ -45,6 +45,13 @@ public class AuthenticationController {
         if (username == null || username.length() == 0) {
             return ErrorResponse.generate("Username cannot be empty");
         }
+        String email = request.getEmail();
+        if (email == null || email.length() == 0) {
+            return ErrorResponse.generate("Email cannot be empty");
+        }
+        if (userRepository.findByEmail(email).isPresent()) {
+            return ErrorResponse.generate(String.format("An account for '%s' already exists.", email));
+        }
         if (userRepository.findByUsername(username).isPresent()) {
             return ErrorResponse.generate(String.format("Username '%s' is taken", username));
         }
