@@ -34,10 +34,12 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final String API_URL = "http://localhost:8080";
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Value("${API_URL}")
+    private String API_URL;
 
     @Value("classpath:/templates/verifyEmail.html")
     private Resource verifyEmailTemplate;

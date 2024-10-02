@@ -16,27 +16,30 @@ import java.util.prefs.Preferences;
 import pl.papuda.ess.client.error.web.body.ErrorResponse;
 import pl.papuda.ess.client.model.User;
 
-
 public class Web {
-    private static final String API_URL = "http://localhost:8080/api/v1";
+    private static final boolean productionEnvironment = true;
+
+    private static final String API_URL = productionEnvironment
+            ? "https://event-scheduling-system.onrender.com"
+            : "http://localhost:8080";
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
-    
+
     private static String accessToken = null;
-    
+
     static User user = null;
-    
+
     static final Preferences prefs = Preferences.userNodeForPackage(pl.papuda.ess.client.MainWindow.class);
-    
+
     static void unsetAccessToken() {
         accessToken = null;
         user = null;
     }
-    
+
     static void logException(Exception ex) {
         Logger.getLogger(Web.class.getName()).log(Level.SEVERE, null, ex);
     }
-    
+
     static void setAccessToken(String token, boolean remember) {
         accessToken = token;
         if (remember) {
@@ -46,7 +49,7 @@ public class Web {
             prefs.put("tokenGenerationDate", generationDate);
         }
     }
-    
+
     static <T> T readResponseBody(HttpResponse response, TypeReference<T> cls) {
         ObjectMapper objectMapper = new ObjectMapper();
         String body = response.body().toString();
@@ -60,7 +63,7 @@ public class Web {
         }
         return obj;
     }
-    
+
     static String getErrorMessage(HttpResponse<String> response) {
         ObjectMapper objectMapper = new ObjectMapper();
         String body = response.body();
@@ -73,45 +76,45 @@ public class Web {
             return "Non-OK response with unparsable body";
         }
     }
-    
+
     private static HttpRequest.Builder createRequest(String endpoint) {
-        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(API_URL + endpoint));
+        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(API_URL + "/api/v1" + endpoint));
         if (endpoint.startsWith("/auth/")) {
             return builder;
         }
         return builder.setHeader("Authorization", "Bearer " + accessToken);
     }
-    
-    private static HttpResponse sendRequest(HttpRequest request)  throws IOException, InterruptedException{
+
+    private static HttpResponse sendRequest(HttpRequest request) throws IOException, InterruptedException {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
-    
+
     static HttpResponse sendGetRequest(String endpoint) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint).GET().build();
         return sendRequest(request);
     }
-    
+
     static HttpResponse sendPostRequest(String endpoint) throws IOException, InterruptedException {
         return sendPostRequest(endpoint, "{}");
     }
 
     static HttpResponse sendPostRequest(String endpoint, String json) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint)
-            .POST(HttpRequest.BodyPublishers.ofString(json))
-            .setHeader("Content-Type", "application/json")
-            .build();
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .setHeader("Content-Type", "application/json")
+                .build();
         return sendRequest(request);
     }
 
     static HttpResponse sendPutRequest(String endpoint, String json) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint)
-            .PUT(HttpRequest.BodyPublishers.ofString(json))
-            .setHeader("Content-Type", "application/json")
-            .build();
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .setHeader("Content-Type", "application/json")
+                .build();
         return sendRequest(request);
     }
-    
-    static HttpResponse sendDeleteRequest(String endpoint)  throws IOException, InterruptedException {
+
+    static HttpResponse sendDeleteRequest(String endpoint) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint).DELETE().build();
         return sendRequest(request);
     }
