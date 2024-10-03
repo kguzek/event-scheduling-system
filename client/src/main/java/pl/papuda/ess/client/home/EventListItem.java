@@ -1,4 +1,4 @@
-package pl.papuda.ess.client;
+package pl.papuda.ess.client.home;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
@@ -12,11 +12,13 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import pl.papuda.ess.client.MainWindow;
+import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.User;
 
-public class CalendarEvent extends javax.swing.JPanel {
+public class EventListItem extends javax.swing.JPanel {
 
     private Event event;
     private final ZoneId zone = ZoneId.systemDefault();
@@ -29,7 +31,7 @@ public class CalendarEvent extends javax.swing.JPanel {
         public void call(Event event);
     }
     
-    public CalendarEvent(Event event, EditEvent editEvent) {
+    public EventListItem(Event event, EditEvent editEvent) {
         initComponents();
         this.event = event;
         this.editEvent = editEvent;

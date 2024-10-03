@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 import javax.swing.Timer;
 
 import pl.papuda.ess.client.error.LoginException;
-import pl.papuda.ess.client.error.web.body.ErrorResponse;
-import pl.papuda.ess.client.error.web.body.LoginResponse;
+import pl.papuda.ess.client.model.body.ErrorResponse;
+import pl.papuda.ess.client.model.body.LoginResponse;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.User;
 
@@ -52,17 +52,17 @@ public class MainWindow extends javax.swing.JFrame {
         loadSettings();
     }
 
-    void addEvent(Event event) {
+    public void addEvent(Event event) {
         events.add(event);
         updateEvents();
     }
 
-    void removeEvent(Long eventId) {
+    public void removeEvent(Long eventId) {
         events.removeIf(event -> event.getId().equals(eventId));
         updateEvents();
     }
 
-    void updateEvent(Event event) {
+    public void updateEvent(Event event) {
         events.replaceAll(e -> e.getId().equals(event.getId()) ? event : e);
         updateEvents();
     }
@@ -210,8 +210,8 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         lblVerifyEmailError = new javax.swing.JTextArea();
         pnlHome = new javax.swing.JPanel();
-        calendarCustom1 = new pl.papuda.ess.client.CalendarCustom();
-        eventsList1 = new pl.papuda.ess.client.EventsList();
+        calendarCustom1 = new pl.papuda.ess.client.home.calendar.CalendarCustom();
+        eventsList1 = new pl.papuda.ess.client.home.EventsList();
         btnLogOut = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -971,9 +971,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnSignUp;
     private javax.swing.JButton btnVerifyEmailGoBack;
     private javax.swing.JButton btnVerifyEmailResend;
-    private pl.papuda.ess.client.CalendarCustom calendarCustom1;
+    private pl.papuda.ess.client.home.calendar.CalendarCustom calendarCustom1;
     private javax.swing.JCheckBox cbxRememberPassword;
-    private pl.papuda.ess.client.EventsList eventsList1;
+    private pl.papuda.ess.client.home.EventsList eventsList1;
     private javax.swing.JTextField iptForgotPasswordEmail;
     private javax.swing.JTextField iptForgotPasswordUsername;
     private javax.swing.JPasswordField iptLogInPassword;

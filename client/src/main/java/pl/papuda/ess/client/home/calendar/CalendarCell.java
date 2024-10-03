@@ -1,4 +1,4 @@
-package pl.papuda.ess.client;
+package pl.papuda.ess.client.home.calendar;
 
 import java.awt.Color;
 import java.awt.Graphics;

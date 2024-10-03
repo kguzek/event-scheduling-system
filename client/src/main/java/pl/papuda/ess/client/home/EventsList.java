@@ -1,4 +1,4 @@
-package pl.papuda.ess.client;
+package pl.papuda.ess.client.home;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.papuda.ess.client.MainWindow;
+import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.PartialEvent;
@@ -59,7 +61,7 @@ public class EventsList extends javax.swing.JPanel {
         pnlEventsList.removeAll();
         for (Event event : events) {
             System.out.println("Adding event " + event.getTitle());
-            pnlEventsList.add(new CalendarEvent(event, this::editEvent));
+            pnlEventsList.add(new EventListItem(event, this::editEvent));
         }
         repaint();
         revalidate();

@@ -804,9 +804,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="pl.papuda.ess.client.CalendarCustom" name="calendarCustom1">
+            <Component class="pl.papuda.ess.client.home.calendar.CalendarCustom" name="calendarCustom1">
             </Component>
-            <Component class="pl.papuda.ess.client.EventsList" name="eventsList1">
+            <Component class="pl.papuda.ess.client.home.EventsList" name="eventsList1">
             </Component>
             <Component class="javax.swing.JButton" name="btnLogOut">
               <Properties>
