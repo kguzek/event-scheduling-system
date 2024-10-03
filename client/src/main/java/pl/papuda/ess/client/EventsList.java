@@ -5,14 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -79,16 +78,14 @@ public class EventsList extends javax.swing.JPanel {
         return (int) (diffSeconds / 60);
     }
     
-    Date parseTimestamp(String timestamp, String pattern) {
-        DateFormat format = new SimpleDateFormat(pattern);
-        System.out.println("Formatting " + timestamp + " with format " + pattern);
-        try {
-            return format.parse(timestamp);
-        } catch (Exception ex) {
-            Web.logException(ex);
+    Date parseTimestamp(String timestamp) {
+        if (timestamp == null) {
             return null;
         }
-            
+        TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(timestamp);
+        Instant instant = Instant.from(ta);
+        Date date = Date.from(instant);
+        return date;
     }
     
     String orEmptyString(String s) {
@@ -103,9 +100,9 @@ public class EventsList extends javax.swing.JPanel {
         showLayoutCard("eventEditor");
         iptEventTitle.setText(event.getTitle());
         iptEventFeedbackMessage.setText(event.getFeedbackMessage());
-//        iptEventDate.setValue(parseTimestamp(event.getStartTime(), "dd/MM/yyyy"));
-//        iptEventStartTime.setValue(parseTimestamp(event.getStartTime(), "hh:mm"));
-//        iptEventEndTime.setValue(parseTimestamp(event.getEndTime(), "hh:mm"));
+        iptEventDate.setValue(parseTimestamp(event.getStartTime()));
+        iptEventStartTime.setValue(parseTimestamp(event.getStartTime()));
+        iptEventEndTime.setValue(parseTimestamp(event.getEndTime()));
         Location location = event.getLocation();
         iptEventStreet.setText(location.getStreet());
         iptEventCode.setText(location.getCode());
@@ -181,7 +178,6 @@ public class EventsList extends javax.swing.JPanel {
             return;
         }
         showLayoutCard("eventsList");
-        btnToggleEventViewActionPerformed(null);
         MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
         if (eventId == null) {
             mainWindow.addEvent(createdEvent);
@@ -189,6 +185,7 @@ public class EventsList extends javax.swing.JPanel {
             btnCreateEvent.setText("CREATE");
             mainWindow.updateEvent(createdEvent);
         }
+        btnToggleEventViewActionPerformed(null);
     }
     
     private class CreateEvent extends Thread {

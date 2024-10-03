@@ -1,5 +1,6 @@
 package pl.papuda.ess.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.time.Instant;
@@ -17,7 +18,7 @@ import pl.papuda.ess.client.model.User;
 
 public class CalendarEvent extends javax.swing.JPanel {
 
-    private final Event event;
+    private Event event;
     private final ZoneId zone = ZoneId.systemDefault();
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("E, dd'/'MM'/'yyyy");
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
@@ -63,6 +64,11 @@ public class CalendarEvent extends javax.swing.JPanel {
                 return "One-time event";
         }
     }
+    
+    private void updateParticipantsText() {
+        String label = String.format("Participating (%s)", event.getAttendees().length);
+        cbxToggleParticipation.setText(label);
+    }
 
     private String formatTime(String timestamp) {
         Instant instant = Instant.parse(timestamp);
@@ -82,7 +88,9 @@ public class CalendarEvent extends javax.swing.JPanel {
     private class DeleteEvent extends Thread {
         @Override
         public void run() {
+            pmiEventDelete.setEnabled(false);
             delete();
+            pmiEventDelete.setEnabled(true);
         }
         
         private void showErrorDialog(String message) {
@@ -122,6 +130,7 @@ public class CalendarEvent extends javax.swing.JPanel {
         lblEventTitle.setText(event.getTitle());
         String dateText = eventDate.format(dateFormat);
         lblEventDate.setText(dateText);
+        updateParticipantsText();
         String timeText = formatTime(event.getStartTime());
         String endTime = event.getEndTime();
         if (endTime != null) {
@@ -132,9 +141,10 @@ public class CalendarEvent extends javax.swing.JPanel {
         if (Web.user == null || !"STAFF".equals(Web.user.getRole())) {
             btnEventOptions.setVisible(false);
         }
+        cbxToggleParticipation.setSelected(false);
         for (User participant : event.getAttendees()) {
             if (participant.getId().equals(Web.user.getId()))
-            cbxToggleParticipation.setSelected(false);
+            cbxToggleParticipation.setSelected(true);
         }
     }
 
@@ -245,11 +255,15 @@ public class CalendarEvent extends javax.swing.JPanel {
                                 .addComponent(lblDateTimeSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblEventTime)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbxToggleParticipation)
-                            .addComponent(btnEventOptions, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(73, 73, 73)
+                                .addComponent(btnEventOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(51, 51, 51))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbxToggleParticipation)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -274,7 +288,14 @@ public class CalendarEvent extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pmiEventDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pmiEventDeleteActionPerformed
-        new DeleteEvent().start();
+        String title = String.format("Are you sure you want to delete event '%s'?", event.getTitle());
+        int decision = JOptionPane.showConfirmDialog(null, title, "Confirmation", JOptionPane.YES_NO_OPTION);
+        // -1: close button
+        //  0: YES
+        //  1: NO
+        if (decision == 0) {
+            new DeleteEvent().start();
+        }
     }//GEN-LAST:event_pmiEventDeleteActionPerformed
 
     private void btnEventOptionsActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnEventOptionsActionPerformed
@@ -287,21 +308,27 @@ public class CalendarEvent extends javax.swing.JPanel {
 
     void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(null, message, "Problem updating attendance status", JOptionPane.ERROR_MESSAGE);
-        cbxToggleParticipation.setSelected(!cbxToggleParticipation.isSelected());
+        if (!message.contains("attendance status is already at that value")) {
+            cbxToggleParticipation.setSelected(!cbxToggleParticipation.isSelected());
+        }
     }
     
     private void cbxToggleParticipationActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCheckBox1ActionPerformed
         new Thread(() -> {
-            HttpResponse response;
+            HttpResponse<String> response;
             String endpoint = "/private/event/" + event.getId() + "/attendee";
+            boolean addingParticipance = cbxToggleParticipation.isSelected();
             try {
-                response = cbxToggleParticipation.isSelected() ? Web.sendPostRequest(endpoint) : Web.sendDeleteRequest(endpoint);
+                response = addingParticipance ? Web.sendPostRequest(endpoint) : Web.sendDeleteRequest(endpoint);
             } catch (IOException | InterruptedException ex) {
                 Web.logException(ex);
                 showErrorMessage("A network error occurred while changing the attendance status for that event. Please try again later.");
                 return;
             }
-            if (response.statusCode() != 200) {
+            if (response.statusCode() == 200) {
+                event = Web.readResponseBody(response, new TypeReference<Event>(){});
+                updateParticipantsText();
+            } else {
                 String errorMessage = Web.getErrorMessage(response);
                 showErrorMessage(errorMessage);
             }
