@@ -67,13 +67,14 @@ public class Web {
     public static String getErrorMessage(HttpResponse<String> response) {
         ObjectMapper objectMapper = new ObjectMapper();
         String body = response.body();
-        System.err.println("Received " + response.statusCode() + " response : " + body);
+        int code = response.statusCode();
+        System.err.println("Received " + code + " response: " + body);
         try {
             ErrorResponse error = objectMapper.readValue(body, ErrorResponse.class);
             return error.getMessage();
         } catch (JsonProcessingException ex) {
             logException(ex);
-            return "Non-OK response with unparsable body";
+            return "Unknown error (" + code + " response)";
         }
     }
 

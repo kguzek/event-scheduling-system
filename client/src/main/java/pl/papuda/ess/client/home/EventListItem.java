@@ -190,6 +190,11 @@ public class EventListItem extends javax.swing.JPanel {
         pmEventOptions.add(pmiEventDelete);
 
         pmiEventBudget.setText("View budget");
+        pmiEventBudget.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pmiEventBudgetActionPerformed(evt);
+            }
+        });
         pmEventOptions.add(pmiEventBudget);
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -257,12 +262,12 @@ public class EventListItem extends javax.swing.JPanel {
                                 .addComponent(lblDateTimeSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblEventTime)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(73, 73, 73)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnEventOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(51, 51, 51))
+                                .addGap(0, 0, 0))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cbxToggleParticipation)))))
@@ -299,6 +304,11 @@ public class EventListItem extends javax.swing.JPanel {
             new DeleteEvent().start();
         }
     }//GEN-LAST:event_pmiEventDeleteActionPerformed
+
+    private void pmiEventBudgetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pmiEventBudgetActionPerformed
+        MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
+        mainWindow.showBudgetFor(event);
+    }//GEN-LAST:event_pmiEventBudgetActionPerformed
 
     private void btnEventOptionsActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnEventOptionsActionPerformed
         pmEventOptions.show(btnEventOptions, 20, 0);

@@ -72,6 +72,11 @@ public class MainWindow extends javax.swing.JFrame {
         calendarCustom1.updateCalendar(events);
         eventsList1.updateEventsList(events);
     }
+    
+    public void showBudgetFor(Event event) {
+        budgetTracker1.setEvent(event);
+        showLayoutCard("budget");
+    }
 
     private class GetEvents extends Thread {
         public void run() {
@@ -213,6 +218,9 @@ public class MainWindow extends javax.swing.JFrame {
         calendarCustom1 = new pl.papuda.ess.client.home.calendar.CalendarCustom();
         eventsList1 = new pl.papuda.ess.client.home.EventsList();
         btnLogOut = new javax.swing.JButton();
+        pnlBudgetContainer = new javax.swing.JPanel();
+        budgetTracker1 = new pl.papuda.ess.client.budgetTracker.BudgetTracker();
+        btnBudgetBack = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Event Scheduling System");
@@ -328,7 +336,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblLogInError)
-                .addGap(18, 50, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(lblPromptSignUp)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnShowSignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -656,13 +664,14 @@ public class MainWindow extends javax.swing.JFrame {
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlHomeLayout.createSequentialGroup()
                 .addComponent(calendarCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlHomeLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(eventsList1, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnLogOut)
-                        .addContainerGap())
-                    .addComponent(eventsList1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         pnlHomeLayout.setVerticalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -679,11 +688,28 @@ public class MainWindow extends javax.swing.JFrame {
 
         pnlMain.add(pnlHome, "home");
 
+        pnlBudgetContainer.setLayout(new java.awt.BorderLayout());
+        pnlBudgetContainer.add(budgetTracker1, java.awt.BorderLayout.CENTER);
+
+        btnBudgetBack.setText("CLOSE BUDGET TRACKER");
+        btnBudgetBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBudgetBackActionPerformed(evt);
+            }
+        });
+        pnlBudgetContainer.add(btnBudgetBack, java.awt.BorderLayout.PAGE_START);
+
+        pnlMain.add(pnlBudgetContainer, "budget");
+
         getContentPane().add(pnlMain);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnBudgetBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBudgetBackActionPerformed
+        showLayoutCard("home");
+    }//GEN-LAST:event_btnBudgetBackActionPerformed
 
     private void btnLogOutActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnLogOutActionPerformed
         showLayoutCard("logIn");
@@ -961,6 +987,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBudgetBack;
     private javax.swing.JButton btnForgotPassword;
     private javax.swing.JButton btnForgotPasswordNext;
     private javax.swing.JButton btnLogIn;
@@ -971,6 +998,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnSignUp;
     private javax.swing.JButton btnVerifyEmailGoBack;
     private javax.swing.JButton btnVerifyEmailResend;
+    private pl.papuda.ess.client.budgetTracker.BudgetTracker budgetTracker1;
     private pl.papuda.ess.client.home.calendar.CalendarCustom calendarCustom1;
     private javax.swing.JCheckBox cbxRememberPassword;
     private pl.papuda.ess.client.home.EventsList eventsList1;
@@ -1009,6 +1037,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextArea lblVerifyEmailError;
     private javax.swing.JLabel lblVerifyEmailHeader;
     private javax.swing.JLabel lblVerifyEmailResend;
+    private javax.swing.JPanel pnlBudgetContainer;
     private javax.swing.JPanel pnlForgotPassword;
     private javax.swing.JPanel pnlForgotPasswordContainer;
     private javax.swing.JPanel pnlHome;
