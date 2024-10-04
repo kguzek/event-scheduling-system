@@ -141,7 +141,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="pnlCreateEvent" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="157" max="32767" attributes="0"/>
+                      <EmptySpace pref="138" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -170,6 +170,7 @@
                               <Component id="cbbEventFrequency" alignment="0" max="32767" attributes="0"/>
                               <Component id="cbbEventReminderTime" alignment="0" max="32767" attributes="0"/>
                               <Component id="pnlEventAddress" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
@@ -193,10 +194,11 @@
                                       <Component id="lblEventLocation" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="lblEventReminderTime" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="lblEventFeedbackMessage" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lblEventBudget" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
+                              <Component id="iptEventBudget" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -238,8 +240,12 @@
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="iptEventFeedbackMessage" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" pref="46" max="32767" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="lblEventBudget" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Component id="iptEventBudget" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jScrollPane1" min="-2" pref="23" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="btnCreateEvent" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -501,6 +507,19 @@
                     </Component>
                   </SubComponents>
                 </Container>
+                <Component class="javax.swing.JLabel" name="lblEventBudget">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Event budget"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JFormattedTextField" name="iptEventBudget">
+                  <Properties>
+                    <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+                      <Format format="&#xa4;#,##0.00" subtype="-1" type="4"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="&#xa3;100"/>
+                  </Properties>
+                </Component>
               </SubComponents>
             </Container>
           </SubComponents>

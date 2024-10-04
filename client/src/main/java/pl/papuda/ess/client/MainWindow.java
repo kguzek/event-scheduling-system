@@ -25,10 +25,6 @@ import pl.papuda.ess.client.model.body.LoginResponse;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.User;
 
-/**
- *
- * @author konrad
- */
 public class MainWindow extends javax.swing.JFrame {
 
     private final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[#?!@$ %^&*-]).{8,}$");
@@ -72,7 +68,7 @@ public class MainWindow extends javax.swing.JFrame {
         calendarCustom1.updateCalendar(events);
         eventsList1.updateEventsList(events);
     }
-    
+
     public void showBudgetFor(Event event) {
         budgetTracker1.setEvent(event);
         showLayoutCard("budget");
@@ -157,6 +153,7 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -227,7 +224,7 @@ public class MainWindow extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 51, 51));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setForeground(new java.awt.Color(51, 255, 0));
-        setMinimumSize(new java.awt.Dimension(950, 635));
+        setMinimumSize(new java.awt.Dimension(950, 670));
         setSize(new java.awt.Dimension(800, 500));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
@@ -707,9 +704,9 @@ public class MainWindow extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBudgetBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBudgetBackActionPerformed
+    private void btnBudgetBackActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnBudgetBackActionPerformed
         showLayoutCard("home");
-    }//GEN-LAST:event_btnBudgetBackActionPerformed
+    }// GEN-LAST:event_btnBudgetBackActionPerformed
 
     private void btnLogOutActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnLogOutActionPerformed
         showLayoutCard("logIn");

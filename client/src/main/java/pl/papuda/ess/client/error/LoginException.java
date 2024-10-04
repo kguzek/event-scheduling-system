@@ -4,10 +4,6 @@
  */
 package pl.papuda.ess.client.error;
 
-/**
- *
- * @author konrad
- */
 public class LoginException extends Exception {
     public LoginException(String message) {
         super(message);

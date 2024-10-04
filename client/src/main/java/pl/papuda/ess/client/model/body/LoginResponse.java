@@ -6,10 +6,6 @@ package pl.papuda.ess.client.model.body;
 
 import lombok.Data;
 
-/**
- *
- * @author konrad
- */
 @Data
 public class LoginResponse {
     private Long userId;

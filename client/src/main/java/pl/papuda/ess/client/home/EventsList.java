@@ -111,6 +111,8 @@ public class EventsList extends javax.swing.JPanel {
         iptEventCity.setText(location.getCity());
         iptEventCountry.setText(location.getCountry());
         iptEventInformation.setText(orEmptyString(location.getAdditionalInformation()));
+        Integer budget = event.getBudgetCents();
+        iptEventBudget.setValue(budget == null ? 0 : (budget / 100.0));
         int diffMinutes = getDifferenceMinutes(event.getStartTime(), event.getReminderTime());
         int selectedIndex = 0;
         if (diffMinutes != 0) {
@@ -146,12 +148,22 @@ public class EventsList extends javax.swing.JPanel {
         if (reminderDelayMinutes != null) {
             eventReminder = eventStart.minusMinutes(reminderDelayMinutes);
         }
+        var budget = (Number) iptEventBudget.getValue();
+//        TODO: fix this
+//        Integer budgetCents = budget == null
+//                ? null
+//                : budget instanceof Long
+//                ? budget.intValue() * 100
+//                : budget instanceof Double
+//                ? (budget.doubleValue() * 100.0)
+//                : null;
+        System.out.println("Budget: " + budget + " " + budget.getClass());
         Location location = Location.builder().street(iptEventStreet.getText()).city(iptEventCity.getText())
                 .code(iptEventCode.getText()).country(iptEventCountry.getText()).additionalInformation(additionalInformation).build();
         PartialEvent event = PartialEvent.builder().title(iptEventTitle.getText())
             .organiserName("John Doe").startTime(formatDateTime(eventStart)).endTime(formatDateTime(eventEnd))
             .location(location).frequency(frequency).feedbackMessage(feedbackMessage)
-            .reminderTime(formatDateTime(eventReminder)).build();
+            .reminderTime(formatDateTime(eventReminder)).budgetCents(10000).build();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(event);   
         return json;
@@ -251,6 +263,8 @@ public class EventsList extends javax.swing.JPanel {
         lblEventReminderTime = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtEventCreateError = new javax.swing.JTextArea();
+        lblEventBudget = new javax.swing.JLabel();
+        iptEventBudget = new javax.swing.JFormattedTextField();
 
         btnToggleEventView.setText("Create event");
         btnToggleEventView.addActionListener(new java.awt.event.ActionListener() {
@@ -404,6 +418,11 @@ public class EventsList extends javax.swing.JPanel {
         txtEventCreateError.setOpaque(false);
         jScrollPane1.setViewportView(txtEventCreateError);
 
+        lblEventBudget.setText("Event budget");
+
+        iptEventBudget.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0.00"))));
+        iptEventBudget.setText("£100");
+
         javax.swing.GroupLayout pnlCreateEventLayout = new javax.swing.GroupLayout(pnlCreateEvent);
         pnlCreateEvent.setLayout(pnlCreateEventLayout);
         pnlCreateEventLayout.setHorizontalGroup(
@@ -417,6 +436,7 @@ public class EventsList extends javax.swing.JPanel {
                     .addComponent(cbbEventFrequency, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbbEventReminderTime, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlEventAddress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(pnlCreateEventLayout.createSequentialGroup()
                         .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlCreateEventLayout.createSequentialGroup()
@@ -435,9 +455,10 @@ public class EventsList extends javax.swing.JPanel {
                             .addComponent(lblEventFrequency)
                             .addComponent(lblEventLocation)
                             .addComponent(lblEventReminderTime)
-                            .addComponent(lblEventFeedbackMessage))
+                            .addComponent(lblEventFeedbackMessage)
+                            .addComponent(lblEventBudget))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                    .addComponent(iptEventBudget))
                 .addContainerGap())
         );
         pnlCreateEventLayout.setVerticalGroup(
@@ -474,8 +495,12 @@ public class EventsList extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(iptEventFeedbackMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblEventBudget)
+                .addGap(0, 0, 0)
+                .addComponent(iptEventBudget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCreateEvent)
                 .addContainerGap())
         );
@@ -494,7 +519,7 @@ public class EventsList extends javax.swing.JPanel {
             .addGroup(pnlEventEditorContainerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pnlCreateEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(157, Short.MAX_VALUE))
+                .addContainerGap(138, Short.MAX_VALUE))
         );
 
         pnlEventsContainer.add(pnlEventEditorContainer, "eventEditor");
@@ -575,6 +600,7 @@ public class EventsList extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cbbEventFrequency;
     private javax.swing.JComboBox<String> cbbEventReminderTime;
     private javax.swing.JCheckBox cbxEventEndTime;
+    private javax.swing.JFormattedTextField iptEventBudget;
     private javax.swing.JTextField iptEventCity;
     private javax.swing.JTextField iptEventCode;
     private javax.swing.JTextField iptEventCountry;
@@ -586,6 +612,7 @@ public class EventsList extends javax.swing.JPanel {
     private javax.swing.JTextField iptEventStreet;
     private javax.swing.JTextField iptEventTitle;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblEventBudget;
     private javax.swing.JLabel lblEventCity;
     private javax.swing.JLabel lblEventCode;
     private javax.swing.JLabel lblEventCountry;
