@@ -77,29 +77,7 @@ public class AuthenticationController {
 
     @GetMapping("/email/verify/{email}/{token}")
     public RedirectView verifyEmail(@PathVariable String email, @PathVariable String token) {
-        RedirectView redirectView = new RedirectView("/invalidEmailToken.html");
-        System.out.println("REQUEST for verification " + email);
-        try {
-            if (!jwtService.isEmailTokenValid(token, email)) {
-                return redirectView;
-            }
-        } catch (Exception ex) {
-            return redirectView;
-        }
-        Optional<User> userData = userRepository.findByEmail(email);
-        if (userData.isEmpty()) {
-            return redirectView;
-        }
-        User user = userData.get();
-        if (user.isEmailVerified()) {
-            return redirectView;
-        }
-        user.setEmailVerified(true);
-        System.out.println("UPDATING USER EMAIL VERIFIED STATE TO TRUE");
-        userRepository.save(user);
-        System.out.println("SAVED NEW USER PROPERTIES");
-        redirectView.setUrl("/verificationSuccessful.html");
-        return redirectView;
+        return authenticationService.verifyEmail(email, token);
     }
 
     @GetMapping("/email/poll")
@@ -109,9 +87,8 @@ public class AuthenticationController {
             return ErrorResponse.generate("Invalid email");
         }
         User user = userData.get();
-        if (user.isEmailVerified()) {
-            return ResponseEntity.ok().build();
-        }
-        return ErrorResponse.generate("Email not verified");
+        return user.isEmailVerified()
+                ? ResponseEntity.ok().build()
+                : ErrorResponse.generate("Email not verified");
     }
 }

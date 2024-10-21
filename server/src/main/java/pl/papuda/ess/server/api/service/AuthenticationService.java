@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -91,5 +93,31 @@ public class AuthenticationService {
         String template = readResource(verifyEmailTemplate);
         String content = template.replace("{EMAIL}", recipientAddress).replace("{TOKEN}", token);
         sendEmail(recipientAddress, "Account Verification", content);
+    }
+
+    public RedirectView verifyEmail(String email, String token) {
+        RedirectView redirectView = new RedirectView("/invalidEmailToken.html");
+        System.out.println("REQUEST for verification " + email);
+        try {
+            if (!jwtService.isEmailTokenValid(token, email)) {
+                return redirectView;
+            }
+        } catch (Exception ex) {
+            return redirectView;
+        }
+        Optional<User> userData = userRepository.findByEmail(email);
+        if (userData.isEmpty()) {
+            return redirectView;
+        }
+        User user = userData.get();
+        if (user.isEmailVerified()) {
+            return redirectView;
+        }
+        user.setEmailVerified(true);
+        System.out.println("UPDATING USER EMAIL VERIFIED STATE TO TRUE");
+        userRepository.save(user);
+        System.out.println("SAVED NEW USER PROPERTIES");
+        redirectView.setUrl("/verificationSuccessful.html");
+        return redirectView;
     }
 }

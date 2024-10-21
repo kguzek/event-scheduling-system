@@ -116,8 +116,9 @@ public class PrivateController {
 
     @GetMapping("/permissions")
     public ResponseEntity<?> getUserPermissions(Principal principal) {
-        if (principal == null)
+        if (principal == null) {
             return ErrorResponse.generate("You are not logged in", HttpStatus.UNAUTHORIZED);
+        }
         Optional<User> userData = userRepository.findByUsername(principal.getName());
         if (userData.isEmpty()) {
             return ErrorResponse.generate("Invalid logged in username", HttpStatus.UNAUTHORIZED);

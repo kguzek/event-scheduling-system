@@ -149,21 +149,24 @@ public class EventsList extends javax.swing.JPanel {
             eventReminder = eventStart.minusMinutes(reminderDelayMinutes);
         }
         var budget = (Number) iptEventBudget.getValue();
-//        TODO: fix this
-//        Integer budgetCents = budget == null
-//                ? null
-//                : budget instanceof Long
-//                ? budget.intValue() * 100
-//                : budget instanceof Double
-//                ? (budget.doubleValue() * 100.0)
-//                : null;
-        System.out.println("Budget: " + budget + " " + budget.getClass());
+        Integer budgetCents = null;
+        System.out.println("Budget value: " + budget);
+        if (budget != null) {
+            if (budget instanceof Long) {
+                System.out.println("Budget is long");
+                budgetCents = budget.intValue() * 100;
+            } else if (budget instanceof Double d) {
+                System.out.println("System is double");
+                budgetCents = ((Double) (d * 100.0)).intValue();
+            }
+        }
+        System.out.println("budgetCents: " + budgetCents);
         Location location = Location.builder().street(iptEventStreet.getText()).city(iptEventCity.getText())
                 .code(iptEventCode.getText()).country(iptEventCountry.getText()).additionalInformation(additionalInformation).build();
         PartialEvent event = PartialEvent.builder().title(iptEventTitle.getText())
             .organiserName("John Doe").startTime(formatDateTime(eventStart)).endTime(formatDateTime(eventEnd))
             .location(location).frequency(frequency).feedbackMessage(feedbackMessage)
-            .reminderTime(formatDateTime(eventReminder)).budgetCents(10000).build();
+            .reminderTime(formatDateTime(eventReminder)).budgetCents(budgetCents).build();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(event);   
         return json;
@@ -499,8 +502,8 @@ public class EventsList extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(iptEventBudget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(btnCreateEvent)
                 .addContainerGap())
         );
@@ -518,8 +521,8 @@ public class EventsList extends javax.swing.JPanel {
             pnlEventEditorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlEventEditorContainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlCreateEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addComponent(pnlCreateEvent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pnlEventsContainer.add(pnlEventEditorContainer, "eventEditor");
