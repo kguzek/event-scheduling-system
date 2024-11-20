@@ -15,15 +15,20 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.User;
+import uk.guzek.sac.AuthType;
 
 public class Web {
     private static final boolean PRODUCTION_ENVIRONMENT = true;
 
-    private static final String API_URL = PRODUCTION_ENVIRONMENT
-            ? "https://event-scheduling-system.onrender.com"
-            : "http://localhost:8080";
+    private static final String API_BASE = (PRODUCTION_ENVIRONMENT
+            ? "s://event-scheduling-system.onrender.com"
+            : "://localhost:8080") + "/api/v1";
+    private static final String API_URL = "http" + API_BASE;
+    
+    private static final String API_URL_WS = "ws" + API_BASE;
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static StompClient stompClient = null;
 
     private static String accessToken = null;
 
@@ -41,6 +46,9 @@ public class Web {
     }
 
     static void setAccessToken(String token, boolean remember) {
+        if (accessToken == null || stompClient == null) {
+            stompClient = new StompClient(URI.create(API_URL_WS), AuthType.jwt(token), API_URL);
+        }
         accessToken = token;
         if (remember) {
             System.out.println("Saving access token to preferences");
@@ -79,7 +87,7 @@ public class Web {
     }
 
     private static HttpRequest.Builder createRequest(String endpoint) {
-        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(API_URL + "/api/v1" + endpoint));
+        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(API_URL + endpoint));
         if (endpoint.startsWith("/auth/")) {
             return builder;
         }
