@@ -27,11 +27,11 @@ jobs:
 
       # Needed for Spring Boot configuration, which requires database connection details at build time
       - name: Save the database secrets to /server/application.properties
-        run: touch application.properties
-          echo "spring.datasource.url=${{ secrets.DB_URL }}" > application.properties
-          echo "spring.datasource.username=${{ secrets.DB_USERNAME }}" > application.properties
-          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" > application.properties
-          echo "application.properties:"
+        run: touch application.properties;
+          echo "spring.datasource.url=${{ secrets.DB_URL }}" > application.properties;
+          echo "spring.datasource.username=${{ secrets.DB_USERNAME }}" > application.properties;
+          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" > application.properties;
+          echo "application.properties:";
           cat application.properties
 
       - name: Build with Maven
