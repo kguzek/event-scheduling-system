@@ -2,7 +2,7 @@ spring:
   application:
     name: ess-server
   config:
-    import: "optional:file:env.properties"
+    import: "file:env.properties"
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
