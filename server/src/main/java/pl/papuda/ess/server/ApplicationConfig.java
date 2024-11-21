@@ -5,8 +5,10 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,26 +17,30 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import lombok.RequiredArgsConstructor;
 import pl.papuda.ess.server.api.repo.UserRepository;
 
 @Configuration
 @RequiredArgsConstructor
-public class ApplicationConfig {
+@EnableWebSocketMessageBroker
+public class ApplicationConfig implements WebSocketMessageBrokerConfigurer {
 
     private final UserRepository userRepository;
 
-    @Value("${EMAIL_ADDRESS}")
+    @Value("${app.email.address}")
     String emailAddress;
 
-    @Value("${EMAIL_PASSWORD}")
+    @Value("${app.email.password}")
     String emailPassword;
 
-    @Value("${EMAIL_SMTP_HOST}")
+    @Value("${app.email.smtp.host}")
     String emailHost;
 
-    @Value("${EMAIL_SMTP_PORT}")
+    @Value("${app.email.smtp.port}")
     int emailPort;
 
     @Bean
@@ -76,5 +82,16 @@ public class ApplicationConfig {
         // props.put("mail.debug", "true");
 
         return mailSender;
+    }
+
+    @Override
+    public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
+        registry.addEndpoint("/api/v1/staff/stomp").setAllowedOrigins("*");
+    }
+
+    @Override
+    public void configureMessageBroker(@NonNull MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/topic");
+        config.setApplicationDestinationPrefixes("/app");
     }
 }

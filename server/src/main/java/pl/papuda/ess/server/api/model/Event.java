@@ -39,22 +39,22 @@ public class Event {
     private Location location;
     private Frequency frequency;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user.id")
     private User creator;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "event_attendance", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> attendees;
     private int budgetCents;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Expense> expenses;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Resource> resources;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Task> tasks;
     private Date reminderTime;
     private String feedbackMessage;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class AuthenticationService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${API_URL}")
+    @Value("${app.api-url}")
     private String API_URL;
 
     @Value("classpath:/templates/verifyEmail.html")
@@ -82,7 +83,7 @@ public class AuthenticationService {
     }
 
     private String readResource(Resource resource) {
-        try (Reader reader = new InputStreamReader(resource.getInputStream(), "utf8")) {
+        try (Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
             return FileCopyUtils.copyToString(reader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);

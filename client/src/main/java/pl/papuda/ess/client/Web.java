@@ -1,4 +1,3 @@
-
 package pl.papuda.ess.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,21 +9,25 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Date;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.User;
+import pl.papuda.ess.client.model.body.StompResponse;
 import uk.guzek.sac.AuthType;
 
 public class Web {
-    private static final boolean PRODUCTION_ENVIRONMENT = true;
+
+    private static final boolean PRODUCTION_ENVIRONMENT = false;
 
     private static final String API_BASE = (PRODUCTION_ENVIRONMENT
             ? "s://event-scheduling-system.onrender.com"
             : "://localhost:8080") + "/api/v1";
     private static final String API_URL = "http" + API_BASE;
-    
+
     private static final String API_URL_WS = "ws" + API_BASE;
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
@@ -45,11 +48,17 @@ public class Web {
         Logger.getLogger(Web.class.getName()).log(Level.SEVERE, null, ex);
     }
 
+    public static void initialiseStompClient() {
+        URI stompServerUri = URI.create(API_URL_WS + "/staff/stomp");
+        stompClient = new StompClient(stompServerUri, AuthType.jwt(accessToken), API_URL);
+        stompClient.connect();
+    }
+
     static void setAccessToken(String token, boolean remember) {
-        if (accessToken == null || stompClient == null) {
-            stompClient = new StompClient(URI.create(API_URL_WS), AuthType.jwt(token), API_URL);
-        }
         accessToken = token;
+        if (stompClient == null) {
+            initialiseStompClient();
+        }
         if (remember) {
             System.out.println("Saving access token to preferences");
             prefs.put("accessToken", accessToken);
@@ -126,5 +135,63 @@ public class Web {
     public static HttpResponse<String> sendDeleteRequest(String endpoint) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint).DELETE().build();
         return sendRequest(request);
+    }
+
+    private static void runWhenClientReady(Runnable callback) {
+        new Thread(() -> {
+            try {
+                while (stompClient == null) {
+                    Thread.sleep(100);
+                }
+                if (stompClient.isDisconnected()) {
+                    System.out.println("Reconnecting STOMP client");
+                    initialiseStompClient();
+                }
+                while (!stompClient.isConnected()) {
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException ex) {
+                System.err.println("Client sleep interrupted, cancelling callback");
+                return;
+            }
+            callback.run();
+        }).start();
+    }
+
+    public static void sendStompText(String destination, String text) {
+        runWhenClientReady(() -> {
+            stompClient.sendText(text, "/app" + destination);
+        });
+    }
+
+    public static void sendStompJson(String destination, Object object) {
+        runWhenClientReady(() -> {
+            try {
+                stompClient.sendJson(object, "/app" + destination);
+            } catch (JsonProcessingException ex) {
+                System.err.println("Error sending message to: " + destination);
+            }
+        });
+    }
+
+    public static void subscribeStompResource(String destination, BiConsumer<Object, String> handler) {
+        ObjectMapper objectMapper = new ObjectMapper();
+//        System.out.println("Scheduling subscription to " + destination);
+        runWhenClientReady(() -> {
+            stompClient.subscribe(destination, (Map<String, String> headers, String payload) -> {
+                System.out.println("Parsing body: " + payload);
+                StompResponse response;
+                try {
+                    response = objectMapper.readValue(payload, new TypeReference<StompResponse>() {
+                    });
+                } catch (JsonProcessingException ex) {
+                    System.err.println("Error handling message body: " + payload);
+                    System.err.println(ex);
+                    handler.accept(null, ex.getMessage());
+                    return;
+                }
+                handler.accept(response.getBody(), null);
+            });
+        });
     }
 }

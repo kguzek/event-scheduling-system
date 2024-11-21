@@ -98,6 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         response.setHeader("WWW-Authenticate", "Bearer realm=/api/v1/auth/");
+        // System.out.println("Denying request: " + denialMessage);
         response.getWriter().write(convertObjectToJson(new ErrorResponse(denialMessage)));
     }
 

@@ -1,6 +1,7 @@
 package pl.papuda.ess.client.home;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.time.Instant;
@@ -9,14 +10,14 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import pl.papuda.ess.client.MainWindow;
 import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.User;
+import pl.papuda.ess.client.model.body.StompResponse;
 
 public class EventListItem extends javax.swing.JPanel {
 
@@ -24,11 +25,16 @@ public class EventListItem extends javax.swing.JPanel {
     private final ZoneId zone = ZoneId.systemDefault();
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("E, dd'/'MM'/'yyyy");
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
+    private boolean awaitingDeletion = false;
 
     private final EditEvent editEvent;
     
     public interface EditEvent {
         public void call(Event event);
+    }
+        
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(null, message, "Problem deleting event", JOptionPane.ERROR_MESSAGE);
     }
     
     public EventListItem(Event event, EditEvent editEvent) {
@@ -36,6 +42,21 @@ public class EventListItem extends javax.swing.JPanel {
         this.event = event;
         this.editEvent = editEvent;
         initEvent();
+        // TODO: Move this to only subscribe once per app instance, not once per EventListItem
+        Web.subscribeStompResource("/topic/events/deleted", this::handleMessage);
+    }
+        
+    private void handleMessage(Object body, String errorMessage) {
+        if (body == null || errorMessage != null) {
+            if (awaitingDeletion) showErrorDialog(errorMessage);
+            System.err.println("Non-OK delete message response " + errorMessage);
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Long eventId = mapper.convertValue(body, Long.class);
+        awaitingDeletion = false;
+        MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
+        mainWindow.removeEvent(eventId);
     }
 
     public static String ordinal(int i) {
@@ -85,44 +106,6 @@ public class EventListItem extends javax.swing.JPanel {
             text += " (" + additionalInformation + ")";
         }
         return text;
-    }
-    
-    private class DeleteEvent extends Thread {
-        @Override
-        public void run() {
-            pmiEventDelete.setEnabled(false);
-            delete();
-            pmiEventDelete.setEnabled(true);
-        }
-        
-        private void showErrorDialog(String message) {
-            JOptionPane.showMessageDialog(null, message, "Problem deleting event", JOptionPane.ERROR_MESSAGE);
-        }
-        
-        private void delete() {
-            HttpResponse response;
-            Long eventId = event.getId();
-            String endpoint = "/staff/event/" + eventId;
-            try {
-                response = Web.sendDeleteRequest(endpoint);
-            } catch (IOException | InterruptedException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-                showErrorDialog("A network error occurred while deleting that event. Please try again later.");
-                return;
-            }
-            int code = response.statusCode();
-            if (code == 403) {
-                showErrorDialog("You do not have permission to delete this event.");
-                return;
-            }
-            if (code != 204) {
-                String errorMessage = Web.getErrorMessage(response);
-                showErrorDialog(errorMessage);
-                return;
-            }
-            MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
-            mainWindow.removeEvent(eventId);
-        }
     }
 
     private void initEvent() {
@@ -301,7 +284,14 @@ public class EventListItem extends javax.swing.JPanel {
         //  0: YES
         //  1: NO
         if (decision == 0) {
-            new DeleteEvent().start();
+            new Thread(() -> {
+                pmiEventDelete.setEnabled(false);
+                Long eventId = event.getId();
+                String endpoint = "/event/delete/" + eventId;
+                Web.sendStompText(endpoint, "");
+                awaitingDeletion = true;
+                pmiEventDelete.setEnabled(true);
+            }).start();
         }
     }//GEN-LAST:event_pmiEventDeleteActionPerformed
 

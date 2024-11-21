@@ -5,16 +5,16 @@ import java.util.Collections;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import pl.papuda.ess.server.api.model.ErrorResponse;
 import pl.papuda.ess.server.api.model.Event;
 import pl.papuda.ess.server.api.model.EventStatus;
 import pl.papuda.ess.server.api.model.Frequency;
 import pl.papuda.ess.server.api.model.Location;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.EventCreationRequest;
+import pl.papuda.ess.server.api.model.body.websocket.StompResponse;
 import pl.papuda.ess.server.api.repo.EventRepository;
 
 @Service
@@ -23,6 +23,7 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Transactional
     private Event mergeEvents(Event oldEvent, EventCreationRequest newEvent) throws InvalidObjectException {
         String title = newEvent.getTitle();
         String organiser = newEvent.getOrganiserName();
@@ -51,30 +52,35 @@ public class EventService {
         return oldEvent;
     }
 
-    public ResponseEntity<?> createEvent(User creator, EventCreationRequest event) {
-        Event savedEvent;
-        try {
-            Event eventObj = mergeEvents(new Event(), event);
-            eventObj.setCreator(creator);
-            eventObj.setAttendees(Collections.emptySet());
-            eventObj.setExpenses(Collections.emptyList());
-            savedEvent = eventRepository.save(eventObj);
-        } catch (InvalidObjectException e) {
-            return ErrorResponse.generate(e.getMessage());
-        } catch (Exception e) {
-            return ErrorResponse.generate(e.getMessage());
-        }
-        return ResponseEntity.ok(savedEvent);
-    }
-
-	public ResponseEntity<?> updateEvent(Event savedEvent, EventCreationRequest event) {
+    public StompResponse<?> createEvent(User creator, EventCreationRequest event) {
         Event eventObj;
         try {
-            eventObj = mergeEvents(savedEvent, event);
+            eventObj = mergeEvents(new Event(), event);
         } catch (InvalidObjectException e) {
-            return ErrorResponse.generate(e.getMessage());
+            e.printStackTrace();
+            return new StompResponse<String>(false, e.getMessage());
         }
-        return ResponseEntity.ok(eventRepository.save(eventObj));
-	}
-	
+        eventObj.setCreator(creator);
+        eventObj.setAttendees(Collections.emptySet());
+        eventObj.setExpenses(Collections.emptyList());
+        Event savedEvent = eventRepository.save(eventObj);
+        return new StompResponse<Event>(true, savedEvent);
+    }
+
+    @Transactional
+    public StompResponse<?> updateEvent(Event previousEvent, EventCreationRequest newEvent) {
+        Event eventObj;
+        try {
+            eventObj = mergeEvents(previousEvent, newEvent);
+        } catch (InvalidObjectException e) {
+            e.printStackTrace();
+            return new StompResponse<String>(false, e.getMessage());
+        }
+        Event savedEvent = eventRepository.save(eventObj);
+        return new StompResponse<Event>(true, savedEvent);
+    }
+
+    public void deleteEvent(Event event) {
+        eventRepository.delete(event);
+    }
 }

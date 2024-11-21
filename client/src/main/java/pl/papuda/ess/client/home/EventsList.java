@@ -3,8 +3,6 @@ package pl.papuda.ess.client.home;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;
-import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -15,6 +13,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pl.papuda.ess.client.MainWindow;
@@ -22,14 +21,15 @@ import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.PartialEvent;
+import pl.papuda.ess.client.model.body.StompResponse;
 
 public class EventsList extends javax.swing.JPanel {
-    
+
     private final ZoneOffset zoneOffset = OffsetDateTime.now().getOffset();
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy'T'HH:mm");
-    
-    private final String[] eventFrequencies = new String[] {
+
+    private final String[] eventFrequencies = new String[]{
         null,
         "DAILY",
         "WEEKLY",
@@ -37,8 +37,8 @@ public class EventsList extends javax.swing.JPanel {
         "MONTHLY",
         "YEARLY"
     };
-    
-    private final Integer[] reminderTimesMinutes = new Integer[] {
+
+    private final Integer[] reminderTimesMinutes = new Integer[]{
         null,
         5,
         15,
@@ -47,39 +47,68 @@ public class EventsList extends javax.swing.JPanel {
         60 * 2,
         60 * 24
     };
-    
+
     private Long eventId = null;
-    
+    private boolean awaitingMessage = false;
+
     /**
      * Creates new form EventsList
      */
     public EventsList() {
+        Web.subscribeStompResource("/topic/events/created", this::messageHandler);
+        Web.subscribeStompResource("/topic/events/updated", this::messageHandler);
         initComponents();
     }
-    
+
+    private void messageHandler(Object body, String errorMessage) {
+        if (body == null || errorMessage != null) {
+            txtEventCreateError.setText(errorMessage);
+            System.err.println("Non-OK event message response " + errorMessage);
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Event createdEvent = mapper.convertValue(body, Event.class);
+        MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
+        mainWindow.updateEvent(createdEvent);
+        if (!awaitingMessage) {
+            return;
+        }
+        showLayoutCard("eventsList");
+        if (eventId != null) {
+            btnCreateEvent.setText("CREATE");
+        }
+        awaitingMessage = false;
+        // Calling this sets `eventId` to null
+        btnToggleEventViewActionPerformed(null);
+    }
+
     public void updateEventsList(List<Event> events) {
         pnlEventsList.removeAll();
         for (Event event : events) {
-            System.out.println("Adding event " + event.getTitle());
+//            System.out.println("Adding event " + event.getTitle());
             pnlEventsList.add(new EventListItem(event, this::editEvent));
         }
         repaint();
         revalidate();
     }
-    
+
     private String formatDateTime(LocalDateTime dateTime) {
-        if (dateTime == null) return null;
+        if (dateTime == null) {
+            return null;
+        }
         return dateTime.atOffset(zoneOffset).toString();
     }
-    
+
     int getDifferenceMinutes(String date1, String date2) {
-        if (date1 == null || date2 == null) return 0;
+        if (date1 == null || date2 == null) {
+            return 0;
+        }
         Instant instant1 = Instant.parse(date1);
         Instant instant2 = Instant.parse(date2);
         Long diffSeconds = Math.abs(instant1.getEpochSecond() - instant2.getEpochSecond());
         return (int) (diffSeconds / 60);
     }
-    
+
     Date parseTimestamp(String timestamp) {
         if (timestamp == null) {
             return null;
@@ -89,11 +118,11 @@ public class EventsList extends javax.swing.JPanel {
         Date date = Date.from(instant);
         return date;
     }
-    
+
     String orEmptyString(String s) {
         return s == null ? "" : s;
     }
-    
+
     void editEvent(Event event) {
         this.eventId = event.getId();
         txtEventCreateError.setText("");
@@ -122,8 +151,8 @@ public class EventsList extends javax.swing.JPanel {
         selectedIndex = Arrays.asList(eventFrequencies).indexOf(event.getFrequency());
         cbbEventFrequency.setSelectedIndex(Math.max(selectedIndex, 0));
     }
-    
-    String getEventJson() throws Exception {
+
+    PartialEvent getEventJson() throws Exception {
         String eventDate = iptEventDate.getText();
         LocalDateTime eventStart, eventEnd = null;
         try {
@@ -164,48 +193,22 @@ public class EventsList extends javax.swing.JPanel {
         Location location = Location.builder().street(iptEventStreet.getText()).city(iptEventCity.getText())
                 .code(iptEventCode.getText()).country(iptEventCountry.getText()).additionalInformation(additionalInformation).build();
         PartialEvent event = PartialEvent.builder().title(iptEventTitle.getText())
-            .organiserName("John Doe").startTime(formatDateTime(eventStart)).endTime(formatDateTime(eventEnd))
-            .location(location).frequency(frequency).feedbackMessage(feedbackMessage)
-            .reminderTime(formatDateTime(eventReminder)).budgetCents(budgetCents).build();
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(event);   
-        return json;
+                .organiserName("John Doe").startTime(formatDateTime(eventStart)).endTime(formatDateTime(eventEnd))
+                .location(location).frequency(frequency).feedbackMessage(feedbackMessage)
+                .reminderTime(formatDateTime(eventReminder)).budgetCents(budgetCents).build();
+        System.out.println("Start: " + event.getStartTime());
+        return event;
     }
-    
+
     private void sendEventRequest() throws Exception {
-        HttpResponse<String> response;
-        String json = getEventJson();
-        try {
-            response = eventId == null ? Web.sendPostRequest("/staff/event", json) : Web.sendPutRequest("/staff/event/" + eventId, json);
-        } catch (IOException | InterruptedException ex) {
-            txtEventCreateError.setText("A network error occurred while creating the event. Please try again later.");
-            return;
-        }
-        int code = response.statusCode();
-        if (code != 200) {
-            txtEventCreateError.setText(Web.getErrorMessage(response));
-            return;
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        Event createdEvent;
-        try {
-            createdEvent = objectMapper.readValue(response.body(), Event.class);
-        } catch (JsonProcessingException ex) {
-            txtEventCreateError.setText("200 response with unparsable body");
-            return;
-        }
-        showLayoutCard("eventsList");
-        MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
-        if (eventId == null) {
-            mainWindow.addEvent(createdEvent);
-        } else {
-            btnCreateEvent.setText("CREATE");
-            mainWindow.updateEvent(createdEvent);
-        }
-        btnToggleEventViewActionPerformed(null);
+        PartialEvent event = getEventJson();
+        String destination = "/event/" + (eventId == null ? "create" : "update/" + eventId);
+        Web.sendStompJson(destination, event);
+        awaitingMessage = true;
     }
-    
+
     private class CreateEvent extends Thread {
+
         @Override
         public void run() {
             btnCreateEvent.setEnabled(false);
@@ -559,12 +562,11 @@ public class EventsList extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    
     private void showLayoutCard(String cardName) {
         CardLayout layout = (CardLayout) pnlEventsContainer.getLayout();
         layout.show(pnlEventsContainer, cardName);
     }
-    
+
     private void btnToggleEventViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToggleEventViewActionPerformed
         txtEventCreateError.setText("");
         eventId = null;
@@ -576,7 +578,7 @@ public class EventsList extends javax.swing.JPanel {
             showLayoutCard("eventEditor");
             btnToggleEventView.setText("Show events list");
         }
-        
+
     }//GEN-LAST:event_btnToggleEventViewActionPerformed
 
     private void iptEventEndTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iptEventEndTimeActionPerformed

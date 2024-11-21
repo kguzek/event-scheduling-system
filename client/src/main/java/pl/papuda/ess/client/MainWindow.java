@@ -48,18 +48,24 @@ public class MainWindow extends javax.swing.JFrame {
         loadSettings();
     }
 
-    public void addEvent(Event event) {
-        events.add(event);
-        updateEvents();
-    }
-
     public void removeEvent(Long eventId) {
         events.removeIf(event -> event.getId().equals(eventId));
         updateEvents();
     }
 
     public void updateEvent(Event event) {
-        events.replaceAll(e -> e.getId().equals(event.getId()) ? event : e);
+        int idx = -1;
+        for (int i = 0; i < events.size(); i++) {
+            Event e = events.get(i);
+            if (!e.getId().equals(event.getId())) continue;
+            idx = i;
+            break;
+        }
+        if (idx == -1) {
+            events.add(event);
+        } else {
+            events.set(idx, event);
+        }
         updateEvents();
     }
 

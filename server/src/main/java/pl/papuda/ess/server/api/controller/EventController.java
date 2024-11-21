@@ -4,26 +4,22 @@ import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
 
-import pl.papuda.ess.server.api.model.ErrorResponse;
 import pl.papuda.ess.server.api.model.Event;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.EventCreationRequest;
+import pl.papuda.ess.server.api.model.body.websocket.StompResponse;
 import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.api.service.EventService;
 
-@RestController
-@RequestMapping("/api/v1/staff/event")
+@Controller
+@MessageMapping("/event")
 public class EventController {
 
     @Autowired
@@ -35,37 +31,43 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @PostMapping
-    public ResponseEntity<?> createEvent(@RequestBody EventCreationRequest event, Principal principal) {
+    @MessageMapping("/create")
+    @SendTo("/topic/events/created")
+    public StompResponse<?> createEvent(@Payload EventCreationRequest event, Principal principal) {
+        System.out.println("Creating event");
         Optional<User> creator = userRepository.findByUsername(principal.getName());
         if (creator.isEmpty()) {
-            return ErrorResponse.generate("Authenticated as non-existing user; cannot create event",
-                    HttpStatus.UNAUTHORIZED);
+            return new StompResponse<String>(false, "Authenticated as non-existing user; cannot create event");
         }
-        return eventService.createEvent(creator.get(), event);
+        User user = creator.get();
+        return eventService.createEvent(user, event);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateEvent(@PathVariable Long id, @RequestBody EventCreationRequest event) {
+    @MessageMapping("/update/{id}")
+    @SendTo("/topic/events/updated")
+    public StompResponse<?> updateEvent(@DestinationVariable Long id, @Payload EventCreationRequest event) {
+        System.out.println("Updating event with id: " + id + ", event start time: " + event.getStartTime() + " = "
+                + event.getStartTime().getTime());
         Optional<Event> eventData = eventRepository.findById(id);
         if (eventData.isEmpty()) {
-            return ErrorResponse.generate("Event not found", HttpStatus.NOT_FOUND);
+            return new StompResponse<String>(false, "Event not found");
         }
-        return eventService.updateEvent(eventData.get(), event);
+        Event value = eventData.get();
+        return eventService.updateEvent(value, event);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEvent(@PathVariable Long id, Principal principal) {
+    @MessageMapping("/delete/{id}")
+    @SendTo("/topic/events/deleted")
+    public StompResponse<?> deleteEvent(@DestinationVariable Long id, Principal principal) {
+        System.out.println("Deleting event with id: " + id);
         Optional<Event> eventData = eventRepository.findById(id);
         if (eventData.isPresent()) {
             Event event = eventData.get();
             if (!event.getCreator().getUsername().equals(principal.getName())) {
-                return ErrorResponse.generate("You cannot delete an event that was not created by you",
-                        HttpStatus.FORBIDDEN);
+                return new StompResponse<String>(false, "You cannot delete an event that was not created by you");
             }
-            eventRepository.delete(event);
+            eventService.deleteEvent(event);
         }
-        return ResponseEntity.noContent().build();
+        return new StompResponse<Long>(true, id);
     }
-
 }

@@ -11,7 +11,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format-sql: true
@@ -27,4 +27,3 @@ app:
     smtp:
       host: ${EMAIL_SMTP_HOST}
       port: ${EMAIL_SMTP_PORT}
-
