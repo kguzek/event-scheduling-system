@@ -3,10 +3,6 @@
 
 name: Build and deploy ESS server Azure Web App - event-scheduling-system
 
-defaults:
-  run:
-    working-directory: server
-
 on:
   push:
     branches:
@@ -16,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
 
     steps:
       - uses: actions/checkout@v4
