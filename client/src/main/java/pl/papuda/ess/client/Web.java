@@ -21,7 +21,7 @@ import uk.guzek.sac.AuthType;
 
 public class Web {
 
-    private static final boolean PRODUCTION_ENVIRONMENT = false;
+    private static final boolean PRODUCTION_ENVIRONMENT = true;
 
     private static final String API_BASE = (PRODUCTION_ENVIRONMENT
             ? "s://event-scheduling-system.onrender.com"
