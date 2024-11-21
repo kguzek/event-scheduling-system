@@ -31,8 +31,6 @@ jobs:
           echo "spring.datasource.url=${{ secrets.DB_URL }}" >> application.properties;
           echo "spring.datasource.username=${{ secrets.DB_USERNAME }}" >> application.properties;
           echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> application.properties;
-          echo "application.properties:";
-          cat application.properties
 
       - name: Build with Maven
         run: mvn clean install
