@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
 import javax.swing.Timer;
 
@@ -35,6 +36,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private Timer timer;
     private Timer resendButtonEnableTimer;
+    private boolean awaitingDeletion = false;
 
     private static List<Event> events = null;
 
@@ -46,25 +48,36 @@ public class MainWindow extends javax.swing.JFrame {
         // Custom code
         this.getContentPane().setBackground(this.getBackground());
         loadSettings();
+        createSubscriptions();
+    }
+    
+    private void createSubscriptions() {
+        Web.subscribeStompResource("/topic/events/deleted", this::handleEventDeleted);
+        Web.subscribeStompResource("/topic/events/updated", this::handleEventUpdated);
+        Web.subscribeStompResource("/topic/events/created", this::handleEventCreated);
+    }
+    
+    public void attemptRemoveEvent() {
+        awaitingDeletion = true;
     }
 
     public void removeEvent(Long eventId) {
         events.removeIf(event -> event.getId().equals(eventId));
         updateEvents();
+        awaitingDeletion = false;
     }
 
-    public void updateEvent(Event event) {
-        int idx = -1;
-        for (int i = 0; i < events.size(); i++) {
-            Event e = events.get(i);
-            if (!e.getId().equals(event.getId())) continue;
-            idx = i;
-            break;
-        }
-        if (idx == -1) {
+    private void updateEvent(Event event, boolean created) {
+        if (created) {
             events.add(event);
         } else {
-            events.set(idx, event);
+            for (int i = 0; i < events.size(); i++) {
+                Event e = events.get(i);
+                if (e.getId().equals(event.getId())) {
+                    events.set(i, event);
+                    break;
+                }
+            }
         }
         updateEvents();
     }
@@ -80,50 +93,46 @@ public class MainWindow extends javax.swing.JFrame {
         showLayoutCard("budget");
     }
 
-    private class GetEvents extends Thread {
-        public void run() {
-            HttpResponse<String> response;
-            try {
-                response = Web.sendGetRequest("/private/event");
-            } catch (IOException | InterruptedException ex) {
-                System.err.println(ex);
-                return;
-            }
-            if (response.statusCode() != 200) {
-                System.out.println("Response code " + response.statusCode());
-                return;
-            }
-            events = Web.readResponseBody(response, new TypeReference<List<Event>>() {
-            });
-            updateEvents();
+    private void getEvents() {
+        HttpResponse<String> response;
+        try {
+            response = Web.sendGetRequest("/private/event");
+        } catch (IOException | InterruptedException ex) {
+            System.err.println(ex);
+            return;
         }
+        if (response.statusCode() != 200) {
+            System.out.println("Response code " + response.statusCode());
+            return;
+        }
+        events = Web.readResponseBody(response, new TypeReference<List<Event>>() {
+        });
+        updateEvents();
     }
 
-    private class GetUserPermissions extends Thread {
-        public void run() {
-            HttpResponse<String> response;
-            try {
-                response = Web.sendGetRequest("/private/permissions");
-            } catch (IOException | InterruptedException ex) {
-                Web.unsetAccessToken();
-                showLayoutCard("logIn");
-                return;
-            }
-            Web.user = Web.readResponseBody(response, new TypeReference<User>() {
-            });
-            System.out.println("User permissions: " + Web.user);
+    private void getUserPermissions() {
+        HttpResponse<String> response;
+        try {
+            response = Web.sendGetRequest("/private/permissions");
+        } catch (IOException | InterruptedException ex) {
+            Web.unsetAccessToken();
+            showLayoutCard("logIn");
+            return;
         }
+        Web.user = Web.readResponseBody(response, new TypeReference<User>() {
+        });
+        System.out.println("User permissions: " + Web.user);
     }
 
     private void afterRegister(String token) {
         Web.setAccessToken(token, cbxRememberPassword.isSelected());
-        new GetUserPermissions().start();
+        new Thread(this::getUserPermissions).start();
     }
 
     private void afterLogin(String token) {
         afterRegister(token);
         showLayoutCard("home");
-        new GetEvents().start();
+        new Thread(this::getEvents).start();
     }
 
     private void loadSettings() {
@@ -140,14 +149,50 @@ public class MainWindow extends javax.swing.JFrame {
             Web.prefs.remove("tokenGenerationDate");
             return;
         }
-        if (generationDate <= 0)
+        if (generationDate <= 0) {
             return;
+        }
         Date now = new Date();
         long diff = now.getTime() - generationDate;
         if (diff < 12 * 3600 * 1000) {
             // Token generated less than 12 hours ago
             afterLogin(token);
         }
+    }
+    
+    private void handleEventCreated(Object body) {
+        messageHandler(body, true);
+    }
+    
+    private void handleEventUpdated(Object body) {
+        messageHandler(body, false);
+    }
+
+    private void messageHandler(Object body, boolean created) {
+        if (body instanceof String errorMessage) {
+            eventsList1.setErrorText(errorMessage);
+            System.err.println("Non-OK event message response " + errorMessage);
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Event createdEvent = mapper.convertValue(body, Event.class);
+        updateEvent(createdEvent, created);
+        eventsList1.onEventUpdated();
+    }
+        
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(null, message, "Problem deleting event", JOptionPane.ERROR_MESSAGE);
+    }
+        
+    private void handleEventDeleted(Object body) {
+        if (body instanceof String errorMessage) {
+            if (awaitingDeletion) showErrorDialog(errorMessage);
+            System.err.println("Non-OK delete message response " + errorMessage);
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Long eventId = mapper.convertValue(body, Long.class);
+        removeEvent(eventId);
     }
 
     /**
@@ -753,6 +798,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     public class EmailChallenge extends Thread {
+
         public void run() {
             HttpResponse<String> response;
             try {
@@ -805,7 +851,7 @@ public class MainWindow extends javax.swing.JFrame {
         preTimer.setRepeats(false);
         preTimer.start();
     }
-
+    
     private void btnVerifyEmailResendActionPerformed(java.awt.event.ActionEvent evt) {
         // GEN-FIRST:event_btnVerifyEmailResendActionPerformed
         sendVerificationEmail();

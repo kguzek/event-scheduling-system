@@ -26,26 +26,19 @@ public class EventController {
     private EventRepository eventRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private EventService eventService;
 
     @MessageMapping("/create")
     @SendTo("/topic/events/created")
     public StompResponse<?> createEvent(@Payload EventCreationRequest event, Principal principal) {
         System.out.println("Creating event");
-        Optional<User> creator = userRepository.findByUsername(principal.getName());
-        if (creator.isEmpty()) {
-            return new StompResponse<String>(false, "Authenticated as non-existing user; cannot create event");
-        }
-        User user = creator.get();
-        return eventService.createEvent(user, event);
+        return eventService.createEvent(principal, event);
     }
 
     @MessageMapping("/update/{id}")
     @SendTo("/topic/events/updated")
-    public StompResponse<?> updateEvent(@DestinationVariable Long id, @Payload EventCreationRequest event) {
+    public StompResponse<?> updateEvent(@DestinationVariable Long id, @Payload EventCreationRequest event,
+            Principal principal) {
         System.out.println("Updating event with id: " + id + ", event start time: " + event.getStartTime() + " = "
                 + event.getStartTime().getTime());
         Optional<Event> eventData = eventRepository.findById(id);
@@ -53,7 +46,7 @@ public class EventController {
             return new StompResponse<String>(false, "Event not found");
         }
         Event value = eventData.get();
-        return eventService.updateEvent(value, event);
+        return eventService.updateEvent(principal, value, event);
     }
 
     @MessageMapping("/delete/{id}")

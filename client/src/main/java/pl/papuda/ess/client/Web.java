@@ -9,14 +9,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.User;
-import pl.papuda.ess.client.model.body.StompResponse;
 import uk.guzek.sac.AuthType;
 
 public class Web {
@@ -32,6 +33,7 @@ public class Web {
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static StompClient stompClient = null;
+    private static final Map<String, Consumer<Object>> subscriptions = new HashMap<>();
 
     private static String accessToken = null;
 
@@ -49,14 +51,14 @@ public class Web {
     }
 
     public static void initialiseStompClient() {
-        URI stompServerUri = URI.create(API_URL_WS + "/staff/stomp");
+        URI stompServerUri = URI.create(API_URL_WS + "/private/stomp");
         stompClient = new StompClient(stompServerUri, AuthType.jwt(accessToken), API_URL);
         stompClient.connect();
     }
 
     static void setAccessToken(String token, boolean remember) {
         accessToken = token;
-        if (stompClient == null) {
+        if (token != null && stompClient == null) {
             initialiseStompClient();
         }
         if (remember) {
@@ -174,24 +176,12 @@ public class Web {
         });
     }
 
-    public static void subscribeStompResource(String destination, BiConsumer<Object, String> handler) {
-        ObjectMapper objectMapper = new ObjectMapper();
-//        System.out.println("Scheduling subscription to " + destination);
-        runWhenClientReady(() -> {
-            stompClient.subscribe(destination, (Map<String, String> headers, String payload) -> {
-                System.out.println("Parsing body: " + payload);
-                StompResponse response;
-                try {
-                    response = objectMapper.readValue(payload, new TypeReference<StompResponse>() {
-                    });
-                } catch (JsonProcessingException ex) {
-                    System.err.println("Error handling message body: " + payload);
-                    System.err.println(ex);
-                    handler.accept(null, ex.getMessage());
-                    return;
-                }
-                handler.accept(response.getBody(), null);
-            });
-        });
+    public static void subscribeStompResource(String destination, Consumer<Object> handler) {
+        subscriptions.put(destination, handler);
+        System.out.println("Scheduling subscription to " + destination);
+    }
+    
+    public static Set<Map.Entry<String, Consumer<Object>>> getSubscriptions() {
+        return subscriptions.entrySet();
     }
 }

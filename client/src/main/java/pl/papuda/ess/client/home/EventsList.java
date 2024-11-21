@@ -1,6 +1,5 @@
 package pl.papuda.ess.client.home;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;
 import java.time.Instant;
@@ -13,7 +12,6 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pl.papuda.ess.client.MainWindow;
@@ -21,7 +19,6 @@ import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.PartialEvent;
-import pl.papuda.ess.client.model.body.StompResponse;
 
 public class EventsList extends javax.swing.JPanel {
 
@@ -55,21 +52,14 @@ public class EventsList extends javax.swing.JPanel {
      * Creates new form EventsList
      */
     public EventsList() {
-        Web.subscribeStompResource("/topic/events/created", this::messageHandler);
-        Web.subscribeStompResource("/topic/events/updated", this::messageHandler);
         initComponents();
     }
-
-    private void messageHandler(Object body, String errorMessage) {
-        if (body == null || errorMessage != null) {
-            txtEventCreateError.setText(errorMessage);
-            System.err.println("Non-OK event message response " + errorMessage);
-            return;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        Event createdEvent = mapper.convertValue(body, Event.class);
-        MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
-        mainWindow.updateEvent(createdEvent);
+    
+    public void setErrorText(String text) {
+        txtEventCreateError.setText(text);
+    }
+    
+    public void onEventUpdated() {
         if (!awaitingMessage) {
             return;
         }
@@ -179,24 +169,23 @@ public class EventsList extends javax.swing.JPanel {
         }
         var budget = (Number) iptEventBudget.getValue();
         Integer budgetCents = null;
-        System.out.println("Budget value: " + budget);
+//        System.out.println("Budget value: " + budget);
         if (budget != null) {
             if (budget instanceof Long) {
                 System.out.println("Budget is long");
                 budgetCents = budget.intValue() * 100;
             } else if (budget instanceof Double d) {
-                System.out.println("System is double");
+//                System.out.println("System is double");
                 budgetCents = ((Double) (d * 100.0)).intValue();
             }
         }
-        System.out.println("budgetCents: " + budgetCents);
+//        System.out.println("budgetCents: " + budgetCents);
         Location location = Location.builder().street(iptEventStreet.getText()).city(iptEventCity.getText())
                 .code(iptEventCode.getText()).country(iptEventCountry.getText()).additionalInformation(additionalInformation).build();
         PartialEvent event = PartialEvent.builder().title(iptEventTitle.getText())
                 .organiserName("John Doe").startTime(formatDateTime(eventStart)).endTime(formatDateTime(eventEnd))
                 .location(location).frequency(frequency).feedbackMessage(feedbackMessage)
                 .reminderTime(formatDateTime(eventReminder)).budgetCents(budgetCents).build();
-        System.out.println("Start: " + event.getStartTime());
         return event;
     }
 

@@ -86,7 +86,7 @@ public class ApplicationConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/v1/staff/stomp").setAllowedOrigins("*");
+        registry.addEndpoint("/api/v1/private/stomp").setAllowedOrigins("*");
     }
 
     @Override

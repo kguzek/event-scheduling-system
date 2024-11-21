@@ -1,8 +1,10 @@
 package pl.papuda.ess.server.api.service;
 
 import java.io.InvalidObjectException;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,12 +18,16 @@ import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.EventCreationRequest;
 import pl.papuda.ess.server.api.model.body.websocket.StompResponse;
 import pl.papuda.ess.server.api.repo.EventRepository;
+import pl.papuda.ess.server.api.repo.UserRepository;
 
 @Service
 public class EventService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     private Event mergeEvents(Event oldEvent, EventCreationRequest newEvent) throws InvalidObjectException {
@@ -52,7 +58,26 @@ public class EventService {
         return oldEvent;
     }
 
-    public StompResponse<?> createEvent(User creator, EventCreationRequest event) {
+    private User getUserFromPrincipal(Principal principal) {
+        Optional<User> user = userRepository.findByUsername(principal.getName());
+        if (user.isEmpty()) {
+            return null;
+        }
+        return user.get();
+    }
+
+    private StompResponse<String> ensureUserIsStaff(User user) {
+        if (user != null && user.getRole().equals(pl.papuda.ess.server.api.model.Role.STAFF)) {
+            return null;
+        }
+        return new StompResponse<String>(false, "You are not authorised to perform this action");
+    }
+
+    public StompResponse<?> createEvent(Principal principal, EventCreationRequest event) {
+        User creator = getUserFromPrincipal(principal);
+        StompResponse<String> staffResponse = ensureUserIsStaff(creator);
+        if (staffResponse != null)
+            return staffResponse;
         Event eventObj;
         try {
             eventObj = mergeEvents(new Event(), event);
@@ -68,7 +93,10 @@ public class EventService {
     }
 
     @Transactional
-    public StompResponse<?> updateEvent(Event previousEvent, EventCreationRequest newEvent) {
+    public StompResponse<?> updateEvent(Principal principal, Event previousEvent, EventCreationRequest newEvent) {
+        StompResponse<String> staffResponse = ensureUserIsStaff(getUserFromPrincipal(principal));
+        if (staffResponse != null)
+            return staffResponse;
         Event eventObj;
         try {
             eventObj = mergeEvents(previousEvent, newEvent);
