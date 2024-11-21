@@ -27,7 +27,7 @@ jobs:
 
       # Needed for Spring Boot configuration, which requires database connection details at build time
       - name: Save the ENV_PROPERTIES secret to /server/application.properties
-        run: echo "${{ secrets.ENV_PROPERTIES }}" > application.properties; cat application.properties
+        run: echo "${{ secrets.ENV_PROPERTIES }}" > application.properties; echo "application.properties:"; cat application.properties
 
       - name: Build with Maven
         run: mvn clean install

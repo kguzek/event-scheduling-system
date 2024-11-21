@@ -2,9 +2,9 @@
 spring.datasource.username=
 spring.datasource.password=
 spring.datasource.url=
-apiUrl=
-jwtSecret=
-email.address=
-email.password=
-email.smtp.host=
-email.smtp.port=
+API_URL=
+JWT_SECRET=
+EMAIL_ADDRESS=
+EMAIL_PASSWORD=
+EMAIL_SMTP_HOST=
+EMAIL_SMTP_PORT=
