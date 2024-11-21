@@ -11,11 +11,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 import pl.papuda.ess.server.api.model.Event;
-import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.EventCreationRequest;
 import pl.papuda.ess.server.api.model.body.websocket.StompResponse;
 import pl.papuda.ess.server.api.repo.EventRepository;
-import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.api.service.EventService;
 
 @Controller

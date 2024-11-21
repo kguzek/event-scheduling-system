@@ -36,3 +36,4 @@ build/
 .env
 env.bat
 env.properties
+application.properties

@@ -31,16 +31,16 @@ public class ApplicationConfig implements WebSocketMessageBrokerConfigurer {
 
     private final UserRepository userRepository;
 
-    @Value("${app.email.address}")
+    @Value("${email.address}")
     String emailAddress;
 
-    @Value("${app.email.password}")
+    @Value("${email.password}")
     String emailPassword;
 
-    @Value("${app.email.smtp.host}")
+    @Value("${email.smtp.host}")
     String emailHost;
 
-    @Value("${app.email.smtp.port}")
+    @Value("${email.smtp.port}")
     int emailPort;
 
     @Bean

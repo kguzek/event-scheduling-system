@@ -20,7 +20,7 @@ import pl.papuda.ess.server.api.model.User;
 @Service
 public class JwtService {
 
-    @Value("${app.jwt-secret}")
+    @Value("${jwtSecret}")
     private String SECRET_KEY;
 
     private SecretKey getSigningKey() {

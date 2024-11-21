@@ -1,0 +1,10 @@
+# Copy this file as  `application.properties` and fill in the values
+spring.datasource.username=
+spring.datasource.password=
+spring.datasource.url=
+apiUrl=
+jwtSecret=
+email.address=
+email.password=
+email.smtp.host=
+email.smtp.port=

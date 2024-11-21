@@ -41,7 +41,7 @@ public class AuthenticationService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${app.api-url}")
+    @Value("${apiUrl}")
     private String API_URL;
 
     @Value("classpath:/templates/verifyEmail.html")

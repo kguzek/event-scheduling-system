@@ -2,12 +2,8 @@ spring:
   application:
     name: ess-server
   config:
-    import: "file:env.properties"
-  datasource:
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    url: ${DB_URL}
-    driver-class-name: org.postgresql.Driver
+    additional-location: env.properties
+  datasource.driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,13 +13,3 @@ spring:
         format-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-app:
-  api-url: ${API_URL}
-  jwt-secret: ${JWT_SECRET}
-  email:
-    address: ${EMAIL_ADDRESS}
-    password: ${EMAIL_PASSWORD}
-    smtp:
-      host: ${EMAIL_SMTP_HOST}
-      port: ${EMAIL_SMTP_PORT}
