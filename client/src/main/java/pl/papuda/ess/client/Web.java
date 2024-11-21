@@ -25,7 +25,7 @@ public class Web {
     private static final boolean PRODUCTION_ENVIRONMENT = true;
 
     private static final String API_BASE = (PRODUCTION_ENVIRONMENT
-            ? "s://event-scheduling-system.onrender.com"
+            ? "s://event-scheduling-system-aqc8hfexf7epekfq.polandcentral-01.azurewebsites.net"
             : "://localhost:8080") + "/api/v1";
     private static final String API_URL = "http" + API_BASE;
 
@@ -118,7 +118,8 @@ public class Web {
         return sendPostRequest(endpoint, "{}");
     }
 
-    public static HttpResponse<String> sendPostRequest(String endpoint, String json) throws IOException, InterruptedException {
+    public static HttpResponse<String> sendPostRequest(String endpoint, String json)
+            throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint)
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .setHeader("Content-Type", "application/json")
@@ -126,7 +127,8 @@ public class Web {
         return sendRequest(request);
     }
 
-    public static HttpResponse<String> sendPutRequest(String endpoint, String json) throws IOException, InterruptedException {
+    public static HttpResponse<String> sendPutRequest(String endpoint, String json)
+            throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint)
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .setHeader("Content-Type", "application/json")
@@ -180,7 +182,7 @@ public class Web {
         subscriptions.put(destination, handler);
         System.out.println("Scheduling subscription to " + destination);
     }
-    
+
     public static Set<Map.Entry<String, Consumer<Object>>> getSubscriptions() {
         return subscriptions.entrySet();
     }
