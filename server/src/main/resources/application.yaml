@@ -3,4 +3,6 @@ spring:
   jpa:
     hibernate.ddl-auto: update
     show-sql: false
-    properties.hibernate.format-sql: true
+    properties.hibernate:
+      format-sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
