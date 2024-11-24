@@ -1,11 +1,8 @@
 package pl.papuda.ess.client.home;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
@@ -14,17 +11,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pl.papuda.ess.client.MainWindow;
 import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.Time;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.PartialEvent;
 
 public class EventsList extends javax.swing.JPanel {
-
-    private final ZoneOffset zoneOffset = OffsetDateTime.now().getOffset();
-
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy'T'HH:mm");
 
     private final String[] eventFrequencies = new String[]{
         null,
@@ -86,7 +79,7 @@ public class EventsList extends javax.swing.JPanel {
         if (dateTime == null) {
             return null;
         }
-        return dateTime.atOffset(zoneOffset).toString();
+        return dateTime.atOffset(Time.zoneOffset).toString();
     }
 
     int getDifferenceMinutes(String date1, String date2) {
@@ -146,9 +139,9 @@ public class EventsList extends javax.swing.JPanel {
         String eventDate = iptEventDate.getText();
         LocalDateTime eventStart, eventEnd = null;
         try {
-            eventStart = LocalDateTime.parse(eventDate + "T" + iptEventStartTime.getText(), dateTimeFormat);
+            eventStart = LocalDateTime.parse(eventDate + "T" + iptEventStartTime.getText(), Time.dateTimeFormat);
             if (cbxEventEndTime.isSelected()) {
-                eventEnd = LocalDateTime.parse(eventDate + "T" + iptEventEndTime.getText(), dateTimeFormat);
+                eventEnd = LocalDateTime.parse(eventDate + "T" + iptEventEndTime.getText(), Time.dateTimeFormat);
             }
         } catch (DateTimeParseException ex) {
             throw new Exception("Invalid event start or end date");
@@ -206,7 +199,7 @@ public class EventsList extends javax.swing.JPanel {
                 sendEventRequest();
             } catch (Exception ex) {
                 txtEventCreateError.setText(ex.getMessage());
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EventsList.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 btnCreateEvent.setEnabled(true);
             }
