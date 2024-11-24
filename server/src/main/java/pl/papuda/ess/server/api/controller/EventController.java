@@ -41,7 +41,7 @@ public class EventController {
                 + event.getStartTime().getTime());
         Optional<Event> eventData = eventRepository.findById(id);
         if (eventData.isEmpty()) {
-            return new StompResponse<String>(false, "Event not found");
+            return new StompResponse<>(false, "Event not found");
         }
         Event value = eventData.get();
         return eventService.updateEvent(principal, value, event);
@@ -55,10 +55,10 @@ public class EventController {
         if (eventData.isPresent()) {
             Event event = eventData.get();
             if (!event.getCreator().getUsername().equals(principal.getName())) {
-                return new StompResponse<String>(false, "You cannot delete an event that was not created by you");
+                return new StompResponse<>(false, "You cannot delete an event that was not created by you");
             }
             eventService.deleteEvent(event);
         }
-        return new StompResponse<Long>(true, id);
+        return new StompResponse<>(true, id);
     }
 }

@@ -275,8 +275,9 @@ public class MainWindow extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 51, 51));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setForeground(new java.awt.Color(51, 255, 0));
-        setMinimumSize(new java.awt.Dimension(950, 670));
-        setSize(new java.awt.Dimension(800, 500));
+        setMinimumSize(new java.awt.Dimension(1100, 750));
+        setPreferredSize(new java.awt.Dimension(900, 600));
+        setSize(new java.awt.Dimension(900, 600));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
         pnlMain.setPreferredSize(new java.awt.Dimension(988, 400));
@@ -287,7 +288,8 @@ public class MainWindow extends javax.swing.JFrame {
         pnlLogInContainer.setLayout(new java.awt.GridBagLayout());
 
         pnlLogIn.setBackground(new java.awt.Color(255, 255, 255));
-        pnlLogIn.setPreferredSize(new java.awt.Dimension(300, 450));
+        pnlLogIn.setMinimumSize(new java.awt.Dimension(400, 500));
+        pnlLogIn.setPreferredSize(new java.awt.Dimension(400, 500));
 
         lblLogInHeader.setFont(new java.awt.Font("Cantarell", 0, 24)); // NOI18N
         lblLogInHeader.setForeground(new java.awt.Color(51, 51, 51));
@@ -399,8 +401,9 @@ public class MainWindow extends javax.swing.JFrame {
         pnlSignUpContainer.setLayout(new java.awt.GridBagLayout());
 
         pnlSignUp.setBackground(new java.awt.Color(255, 255, 255));
+        pnlSignUp.setMinimumSize(new java.awt.Dimension(400, 500));
         pnlSignUp.setName(""); // NOI18N
-        pnlSignUp.setPreferredSize(new java.awt.Dimension(300, 450));
+        pnlSignUp.setPreferredSize(new java.awt.Dimension(400, 500));
 
         lblSignUpHeader.setFont(new java.awt.Font("Cantarell", 0, 24)); // NOI18N
         lblSignUpHeader.setForeground(new java.awt.Color(51, 51, 51));
@@ -494,7 +497,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(btnSignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblSignUpError)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addComponent(lblPromptLogIn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnShowLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -510,7 +513,9 @@ public class MainWindow extends javax.swing.JFrame {
         pnlForgotPasswordContainer.setLayout(new java.awt.GridBagLayout());
 
         pnlForgotPassword.setBackground(new java.awt.Color(255, 255, 255));
-        pnlForgotPassword.setPreferredSize(new java.awt.Dimension(300, 450));
+        pnlForgotPassword.setMinimumSize(new java.awt.Dimension(400, 500));
+        pnlForgotPassword.setName(""); // NOI18N
+        pnlForgotPassword.setPreferredSize(new java.awt.Dimension(400, 500));
 
         lblForgotPassword.setFont(new java.awt.Font("Cantarell", 0, 24)); // NOI18N
         lblForgotPassword.setForeground(new java.awt.Color(51, 51, 51));
@@ -584,7 +589,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(lblForgotPasswordError, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnForgotPasswordNext, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
                 .addComponent(lblPromptLogIn2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnShowLogIn2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -599,8 +604,9 @@ public class MainWindow extends javax.swing.JFrame {
         pnlVerifyEmailContainer.setLayout(new java.awt.GridBagLayout());
 
         pnlVerifyEmail.setBackground(new java.awt.Color(255, 255, 255));
+        pnlVerifyEmail.setMinimumSize(new java.awt.Dimension(400, 500));
         pnlVerifyEmail.setName(""); // NOI18N
-        pnlVerifyEmail.setPreferredSize(new java.awt.Dimension(300, 450));
+        pnlVerifyEmail.setPreferredSize(new java.awt.Dimension(400, 500));
 
         lblVerifyEmailHeader.setFont(new java.awt.Font("Cantarell", 0, 24)); // NOI18N
         lblVerifyEmailHeader.setForeground(new java.awt.Color(51, 51, 51));
@@ -685,7 +691,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnVerifyEmailResend, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblPromptLogIn1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -715,7 +721,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlHomeLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(eventsList1, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE))
+                        .addComponent(eventsList1, javax.swing.GroupLayout.PREFERRED_SIZE, 459, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnLogOut)
