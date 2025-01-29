@@ -10,11 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import pl.papuda.ess.server.api.model.Event;
-import pl.papuda.ess.server.api.model.EventStatus;
-import pl.papuda.ess.server.api.model.Frequency;
-import pl.papuda.ess.server.api.model.Location;
-import pl.papuda.ess.server.api.model.User;
+import pl.papuda.ess.server.api.model.*;
 import pl.papuda.ess.server.api.model.body.EventCreationRequest;
 import pl.papuda.ess.server.api.model.body.websocket.StompResponse;
 import pl.papuda.ess.server.api.repo.EventRepository;
@@ -30,7 +26,7 @@ public class EventService {
     private UserRepository userRepository;
 
     @Transactional
-    private Event mergeEvents(Event oldEvent, EventCreationRequest newEvent) throws InvalidObjectException {
+    protected Event mergeEvents(Event oldEvent, EventCreationRequest newEvent) throws InvalidObjectException {
         String title = newEvent.getTitle();
         String organiser = newEvent.getOrganiserName();
         Date startTime = newEvent.getStartTime();
@@ -60,17 +56,21 @@ public class EventService {
 
     private User getUserFromPrincipal(Principal principal) {
         Optional<User> user = userRepository.findByUsername(principal.getName());
-        if (user.isEmpty()) {
-            return null;
-        }
-        return user.get();
+        return user.orElse(null);
     }
 
     private StompResponse<String> ensureUserIsStaff(User user) {
-        if (user != null && user.getRole().equals(pl.papuda.ess.server.api.model.Role.STAFF)) {
-            return null;
+        String errorMessage = null;
+        if (user == null) {
+            errorMessage = "You must be logged in to perform that action.";
+        } else {
+            Role role = user.getRole();
+            if (!role.equals(Role.STAFF)) {
+                errorMessage = "Only staff members may perform that action. You are: " + role;
+            }
         }
-        return new StompResponse<String>(false, "You are not authorised to perform this action");
+        if (errorMessage == null) return null;
+        return new StompResponse<>(false, errorMessage);
     }
 
     public StompResponse<?> createEvent(Principal principal, EventCreationRequest event) {
