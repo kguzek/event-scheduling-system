@@ -220,6 +220,8 @@ public class EventsList extends javax.swing.JPanel {
         pnlEventsContainer = new javax.swing.JPanel();
         scpEventsList = new javax.swing.JScrollPane();
         pnlEventsList = new javax.swing.JPanel();
+        pnlEventsLoading = new javax.swing.JPanel();
+        lblEventsLoading = new javax.swing.JLabel();
         pnlEventEditorContainer = new javax.swing.JPanel();
         pnlCreateEvent = new javax.swing.JPanel();
         lblEventTitle = new javax.swing.JLabel();
@@ -272,6 +274,32 @@ public class EventsList extends javax.swing.JPanel {
 
         pnlEventsList.setBackground(new java.awt.Color(204, 204, 204));
         pnlEventsList.setLayout(new javax.swing.BoxLayout(pnlEventsList, javax.swing.BoxLayout.Y_AXIS));
+
+        pnlEventsLoading.setBackground(pnlEventsList.getBackground());
+
+        lblEventsLoading.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblEventsLoading.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblEventsLoading.setText("Loading...");
+
+        javax.swing.GroupLayout pnlEventsLoadingLayout = new javax.swing.GroupLayout(pnlEventsLoading);
+        pnlEventsLoading.setLayout(pnlEventsLoadingLayout);
+        pnlEventsLoadingLayout.setHorizontalGroup(
+            pnlEventsLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlEventsLoadingLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblEventsLoading, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlEventsLoadingLayout.setVerticalGroup(
+            pnlEventsLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlEventsLoadingLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblEventsLoading, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(539, Short.MAX_VALUE))
+        );
+
+        pnlEventsList.add(pnlEventsLoading);
+
         scpEventsList.setViewportView(pnlEventsList);
 
         pnlEventsContainer.add(scpEventsList, "eventsList");
@@ -487,7 +515,7 @@ public class EventsList extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(iptEventBudget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(btnCreateEvent)
                 .addContainerGap())
@@ -535,7 +563,7 @@ public class EventsList extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnToggleEventView)
                     .addComponent(btnSendMessage))
-                .addContainerGap(752, Short.MAX_VALUE))
+                .addContainerGap(625, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addGap(39, 39, 39)
@@ -612,11 +640,13 @@ public class EventsList extends javax.swing.JPanel {
     private javax.swing.JLabel lblEventStartTime;
     private javax.swing.JLabel lblEventStreet;
     private javax.swing.JLabel lblEventTitle;
+    private javax.swing.JLabel lblEventsLoading;
     private javax.swing.JPanel pnlCreateEvent;
     private javax.swing.JPanel pnlEventAddress;
     private javax.swing.JPanel pnlEventEditorContainer;
     private javax.swing.JPanel pnlEventsContainer;
     private javax.swing.JPanel pnlEventsList;
+    private javax.swing.JPanel pnlEventsLoading;
     private javax.swing.JScrollPane scpEventsList;
     private javax.swing.JTextArea txtEventCreateError;
     // End of variables declaration//GEN-END:variables

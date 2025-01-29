@@ -721,7 +721,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlHomeLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(eventsList1, javax.swing.GroupLayout.PREFERRED_SIZE, 459, Short.MAX_VALUE))
+                        .addComponent(eventsList1, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnLogOut)
