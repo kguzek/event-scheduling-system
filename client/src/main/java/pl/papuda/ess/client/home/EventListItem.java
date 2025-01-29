@@ -98,16 +98,18 @@ public class EventListItem extends javax.swing.JPanel {
         if (endTime != null) {
             timeText += " - " + formatTime(endTime);
         }
+        updateUserPermissions(Web.user.getRole().equals("STAFF"));
         lblEventTime.setText(timeText);
         lblEventAddress.setText(formatLocation(event.getLocation()));
-        if (Web.user == null || !"STAFF".equals(Web.user.getRole())) {
-            btnEventOptions.setVisible(false);
-        }
         cbxToggleParticipation.setSelected(false);
         for (User participant : event.getAttendees()) {
             if (participant.getId().equals(Web.user.getId()))
             cbxToggleParticipation.setSelected(true);
         }
+    }
+    
+    public void updateUserPermissions(boolean userIsStaff) {
+        btnEventOptions.setVisible(userIsStaff);
     }
 
     /**

@@ -1,7 +1,7 @@
 package pl.papuda.ess.client.home;
 
 import java.awt.CardLayout;
-import java.awt.LayoutManager;
+import java.awt.Component;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -79,7 +79,13 @@ public class EventsList extends javax.swing.JPanel {
     public void updateUserPermissions(String role) {
         boolean isStaff = role.equals("STAFF");
         boolean isAdmin = role.equals("ADMIN");
-        btnToggleEventView.setEnabled(isStaff || isAdmin);
+        boolean isStaffOrAdmin = isStaff || isAdmin;
+        btnToggleEventView.setEnabled(isStaffOrAdmin);
+        for (Component child : pnlEventsList.getComponents()) {
+            if (!(child instanceof EventListItem)) continue;
+            EventListItem listItem = (EventListItem) child;
+            listItem.updateUserPermissions(isStaff);
+        }
     }
 
     private String formatDateTime(LocalDateTime dateTime) {

@@ -32,25 +32,25 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="iptUserEmail" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="lblUsername" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lblUsernameEmailSeparator" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lblUserUuid" pref="367" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
                       <Component id="rdbUserRoleUser" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rdbUserRoleStaff" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rdbUserRoleAdmin" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="189" max="32767" attributes="0"/>
                       <Component id="btnUpdateUser" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="lblUserEmail" min="-2" pref="95" max="-2" attributes="0"/>
                           <Component id="lblUserRole" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="lblUserUuid" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lblUsernameEmailSeparator" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lblUsername" min="-2" pref="57" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
@@ -64,9 +64,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="lblUsername" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="lblUsernameEmailSeparator" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="lblUserUuid" alignment="0" min="-2" pref="16" max="-2" attributes="0"/>
+                  <Component id="lblUserUuid" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                  <Component id="lblUsername" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblUserEmail" min="-2" max="-2" attributes="0"/>
@@ -107,7 +107,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="lblUserUuid">
       <Properties>
-        <Property name="text" type="java.lang.String" value="984b876f-3e71-4c0a-b8f3-9a71e1ea7121"/>
+        <Property name="text" type="java.lang.String" value="7"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lblUserRole">
