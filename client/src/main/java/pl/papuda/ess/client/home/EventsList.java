@@ -1,6 +1,7 @@
 package pl.papuda.ess.client.home;
 
 import java.awt.CardLayout;
+import java.awt.LayoutManager;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -73,6 +74,12 @@ public class EventsList extends javax.swing.JPanel {
         }
         repaint();
         revalidate();
+    }
+    
+    public void updateUserPermissions(String role) {
+        boolean isStaff = role.equals("STAFF");
+        boolean isAdmin = role.equals("ADMIN");
+        btnToggleEventView.setEnabled(isStaff || isAdmin);
     }
 
     private String formatDateTime(LocalDateTime dateTime) {
@@ -215,8 +222,8 @@ public class EventsList extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jToolBar1 = new javax.swing.JToolBar();
         btnToggleEventView = new javax.swing.JButton();
-        btnSendMessage = new javax.swing.JButton();
         pnlEventsContainer = new javax.swing.JPanel();
         scpEventsList = new javax.swing.JScrollPane();
         pnlEventsList = new javax.swing.JPanel();
@@ -256,14 +263,15 @@ public class EventsList extends javax.swing.JPanel {
         lblEventBudget = new javax.swing.JLabel();
         iptEventBudget = new javax.swing.JFormattedTextField();
 
+        jToolBar1.setRollover(true);
+
         btnToggleEventView.setText("Create event");
+        btnToggleEventView.setEnabled(false);
         btnToggleEventView.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnToggleEventViewActionPerformed(evt);
             }
         });
-
-        btnSendMessage.setText("Send message");
 
         pnlEventsContainer.setBackground(new java.awt.Color(204, 204, 204));
         pnlEventsContainer.setLayout(new java.awt.CardLayout());
@@ -277,7 +285,7 @@ public class EventsList extends javax.swing.JPanel {
 
         pnlEventsLoading.setBackground(pnlEventsList.getBackground());
 
-        lblEventsLoading.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblEventsLoading.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblEventsLoading.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEventsLoading.setText("Loading...");
 
@@ -294,8 +302,8 @@ public class EventsList extends javax.swing.JPanel {
             pnlEventsLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlEventsLoadingLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblEventsLoading, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(539, Short.MAX_VALUE))
+                .addComponent(lblEventsLoading, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(529, Short.MAX_VALUE))
         );
 
         pnlEventsList.add(pnlEventsLoading);
@@ -547,9 +555,7 @@ public class EventsList extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnToggleEventView)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSendMessage)
-                .addContainerGap(187, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
@@ -560,9 +566,7 @@ public class EventsList extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnToggleEventView)
-                    .addComponent(btnSendMessage))
+                .addComponent(btnToggleEventView)
                 .addContainerGap(625, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -576,20 +580,6 @@ public class EventsList extends javax.swing.JPanel {
         CardLayout layout = (CardLayout) pnlEventsContainer.getLayout();
         layout.show(pnlEventsContainer, cardName);
     }
-
-    private void btnToggleEventViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToggleEventViewActionPerformed
-        txtEventCreateError.setText("");
-        eventId = null;
-        btnCreateEvent.setText("CREATE");
-        if (btnToggleEventView.getText().equals("Show events list")) {
-            showLayoutCard("eventsList");
-            btnToggleEventView.setText("Create event");
-        } else {
-            showLayoutCard("eventEditor");
-            btnToggleEventView.setText("Show events list");
-        }
-
-    }//GEN-LAST:event_btnToggleEventViewActionPerformed
 
     private void iptEventEndTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iptEventEndTimeActionPerformed
         // TODO add your handling code here:
@@ -607,10 +597,22 @@ public class EventsList extends javax.swing.JPanel {
         new CreateEvent().start();
     }//GEN-LAST:event_btnCreateEventActionPerformed
 
+    private void btnToggleEventViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToggleEventViewActionPerformed
+        txtEventCreateError.setText("");
+        eventId = null;
+        btnCreateEvent.setText("CREATE");
+        if (btnToggleEventView.getText().equals("Show events list")) {
+            showLayoutCard("eventsList");
+            btnToggleEventView.setText("Create event");
+        } else {
+            showLayoutCard("eventEditor");
+            btnToggleEventView.setText("Show events list");
+        }
+    }//GEN-LAST:event_btnToggleEventViewActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCreateEvent;
-    private javax.swing.JButton btnSendMessage;
     private javax.swing.JButton btnToggleEventView;
     private javax.swing.JComboBox<String> cbbEventFrequency;
     private javax.swing.JComboBox<String> cbbEventReminderTime;
@@ -627,6 +629,7 @@ public class EventsList extends javax.swing.JPanel {
     private javax.swing.JTextField iptEventStreet;
     private javax.swing.JTextField iptEventTitle;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lblEventBudget;
     private javax.swing.JLabel lblEventCity;
     private javax.swing.JLabel lblEventCode;

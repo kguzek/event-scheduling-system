@@ -68,7 +68,7 @@ public class Web {
             prefs.put("tokenGenerationDate", generationDate);
         }
     }
-
+    
     public static <T> T readResponseBody(HttpResponse<String> response, TypeReference<T> cls) {
         ObjectMapper objectMapper = new ObjectMapper();
         String body = response.body();
@@ -106,7 +106,13 @@ public class Web {
     }
 
     private static HttpResponse<String> sendRequest(HttpRequest request) throws IOException, InterruptedException {
-        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        int status = response.statusCode();
+        if (status == 401) {
+            System.err.println("401 response fetching " + request.uri().toString());
+            // unsetAccessToken();
+        }
+        return response;
     }
 
     public static HttpResponse<String> sendGetRequest(String endpoint) throws IOException, InterruptedException {

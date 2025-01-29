@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import pl.papuda.ess.client.error.LoginException;
+import pl.papuda.ess.client.home.UsersList;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.body.LoginResponse;
 import pl.papuda.ess.client.model.Event;
@@ -121,7 +122,19 @@ public class MainWindow extends javax.swing.JFrame {
         }
         Web.user = Web.readResponseBody(response, new TypeReference<User>() {
         });
-        System.out.println("User permissions: " + Web.user);
+        String role = Web.user.getRole();
+        if (role.equals("ADMIN")) {
+            addUsersList();
+        } else {
+            System.out.println("User permissions: " + Web.user);
+        }
+        lblUsernameInfo.setText(Web.user.getUsername() + " (" + role + ")");
+        eventsList1.updateUserPermissions(role);
+    }
+    
+    private void addUsersList() {
+        UsersList usersList = new UsersList();
+        tabViewMenu.addTab("Users", usersList);
     }
 
     private void afterRegister(String token) {
@@ -264,8 +277,11 @@ public class MainWindow extends javax.swing.JFrame {
         lblVerifyEmailError = new javax.swing.JTextArea();
         pnlHome = new javax.swing.JPanel();
         calendarCustom1 = new pl.papuda.ess.client.home.calendar.CalendarCustom();
-        eventsList1 = new pl.papuda.ess.client.home.EventsList();
         btnLogOut = new javax.swing.JButton();
+        tabViewMenu = new javax.swing.JTabbedPane();
+        eventsList1 = new pl.papuda.ess.client.home.EventsList();
+        lblUsernameInfo = new javax.swing.JLabel();
+        lblLoggedInAs = new javax.swing.JLabel();
         pnlBudgetContainer = new javax.swing.JPanel();
         budgetTracker1 = new pl.papuda.ess.client.budgetTracker.BudgetTracker();
         btnBudgetBack = new javax.swing.JButton();
@@ -276,7 +292,6 @@ public class MainWindow extends javax.swing.JFrame {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setForeground(new java.awt.Color(51, 255, 0));
         setMinimumSize(new java.awt.Dimension(1100, 750));
-        setPreferredSize(new java.awt.Dimension(900, 600));
         setSize(new java.awt.Dimension(900, 600));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
@@ -712,20 +727,31 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        tabViewMenu.addTab("Events", eventsList1);
+
+        lblUsernameInfo.setForeground(new java.awt.Color(204, 204, 204));
+        lblUsernameInfo.setText("loading...");
+
+        lblLoggedInAs.setForeground(new java.awt.Color(204, 204, 204));
+        lblLoggedInAs.setText("Logged in as:");
+
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
         pnlHome.setLayout(pnlHomeLayout);
         pnlHomeLayout.setHorizontalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlHomeLayout.createSequentialGroup()
                 .addComponent(calendarCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlHomeLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lblLoggedInAs)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(eventsList1, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnLogOut)
-                        .addContainerGap())))
+                        .addComponent(lblUsernameInfo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLogOut))
+                    .addComponent(tabViewMenu, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE))
+                .addContainerGap())
         );
         pnlHomeLayout.setVerticalGroup(
             pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -734,9 +760,12 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(calendarCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
                     .addGroup(pnlHomeLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnLogOut)
+                        .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnLogOut)
+                            .addComponent(lblUsernameInfo)
+                            .addComponent(lblLoggedInAs))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(eventsList1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(tabViewMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(0, 0, 0))
         );
 
@@ -770,6 +799,9 @@ public class MainWindow extends javax.swing.JFrame {
         Web.unsetAccessToken();
         Web.prefs.remove("accessToken");
         Web.prefs.remove("tokenGenerationDate");
+        if (tabViewMenu.getTabCount() > 1) {
+            tabViewMenu.remove(1);
+        }
     }// GEN-LAST:event_btnLogOutActionPerformed
 
     private void btnVerifyEmailGoBackActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnVerifyEmailGoBackActionPerformed
@@ -1076,6 +1108,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblLogInHeader;
     private javax.swing.JLabel lblLogInPassword;
     private javax.swing.JLabel lblLogInUsername;
+    private javax.swing.JLabel lblLoggedInAs;
     private javax.swing.JLabel lblPromptLogIn;
     private javax.swing.JLabel lblPromptLogIn1;
     private javax.swing.JLabel lblPromptLogIn2;
@@ -1087,6 +1120,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblSignUpPassword;
     private javax.swing.JLabel lblSignUpPassword2;
     private javax.swing.JLabel lblSignUpUsername;
+    private javax.swing.JLabel lblUsernameInfo;
     private javax.swing.JLabel lblVerifyEmailDescription;
     private javax.swing.JLabel lblVerifyEmailDescription2;
     private javax.swing.JTextArea lblVerifyEmailError;
@@ -1103,5 +1137,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel pnlSignUpContainer;
     private javax.swing.JPanel pnlVerifyEmail;
     private javax.swing.JPanel pnlVerifyEmailContainer;
+    private javax.swing.JTabbedPane tabViewMenu;
     // End of variables declaration//GEN-END:variables
 }

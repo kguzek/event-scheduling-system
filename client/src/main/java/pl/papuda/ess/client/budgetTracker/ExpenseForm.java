@@ -38,6 +38,7 @@ public class ExpenseForm extends javax.swing.JPanel {
         iptExpenseTime = new javax.swing.JFormattedTextField();
         lblExpenseTime = new javax.swing.JLabel();
         cbxExpenseNow = new javax.swing.JCheckBox();
+        btnAddExpense = new javax.swing.JButton();
 
         jLabel1.setText("Add a new expense");
 
@@ -63,6 +64,8 @@ public class ExpenseForm extends javax.swing.JPanel {
             }
         });
 
+        btnAddExpense.setText("Add expense");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -70,6 +73,7 @@ public class ExpenseForm extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAddExpense, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(iptExpenseTitle)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(iptExpenseCost)
@@ -109,6 +113,8 @@ public class ExpenseForm extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(iptExpenseDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(iptExpenseTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAddExpense)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -140,6 +146,7 @@ public class ExpenseForm extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddExpense;
     private javax.swing.JCheckBox cbxExpenseNow;
     private javax.swing.JFormattedTextField iptExpenseCost;
     private javax.swing.JFormattedTextField iptExpenseDate;
