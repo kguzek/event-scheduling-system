@@ -1,4 +1,4 @@
-package pl.papuda.ess.server.api.controller;
+package pl.papuda.ess.server.api.controller.staff;
 
 import java.security.Principal;
 import java.util.List;

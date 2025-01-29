@@ -1,4 +1,4 @@
-package pl.papuda.ess.server.api.controller;
+package pl.papuda.ess.server.api.controller.admin;
 
 import java.util.ArrayList;
 import java.util.List;

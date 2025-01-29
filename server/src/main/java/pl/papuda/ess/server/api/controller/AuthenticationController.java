@@ -42,11 +42,11 @@ public class AuthenticationController {
                             "Password must be minimum 8 characters long, and contain a capital letter and a special character");
         }
         String username = request.getUsername();
-        if (username == null || username.length() == 0) {
+        if (username == null || username.isEmpty()) {
             return ErrorResponse.generate("Username cannot be empty");
         }
         String email = request.getEmail();
-        if (email == null || email.length() == 0) {
+        if (email == null || email.isEmpty()) {
             return ErrorResponse.generate("Email cannot be empty");
         }
         if (userRepository.findByEmail(email).isPresent()) {
