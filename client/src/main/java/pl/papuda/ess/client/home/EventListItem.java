@@ -10,13 +10,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import javax.swing.JOptionPane;
-import pl.papuda.ess.client.MainWindow;
+import pl.papuda.ess.client.AppPanel;
 import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.User;
 
-public class EventListItem extends javax.swing.JPanel {
+public class EventListItem extends AppPanel {
 
     private Event event;
     private final ZoneId zone = ZoneId.systemDefault();
@@ -24,11 +24,12 @@ public class EventListItem extends javax.swing.JPanel {
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
 
     private final EditEvent editEvent;
-    
+
     public interface EditEvent {
+
         public void call(Event event);
     }
-    
+
     public EventListItem(Event event, EditEvent editEvent) {
         initComponents();
         this.event = event;
@@ -37,10 +38,12 @@ public class EventListItem extends javax.swing.JPanel {
     }
 
     public static String ordinal(int i) {
-        String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+        String[] suffixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
         return switch (i % 100) {
-            case 11, 12, 13 -> i + "th";
-            default -> i + suffixes[i % 10];
+            case 11, 12, 13 ->
+                i + "th";
+            default ->
+                i + suffixes[i % 10];
         };
     }
 
@@ -64,7 +67,7 @@ public class EventListItem extends javax.swing.JPanel {
                 return "One-time event";
         }
     }
-    
+
     private void updateParticipantsText() {
         String label = String.format("Participating (%s)", event.getAttendees().length);
         cbxToggleParticipation.setText(label);
@@ -103,11 +106,12 @@ public class EventListItem extends javax.swing.JPanel {
         lblEventAddress.setText(formatLocation(event.getLocation()));
         cbxToggleParticipation.setSelected(false);
         for (User participant : event.getAttendees()) {
-            if (participant.getId().equals(Web.user.getId()))
-            cbxToggleParticipation.setSelected(true);
+            if (participant.getId().equals(Web.user.getId())) {
+                cbxToggleParticipation.setSelected(true);
+            }
         }
     }
-    
+
     public void updateUserPermissions(boolean userIsStaff) {
         btnEventOptions.setVisible(userIsStaff);
     }
@@ -262,22 +266,21 @@ public class EventListItem extends javax.swing.JPanel {
         // -1: close button
         //  0: YES
         //  1: NO
-        if (decision == 0) {
-            new Thread(() -> {
-                pmiEventDelete.setEnabled(false);
-                Long eventId = event.getId();
-                String endpoint = "/event/delete/" + eventId;
-                Web.sendStompText(endpoint, "");
-                MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
-                mainWindow.attemptRemoveEvent();
-                pmiEventDelete.setEnabled(true);
-            }).start();
+        if (decision != 0) {
+            return;
         }
+        new Thread(() -> {
+            pmiEventDelete.setEnabled(false);
+            Long eventId = event.getId();
+            String endpoint = "/event/delete/" + eventId;
+            Web.sendStompText(endpoint, "");
+            getMainWindow().eventService.attemptRemoveEvent();
+            pmiEventDelete.setEnabled(true);
+        }).start();
     }//GEN-LAST:event_pmiEventDeleteActionPerformed
 
     private void pmiEventBudgetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pmiEventBudgetActionPerformed
-        MainWindow mainWindow = (MainWindow) getTopLevelAncestor();
-        mainWindow.showBudgetFor(event);
+        getMainWindow().showBudgetFor(event);
     }//GEN-LAST:event_pmiEventBudgetActionPerformed
 
     private void btnEventOptionsActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnEventOptionsActionPerformed
@@ -294,7 +297,7 @@ public class EventListItem extends javax.swing.JPanel {
             cbxToggleParticipation.setSelected(!cbxToggleParticipation.isSelected());
         }
     }
-    
+
     private void cbxToggleParticipationActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCheckBox1ActionPerformed
         new Thread(() -> {
             HttpResponse<String> response;
@@ -308,7 +311,8 @@ public class EventListItem extends javax.swing.JPanel {
                 return;
             }
             if (response.statusCode() == 200) {
-                event = Web.readResponseBody(response, new TypeReference<Event>(){});
+                event = Web.readResponseBody(response, new TypeReference<Event>() {
+                });
                 updateParticipantsText();
             } else {
                 String errorMessage = Web.getErrorMessage(response);

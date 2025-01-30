@@ -13,7 +13,7 @@ public class CalendarCustom extends javax.swing.JPanel {
     private int month;
     private int year;
     private List<Event> events = null;
-    
+
     /**
      * Creates new form Calendar
      */
@@ -21,7 +21,7 @@ public class CalendarCustom extends javax.swing.JPanel {
         initComponents();
         resetCalendar();
     }
-    
+
     private void resetCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
@@ -29,25 +29,25 @@ public class CalendarCustom extends javax.swing.JPanel {
         year = calendar.get(Calendar.YEAR);
         scrollCalendar();
     }
-    
+
     public void updateCalendar(List<Event> events) {
         this.events = events;
         update();
     }
-    
+
     private void update() {
         pnlCalendarContainer.removeAll();
         pnlCalendarContainer.add(new CalendarPanel(month, year, events), BorderLayout.CENTER);
         repaint();
         revalidate();
     }
-    
+
     private void scrollCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.DATE, 1);
-        SimpleDateFormat df  = new SimpleDateFormat("MMMM yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy");
         lblCalendarInfo.setText(df.format(calendar.getTime()));
         update();
     }

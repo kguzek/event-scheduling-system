@@ -39,9 +39,17 @@ public class Web {
 
     public static User user = null;
 
-    static final Preferences prefs = Preferences.userNodeForPackage(pl.papuda.ess.client.MainWindow.class);
+    static final Preferences prefs = Preferences.userNodeForPackage(Web.class);
 
-    static void unsetAccessToken() {
+    public static void unsetAccessToken(boolean clearStoredData) {
+        unsetAccessToken();
+        if (clearStoredData) {
+            Web.prefs.remove("accessToken");
+            Web.prefs.remove("tokenGenerationDate");
+        }
+    }
+
+    public static void unsetAccessToken() {
         accessToken = null;
         user = null;
     }
@@ -68,7 +76,7 @@ public class Web {
             prefs.put("tokenGenerationDate", generationDate);
         }
     }
-    
+
     public static <T> T readResponseBody(HttpResponse<String> response, TypeReference<T> cls) {
         ObjectMapper objectMapper = new ObjectMapper();
         String body = response.body();
