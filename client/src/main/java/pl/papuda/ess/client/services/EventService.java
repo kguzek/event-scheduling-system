@@ -6,12 +6,12 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import pl.papuda.ess.client.tools.Web;
+import pl.papuda.ess.client.components.home.EventsList;
+import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.eventObserver.EventCreationObserver;
 import pl.papuda.ess.client.eventObserver.EventDeletionObserver;
 import pl.papuda.ess.client.eventObserver.EventObservable;
 import pl.papuda.ess.client.eventObserver.EventUpdateObserver;
-import pl.papuda.ess.client.home.EventsList;
-import pl.papuda.ess.client.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.pages.HomePage;
 import pl.papuda.ess.client.interfaces.Observable;
 import pl.papuda.ess.client.interfaces.Observer;
@@ -24,7 +24,7 @@ public class EventService {
     private boolean awaitingDeletion = false;
     private final EventsList eventsList;
     private final CalendarCustom calendarCustom;
-    
+
     private final Observable eventUpdateManager = new EventObservable();
     private final Observer eventCreationObserver = new EventCreationObserver(this);
     private final Observer eventUpdateObserver = new EventUpdateObserver(this);

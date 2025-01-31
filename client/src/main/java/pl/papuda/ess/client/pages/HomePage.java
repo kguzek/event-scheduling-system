@@ -3,11 +3,12 @@ package pl.papuda.ess.client.pages;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import pl.papuda.ess.client.AppPanel;
+
+import pl.papuda.ess.client.components.AppPanel;
+import pl.papuda.ess.client.components.home.EventsList;
+import pl.papuda.ess.client.components.home.UsersList;
+import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.tools.Web;
-import pl.papuda.ess.client.home.EventsList;
-import pl.papuda.ess.client.home.UsersList;
-import pl.papuda.ess.client.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.model.User;
 
 public class HomePage extends AppPanel {
@@ -43,11 +44,11 @@ public class HomePage extends AppPanel {
         lblUsernameInfo.setText(Web.user.getUsername() + " (" + role + ")");
         eventsList1.updateUserPermissions(role);
     }
-    
+
     public EventsList getEventsList() {
         return eventsList1;
     }
-    
+
     public CalendarCustom getCalendarCustom() {
         return calendarCustom1;
     }
@@ -56,7 +57,7 @@ public class HomePage extends AppPanel {
         UsersList usersList = new UsersList();
         tabViewMenu.addTab("Users", usersList);
     }
-    
+
     private void logOut() {
         switchPage("logIn");
         Web.unsetAccessToken(true);
@@ -77,10 +78,10 @@ public class HomePage extends AppPanel {
         pnlHome = new javax.swing.JPanel();
         btnLogOut = new javax.swing.JButton();
         tabViewMenu = new javax.swing.JTabbedPane();
-        eventsList1 = new pl.papuda.ess.client.home.EventsList();
+        eventsList1 = new pl.papuda.ess.client.components.home.EventsList();
         lblUsernameInfo = new javax.swing.JLabel();
         lblLoggedInAs = new javax.swing.JLabel();
-        calendarCustom1 = new pl.papuda.ess.client.home.calendar.CalendarCustom();
+        calendarCustom1 = new pl.papuda.ess.client.components.home.calendar.CalendarCustom();
 
         setMinimumSize(new java.awt.Dimension(800, 500));
         setPreferredSize(new java.awt.Dimension(800, 500));
@@ -107,36 +108,36 @@ public class HomePage extends AppPanel {
         javax.swing.GroupLayout pnlHomeLayout = new javax.swing.GroupLayout(pnlHome);
         pnlHome.setLayout(pnlHomeLayout);
         pnlHomeLayout.setHorizontalGroup(
-            pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlHomeLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(calendarCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlHomeLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(lblLoggedInAs)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblUsernameInfo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLogOut))
-                    .addComponent(tabViewMenu, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE))
-                .addContainerGap())
+                pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlHomeLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(calendarCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(pnlHomeLayout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(lblLoggedInAs)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(lblUsernameInfo)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnLogOut))
+                                        .addComponent(tabViewMenu, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE))
+                                .addContainerGap())
         );
         pnlHomeLayout.setVerticalGroup(
-            pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlHomeLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlHomeLayout.createSequentialGroup()
-                        .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnLogOut)
-                            .addComponent(lblUsernameInfo)
-                            .addComponent(lblLoggedInAs))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tabViewMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(calendarCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE))
-                .addContainerGap())
+                pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlHomeLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(pnlHomeLayout.createSequentialGroup()
+                                                .addGroup(pnlHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(btnLogOut)
+                                                        .addComponent(lblUsernameInfo)
+                                                        .addComponent(lblLoggedInAs))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(tabViewMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                        .addComponent(calendarCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE))
+                                .addContainerGap())
         );
 
         add(pnlHome);
@@ -146,11 +147,10 @@ public class HomePage extends AppPanel {
         logOut();
     }//GEN-LAST:event_btnLogOutActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogOut;
-    private pl.papuda.ess.client.home.calendar.CalendarCustom calendarCustom1;
-    private pl.papuda.ess.client.home.EventsList eventsList1;
+    private pl.papuda.ess.client.components.home.calendar.CalendarCustom calendarCustom1;
+    private pl.papuda.ess.client.components.home.EventsList eventsList1;
     private javax.swing.JLabel lblLoggedInAs;
     private javax.swing.JLabel lblUsernameInfo;
     private javax.swing.JPanel pnlHome;

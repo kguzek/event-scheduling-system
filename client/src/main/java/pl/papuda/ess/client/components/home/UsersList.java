@@ -1,4 +1,4 @@
-package pl.papuda.ess.client.home;
+package pl.papuda.ess.client.components.home;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import pl.papuda.ess.client.model.User;
 public class UsersList extends javax.swing.JPanel {
 
     private List<User> users = null;
-    
+
     /**
      * Creates new form UsersList
      */
@@ -22,7 +22,7 @@ public class UsersList extends javax.swing.JPanel {
         initComponents();
         populateUsers();
     }
-    
+
     private void populateUsers() {
         getUsers();
         if (users == null) {
@@ -39,7 +39,7 @@ public class UsersList extends javax.swing.JPanel {
             pnlUsersList.add(userListItem);
         }
     }
-    
+
     private void getUsers() {
         HttpResponse<String> response;
         try {
@@ -53,7 +53,8 @@ public class UsersList extends javax.swing.JPanel {
             System.err.println("Non-200 status code fetching users: " + status);
             return;
         }
-        users = Web.readResponseBody(response, new TypeReference<List<User>>() {});
+        users = Web.readResponseBody(response, new TypeReference<List<User>>() {
+        });
     }
 
     /**
@@ -87,18 +88,18 @@ public class UsersList extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlUsersLoadingLayout = new javax.swing.GroupLayout(pnlUsersLoading);
         pnlUsersLoading.setLayout(pnlUsersLoadingLayout);
         pnlUsersLoadingLayout.setHorizontalGroup(
-            pnlUsersLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlUsersLoadingLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblUsersLoading, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                .addContainerGap())
+                pnlUsersLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlUsersLoadingLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblUsersLoading, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         pnlUsersLoadingLayout.setVerticalGroup(
-            pnlUsersLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlUsersLoadingLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblUsersLoading, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(198, Short.MAX_VALUE))
+                pnlUsersLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlUsersLoadingLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblUsersLoading, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(198, Short.MAX_VALUE))
         );
 
         pnlUsersList.add(pnlUsersLoading);
@@ -110,21 +111,20 @@ public class UsersList extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlUsersContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(pnlUsersContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlUsersContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(pnlUsersContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblUsersLoading;

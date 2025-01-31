@@ -1,15 +1,18 @@
-package pl.papuda.ess.client.budgetTracker;
+package pl.papuda.ess.client.components.budgetTracker;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.NumberFormat;
 import java.util.Locale;
+
 import javax.swing.JPanel;
+
 import org.knowm.xchart.PieChart;
 import org.knowm.xchart.PieChartBuilder;
 import org.knowm.xchart.PieSeries;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.style.PieStyler;
+
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Expense;
 

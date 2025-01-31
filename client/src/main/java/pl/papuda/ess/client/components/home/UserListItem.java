@@ -1,4 +1,4 @@
-package pl.papuda.ess.client.home;
+package pl.papuda.ess.client.components.home;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -16,9 +16,10 @@ import pl.papuda.ess.client.model.User;
 public class UserListItem extends javax.swing.JPanel {
 
     User user;
-    
+
     /**
      * Creates new form UserListItem
+     *
      * @param user the user to initialise the card with
      */
     public UserListItem(User user) {
@@ -26,7 +27,7 @@ public class UserListItem extends javax.swing.JPanel {
         initComponents();
         initFields();
     }
-    
+
     private void initFields() {
         iptUserEmail.setText(user.getEmail());
         lblUserUuid.setText(user.getId().toString());
@@ -47,7 +48,7 @@ public class UserListItem extends javax.swing.JPanel {
                 break;
         }
     }
-    
+
     private String getButtonGroupSelectedText(ButtonGroup buttonGroup) {
         for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
@@ -57,7 +58,7 @@ public class UserListItem extends javax.swing.JPanel {
         }
         return null;
     }
-    
+
     private void setButtonGroupSelectedText(ButtonGroup buttonGroup, String text, boolean ignoreCase) throws RuntimeException {
         for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
@@ -73,7 +74,7 @@ public class UserListItem extends javax.swing.JPanel {
         }
         System.err.println("No button group child contained given text: " + text);
     }
-    
+
     private String getUserRole() {
         String text = getButtonGroupSelectedText(rbgUserRole);
         if (text == null) {
@@ -82,7 +83,7 @@ public class UserListItem extends javax.swing.JPanel {
         }
         return text.toUpperCase();
     }
-    
+
     private void saveUser() {
         HttpResponse<String> response;
         String id = user.getId().toString();
@@ -163,53 +164,53 @@ public class UserListItem extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(iptUserEmail)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(rdbUserRoleUser)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdbUserRoleStaff)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdbUserRoleAdmin)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 189, Short.MAX_VALUE)
-                        .addComponent(btnUpdateUser))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblUserRole)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblUserUuid)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblUsernameEmailSeparator)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(iptUserEmail)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(rdbUserRoleUser)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rdbUserRoleStaff)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rdbUserRoleAdmin)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 189, Short.MAX_VALUE)
+                                                .addComponent(btnUpdateUser))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(lblUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(lblUserRole)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(lblUserUuid)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(lblUsernameEmailSeparator)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(lblUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblUsernameEmailSeparator)
-                    .addComponent(lblUserUuid, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblUsername))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblUserEmail)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(iptUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblUserRole)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rdbUserRoleUser)
-                    .addComponent(rdbUserRoleStaff)
-                    .addComponent(rdbUserRoleAdmin)
-                    .addComponent(btnUpdateUser))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblUsernameEmailSeparator)
+                                        .addComponent(lblUserUuid, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblUsername))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblUserEmail)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(iptUserEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lblUserRole)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(rdbUserRoleUser)
+                                        .addComponent(rdbUserRoleStaff)
+                                        .addComponent(rdbUserRoleAdmin)
+                                        .addComponent(btnUpdateUser))
+                                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -217,7 +218,6 @@ public class UserListItem extends javax.swing.JPanel {
         btnUpdateUser.setEnabled(false);
         new Thread(this::saveUser).start();
     }//GEN-LAST:event_btnUpdateUserActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnUpdateUser;

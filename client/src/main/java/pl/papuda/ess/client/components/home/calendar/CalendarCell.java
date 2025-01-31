@@ -1,47 +1,49 @@
-package pl.papuda.ess.client.home.calendar;
+package pl.papuda.ess.client.components.home.calendar;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.Date;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
 public class CalendarCell extends JButton {
+
     private Date date;
     private boolean isTitleCell = false;
     private boolean isToday = false;
     private Long eventId = null;
-    
+
     public CalendarCell() {
         setContentAreaFilled(false);
         setBorder(null);
         setHorizontalAlignment(JLabel.CENTER);
     }
-    
+
     public void setDate(Date date) {
         this.date = date;
     }
-    
+
     public void updateColor(boolean isCurrentMonth) {
         setForeground(isCurrentMonth ? new Color(68, 68, 68) : new Color(169, 169, 169));
     }
-    
+
     public void markAsTitleCell() {
         isTitleCell = true;
     }
-    
+
     public void markAsToday() {
         isToday = true;
         setForeground(Color.WHITE);
         requestFocusInWindow();
     }
-    
+
     public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
-    
+
     @Override
     protected void paintComponent(Graphics graphics) {
         if (isTitleCell) {

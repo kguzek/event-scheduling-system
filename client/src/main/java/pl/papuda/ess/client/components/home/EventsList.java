@@ -1,4 +1,4 @@
-package pl.papuda.ess.client.home;
+package pl.papuda.ess.client.components.home;
 
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -48,11 +48,11 @@ public class EventsList extends javax.swing.JPanel {
     public EventsList() {
         initComponents();
     }
-    
+
     public void setErrorText(String text) {
         txtEventCreateError.setText(text);
     }
-    
+
     public void onEventUpdated() {
         if (!awaitingMessage) {
             return;
@@ -75,14 +75,16 @@ public class EventsList extends javax.swing.JPanel {
         repaint();
         revalidate();
     }
-    
+
     public void updateUserPermissions(String role) {
         boolean isStaff = role.equals("STAFF");
         boolean isAdmin = role.equals("ADMIN");
         boolean isStaffOrAdmin = isStaff || isAdmin;
         btnToggleEventView.setEnabled(isStaffOrAdmin);
         for (Component child : pnlEventsList.getComponents()) {
-            if (!(child instanceof EventListItem)) continue;
+            if (!(child instanceof EventListItem)) {
+                continue;
+            }
             EventListItem listItem = (EventListItem) child;
             listItem.updateUserPermissions(isStaff);
         }
@@ -298,18 +300,18 @@ public class EventsList extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlEventsLoadingLayout = new javax.swing.GroupLayout(pnlEventsLoading);
         pnlEventsLoading.setLayout(pnlEventsLoadingLayout);
         pnlEventsLoadingLayout.setHorizontalGroup(
-            pnlEventsLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEventsLoadingLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblEventsLoading, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
-                .addContainerGap())
+                pnlEventsLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEventsLoadingLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblEventsLoading, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         pnlEventsLoadingLayout.setVerticalGroup(
-            pnlEventsLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEventsLoadingLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblEventsLoading, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(529, Short.MAX_VALUE))
+                pnlEventsLoadingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEventsLoadingLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblEventsLoading, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(529, Short.MAX_VALUE))
         );
 
         pnlEventsList.add(pnlEventsLoading);
@@ -328,7 +330,7 @@ public class EventsList extends javax.swing.JPanel {
 
         lblEventFrequency.setText("* Event frequency");
 
-        cbbEventFrequency.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "One-time event", "Daily", "Weekly", "Fortnightly", "Monthly", "Yearly" }));
+        cbbEventFrequency.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"One-time event", "Daily", "Weekly", "Fortnightly", "Monthly", "Yearly"}));
 
         lblEventLocation.setText("Event location");
 
@@ -347,53 +349,53 @@ public class EventsList extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlEventAddressLayout = new javax.swing.GroupLayout(pnlEventAddress);
         pnlEventAddress.setLayout(pnlEventAddressLayout);
         pnlEventAddressLayout.setHorizontalGroup(
-            pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEventAddressLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(iptEventStreet)
-                    .addComponent(iptEventCountry)
-                    .addComponent(iptEventInformation)
-                    .addGroup(pnlEventAddressLayout.createSequentialGroup()
-                        .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblEventStreet)
-                            .addComponent(lblEventCountry)
-                            .addComponent(lblEventInformation))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(pnlEventAddressLayout.createSequentialGroup()
-                        .addComponent(iptEventCode, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(iptEventCity))
-                    .addGroup(pnlEventAddressLayout.createSequentialGroup()
-                        .addComponent(lblEventCode)
-                        .addGap(41, 41, 41)
-                        .addComponent(lblEventCity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEventAddressLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(iptEventStreet)
+                                        .addComponent(iptEventCountry)
+                                        .addComponent(iptEventInformation)
+                                        .addGroup(pnlEventAddressLayout.createSequentialGroup()
+                                                .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(lblEventStreet)
+                                                        .addComponent(lblEventCountry)
+                                                        .addComponent(lblEventInformation))
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(pnlEventAddressLayout.createSequentialGroup()
+                                                .addComponent(iptEventCode, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(iptEventCity))
+                                        .addGroup(pnlEventAddressLayout.createSequentialGroup()
+                                                .addComponent(lblEventCode)
+                                                .addGap(41, 41, 41)
+                                                .addComponent(lblEventCity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         pnlEventAddressLayout.setVerticalGroup(
-            pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEventAddressLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblEventStreet)
-                .addGap(0, 0, 0)
-                .addComponent(iptEventStreet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEventCity)
-                    .addComponent(lblEventCode))
-                .addGap(0, 0, 0)
-                .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(iptEventCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(iptEventCity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblEventCountry)
-                .addGap(0, 0, 0)
-                .addComponent(iptEventCountry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblEventInformation)
-                .addGap(0, 0, 0)
-                .addComponent(iptEventInformation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEventAddressLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblEventStreet)
+                                .addGap(0, 0, 0)
+                                .addComponent(iptEventStreet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lblEventCity)
+                                        .addComponent(lblEventCode))
+                                .addGap(0, 0, 0)
+                                .addGroup(pnlEventAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(iptEventCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(iptEventCity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventCountry)
+                                .addGap(0, 0, 0)
+                                .addComponent(iptEventCountry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventInformation)
+                                .addGap(0, 0, 0)
+                                .addComponent(iptEventInformation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         lblEventFeedbackMessage.setText("Feedback message (sent to participants after event ends)");
@@ -433,7 +435,7 @@ public class EventsList extends javax.swing.JPanel {
             }
         });
 
-        cbbEventReminderTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No reminder", "5 minutes before", "15 minutes before", "30 minutes before", "1 hour before", "2 hours before", "1 day before" }));
+        cbbEventReminderTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"No reminder", "5 minutes before", "15 minutes before", "30 minutes before", "1 hour before", "2 hours before", "1 day before"}));
 
         lblEventReminderTime.setText("Event reminder (send to participants before event starts)");
 
@@ -456,100 +458,100 @@ public class EventsList extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlCreateEventLayout = new javax.swing.GroupLayout(pnlCreateEvent);
         pnlCreateEvent.setLayout(pnlCreateEventLayout);
         pnlCreateEventLayout.setHorizontalGroup(
-            pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlCreateEventLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(iptEventTitle)
-                    .addComponent(iptEventFeedbackMessage)
-                    .addComponent(btnCreateEvent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbbEventFrequency, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbbEventReminderTime, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlEventAddress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
-                    .addGroup(pnlCreateEventLayout.createSequentialGroup()
-                        .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlCreateEventLayout.createSequentialGroup()
-                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(iptEventDate, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblEventDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lblEventStartTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(iptEventStartTime))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cbxEventEndTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(iptEventEndTime)))
-                            .addComponent(lblEventTitle)
-                            .addComponent(lblEventFrequency)
-                            .addComponent(lblEventLocation)
-                            .addComponent(lblEventReminderTime)
-                            .addComponent(lblEventFeedbackMessage)
-                            .addComponent(lblEventBudget))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(iptEventBudget))
-                .addContainerGap())
+                pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlCreateEventLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(iptEventTitle)
+                                        .addComponent(iptEventFeedbackMessage)
+                                        .addComponent(btnCreateEvent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cbbEventFrequency, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cbbEventReminderTime, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(pnlEventAddress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane1)
+                                        .addGroup(pnlCreateEventLayout.createSequentialGroup()
+                                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(pnlCreateEventLayout.createSequentialGroup()
+                                                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                                        .addComponent(iptEventDate, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(lblEventDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                        .addComponent(lblEventStartTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                        .addComponent(iptEventStartTime))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                                        .addComponent(cbxEventEndTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                        .addComponent(iptEventEndTime)))
+                                                        .addComponent(lblEventTitle)
+                                                        .addComponent(lblEventFrequency)
+                                                        .addComponent(lblEventLocation)
+                                                        .addComponent(lblEventReminderTime)
+                                                        .addComponent(lblEventFeedbackMessage)
+                                                        .addComponent(lblEventBudget))
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addComponent(iptEventBudget))
+                                .addContainerGap())
         );
         pnlCreateEventLayout.setVerticalGroup(
-            pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlCreateEventLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblEventTitle)
-                .addGap(0, 0, 0)
-                .addComponent(iptEventTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblEventDate)
-                    .addComponent(lblEventStartTime)
-                    .addComponent(cbxEventEndTime))
-                .addGap(0, 0, 0)
-                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(iptEventDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(iptEventStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(iptEventEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblEventFrequency)
-                .addGap(0, 0, 0)
-                .addComponent(cbbEventFrequency, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblEventLocation)
-                .addGap(4, 4, 4)
-                .addComponent(pnlEventAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblEventReminderTime)
-                .addGap(0, 0, 0)
-                .addComponent(cbbEventReminderTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblEventFeedbackMessage)
-                .addGap(0, 0, 0)
-                .addComponent(iptEventFeedbackMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblEventBudget)
-                .addGap(0, 0, 0)
-                .addComponent(iptEventBudget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(btnCreateEvent)
-                .addContainerGap())
+                pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlCreateEventLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblEventTitle)
+                                .addGap(0, 0, 0)
+                                .addComponent(iptEventTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lblEventDate)
+                                        .addComponent(lblEventStartTime)
+                                        .addComponent(cbxEventEndTime))
+                                .addGap(0, 0, 0)
+                                .addGroup(pnlCreateEventLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(iptEventDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(iptEventStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(iptEventEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventFrequency)
+                                .addGap(0, 0, 0)
+                                .addComponent(cbbEventFrequency, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventLocation)
+                                .addGap(4, 4, 4)
+                                .addComponent(pnlEventAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lblEventReminderTime)
+                                .addGap(0, 0, 0)
+                                .addComponent(cbbEventReminderTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventFeedbackMessage)
+                                .addGap(0, 0, 0)
+                                .addComponent(iptEventFeedbackMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventBudget)
+                                .addGap(0, 0, 0)
+                                .addComponent(iptEventBudget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCreateEvent)
+                                .addContainerGap())
         );
 
         javax.swing.GroupLayout pnlEventEditorContainerLayout = new javax.swing.GroupLayout(pnlEventEditorContainer);
         pnlEventEditorContainer.setLayout(pnlEventEditorContainerLayout);
         pnlEventEditorContainerLayout.setHorizontalGroup(
-            pnlEventEditorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEventEditorContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlCreateEvent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                pnlEventEditorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEventEditorContainerLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(pnlCreateEvent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         pnlEventEditorContainerLayout.setVerticalGroup(
-            pnlEventEditorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlEventEditorContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlCreateEvent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                pnlEventEditorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEventEditorContainerLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(pnlCreateEvent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         pnlEventsContainer.add(pnlEventEditorContainer, "eventEditor");
@@ -557,28 +559,28 @@ public class EventsList extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnToggleEventView)
-                .addContainerGap(302, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(pnlEventsContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(btnToggleEventView)
+                                .addContainerGap(302, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(pnlEventsContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addContainerGap()))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnToggleEventView)
-                .addContainerGap(625, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addGap(39, 39, 39)
-                    .addComponent(pnlEventsContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(btnToggleEventView)
+                                .addContainerGap(625, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(39, 39, 39)
+                                        .addComponent(pnlEventsContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addContainerGap()))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -615,7 +617,6 @@ public class EventsList extends javax.swing.JPanel {
             btnToggleEventView.setText("Show events list");
         }
     }//GEN-LAST:event_btnToggleEventViewActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCreateEvent;

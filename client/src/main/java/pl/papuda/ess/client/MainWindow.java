@@ -9,7 +9,7 @@ import java.net.http.HttpResponse;
 import java.util.Date;
 import java.util.Map;
 
-import pl.papuda.ess.client.error.LoginException;
+import pl.papuda.ess.client.model.error.LoginException;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.body.LoginResponse;
 import pl.papuda.ess.client.model.Event;
@@ -164,7 +164,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
 
-    void showLayoutCard(String cardName) {
+    public void showLayoutCard(String cardName) {
         CardLayout layout = (CardLayout) pnlMain.getLayout();
         layout.show(pnlMain, cardName);
         System.out.println("Navigating to " + cardName + " page");

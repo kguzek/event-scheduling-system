@@ -24,7 +24,7 @@
     <Property name="rows" type="int" value="7"/>
   </Layout>
   <SubComponents>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell1">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell1">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -35,7 +35,7 @@
         <Property name="text" type="java.lang.String" value="Mon"/>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell2">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell2">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -46,7 +46,7 @@
         <Property name="text" type="java.lang.String" value="Tue"/>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell3">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell3">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -57,7 +57,7 @@
         <Property name="text" type="java.lang.String" value="Wed"/>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell4">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell4">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -68,7 +68,7 @@
         <Property name="text" type="java.lang.String" value="Thu"/>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell5">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell5">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -79,7 +79,7 @@
         <Property name="text" type="java.lang.String" value="Fri"/>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell6">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell6">
       <Properties>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="99" red="99" type="rgb"/>
@@ -87,7 +87,7 @@
         <Property name="text" type="java.lang.String" value="Sat"/>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell7">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell7">
       <Properties>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="99" red="ff" type="rgb"/>
@@ -95,7 +95,7 @@
         <Property name="text" type="java.lang.String" value="Sun"/>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell8">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell8">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -105,7 +105,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell9">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell9">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -115,7 +115,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell10">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell10">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -125,7 +125,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell11">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell11">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -135,7 +135,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell12">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell12">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -145,31 +145,21 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell13">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell13">
       <Properties>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="33" green="33" red="33" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell14">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell14">
       <Properties>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="33" green="33" red="33" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell15">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-        </Property>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell16">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell15">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -179,7 +169,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell17">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell16">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -189,7 +179,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell18">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell17">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -199,7 +189,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell19">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell18">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -209,21 +199,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell20">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell21">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell22">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell19">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -233,7 +209,21 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell23">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell20">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell21">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell22">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -243,7 +233,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell24">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell23">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -253,7 +243,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell25">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell24">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -263,7 +253,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell26">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell25">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -273,21 +263,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell27">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell28">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell29">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell26">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -297,7 +273,21 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell30">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell27">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell28">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell29">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -307,7 +297,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell31">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell30">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -317,7 +307,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell32">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell31">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -327,7 +317,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell33">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell32">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -337,21 +327,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell34">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell35">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell36">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell33">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -361,7 +337,21 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell37">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell34">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell35">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell36">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -371,7 +361,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell38">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell37">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -381,7 +371,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell39">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell38">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -391,7 +381,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell40">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell39">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -401,21 +391,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell41">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell42">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell43">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell40">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -425,7 +401,21 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell44">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell41">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell42">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell43">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -435,7 +425,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell45">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell44">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -445,7 +435,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell46">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell45">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -455,7 +445,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell47">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell46">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -465,14 +455,24 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell48">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell47">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="33" green="33" red="33" type="rgb"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell48">
       <Properties>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="33" green="33" red="33" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="pl.papuda.ess.client.home.calendar.CalendarCell" name="calendarCell49">
+    <Component class="pl.papuda.ess.client.components.home.calendar.CalendarCell" name="calendarCell49">
       <Properties>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="33" green="33" red="33" type="rgb"/>

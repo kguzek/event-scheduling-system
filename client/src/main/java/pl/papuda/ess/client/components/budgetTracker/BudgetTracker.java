@@ -1,4 +1,4 @@
-package pl.papuda.ess.client.budgetTracker;
+package pl.papuda.ess.client.components.budgetTracker;
 
 import pl.papuda.ess.client.model.Event;
 
@@ -27,8 +27,8 @@ public class BudgetTracker extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        budgetPie2 = new pl.papuda.ess.client.budgetTracker.BudgetPie();
-        expenseForm1 = new pl.papuda.ess.client.budgetTracker.ExpenseForm();
+        budgetPie2 = new pl.papuda.ess.client.components.budgetTracker.BudgetPie();
+        expenseForm1 = new pl.papuda.ess.client.components.budgetTracker.ExpenseForm();
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -55,7 +55,7 @@ public class BudgetTracker extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private pl.papuda.ess.client.budgetTracker.BudgetPie budgetPie2;
-    private pl.papuda.ess.client.budgetTracker.ExpenseForm expenseForm1;
+    private pl.papuda.ess.client.components.budgetTracker.BudgetPie budgetPie2;
+    private pl.papuda.ess.client.components.budgetTracker.ExpenseForm expenseForm1;
     // End of variables declaration//GEN-END:variables
 }
