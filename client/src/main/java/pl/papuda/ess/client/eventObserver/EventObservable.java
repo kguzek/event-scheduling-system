@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.interfaces.Observable;
 import pl.papuda.ess.client.interfaces.Observer;
 

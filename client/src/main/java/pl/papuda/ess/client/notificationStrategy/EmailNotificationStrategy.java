@@ -2,7 +2,7 @@ package pl.papuda.ess.client.notificationStrategy;
 
 import java.io.IOException;
 import javax.swing.JOptionPane;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.interfaces.Strategy;
 import pl.papuda.ess.client.model.Event;
 

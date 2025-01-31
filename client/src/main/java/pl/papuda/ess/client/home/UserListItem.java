@@ -6,7 +6,7 @@ import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.text.AbstractDocument;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.model.User;
 
 /**

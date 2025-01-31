@@ -1,5 +1,6 @@
-package pl.papuda.ess.client;
+package pl.papuda.ess.client.services;
 
+import pl.papuda.ess.client.tools.Web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

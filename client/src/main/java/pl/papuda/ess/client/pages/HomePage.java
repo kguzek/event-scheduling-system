@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import pl.papuda.ess.client.AppPanel;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.home.EventsList;
 import pl.papuda.ess.client.home.UsersList;
 import pl.papuda.ess.client.home.calendar.CalendarCustom;

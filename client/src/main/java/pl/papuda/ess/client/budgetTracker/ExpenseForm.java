@@ -7,7 +7,7 @@ package pl.papuda.ess.client.budgetTracker;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
-import pl.papuda.ess.client.Time;
+import pl.papuda.ess.client.tools.Time;
 
 public class ExpenseForm extends javax.swing.JPanel {
 

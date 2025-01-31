@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.List;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.model.User;
 
 /**

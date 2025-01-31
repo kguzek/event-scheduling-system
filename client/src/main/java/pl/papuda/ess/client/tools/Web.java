@@ -1,4 +1,4 @@
-package pl.papuda.ess.client;
+package pl.papuda.ess.client.tools;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import pl.papuda.ess.client.services.StompClient;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.User;
 import uk.guzek.sac.AuthType;
@@ -39,7 +40,7 @@ public class Web {
 
     public static User user = null;
 
-    static final Preferences prefs = Preferences.userNodeForPackage(Web.class);
+    public static final Preferences prefs = Preferences.userNodeForPackage(Web.class);
 
     public static void unsetAccessToken(boolean clearStoredData) {
         unsetAccessToken();
@@ -64,7 +65,7 @@ public class Web {
         stompClient.connect();
     }
 
-    static void setAccessToken(String token, boolean remember) {
+    public static void setAccessToken(String token, boolean remember) {
         accessToken = token;
         if (token != null && stompClient == null) {
             initialiseStompClient();

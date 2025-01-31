@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import javax.swing.Timer;
 import pl.papuda.ess.client.AppPanel;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 
 /**
  *

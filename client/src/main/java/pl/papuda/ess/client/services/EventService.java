@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.eventObserver.EventCreationObserver;
 import pl.papuda.ess.client.eventObserver.EventDeletionObserver;
 import pl.papuda.ess.client.eventObserver.EventObservable;

@@ -1,5 +1,6 @@
 package pl.papuda.ess.client;
 
+import pl.papuda.ess.client.tools.Web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.CardLayout;

@@ -11,7 +11,7 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import javax.swing.JOptionPane;
 import pl.papuda.ess.client.AppPanel;
-import pl.papuda.ess.client.Web;
+import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.User;
