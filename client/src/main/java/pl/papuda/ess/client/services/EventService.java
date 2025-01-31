@@ -12,7 +12,7 @@ import pl.papuda.ess.client.eventObserver.EventObservable;
 import pl.papuda.ess.client.eventObserver.EventUpdateObserver;
 import pl.papuda.ess.client.home.EventsList;
 import pl.papuda.ess.client.home.calendar.CalendarCustom;
-import pl.papuda.ess.client.home.panels.HomePage;
+import pl.papuda.ess.client.pages.HomePage;
 import pl.papuda.ess.client.interfaces.Observable;
 import pl.papuda.ess.client.interfaces.Observer;
 

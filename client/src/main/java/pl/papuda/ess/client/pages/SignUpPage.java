@@ -1,4 +1,4 @@
-package pl.papuda.ess.client.home.panels;
+package pl.papuda.ess.client.pages;
 
 import java.util.HashMap;
 import java.util.Map;

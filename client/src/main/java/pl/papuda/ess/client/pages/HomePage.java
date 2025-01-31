@@ -1,4 +1,4 @@
-package pl.papuda.ess.client.home.panels;
+package pl.papuda.ess.client.pages;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;

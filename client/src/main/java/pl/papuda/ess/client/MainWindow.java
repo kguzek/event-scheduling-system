@@ -44,7 +44,7 @@ public class MainWindow extends javax.swing.JFrame {
         showLayoutCard("home");
         eventService.startFetchEvents();
     }
-    
+
     public void verifyEmail(String email) {
         showLayoutCard("verifyEmail");
         verifyEmailPage1.startEmailVerification(email);
@@ -89,13 +89,13 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlMain = new javax.swing.JPanel();
-        logInPage1 = new pl.papuda.ess.client.home.panels.LogInPage();
-        signUpPage1 = new pl.papuda.ess.client.home.panels.SignUpPage();
-        forgotPasswordPage1 = new pl.papuda.ess.client.home.panels.ForgotPasswordPage();
-        verifyEmailPage1 = new pl.papuda.ess.client.home.panels.VerifyEmailPage();
-        budgetPage1 = new pl.papuda.ess.client.home.panels.BudgetPage();
+        logInPage1 = new pl.papuda.ess.client.pages.LogInPage();
+        signUpPage1 = new pl.papuda.ess.client.pages.SignUpPage();
+        forgotPasswordPage1 = new pl.papuda.ess.client.pages.ForgotPasswordPage();
+        verifyEmailPage1 = new pl.papuda.ess.client.pages.VerifyEmailPage();
+        budgetPage1 = new pl.papuda.ess.client.pages.BudgetPage();
         pnlHomeContainer = new javax.swing.JPanel();
-        homePage1 = new pl.papuda.ess.client.home.panels.HomePage();
+        homePage1 = new pl.papuda.ess.client.pages.HomePage();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Event Scheduling System");
@@ -212,13 +212,13 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private pl.papuda.ess.client.home.panels.BudgetPage budgetPage1;
-    private pl.papuda.ess.client.home.panels.ForgotPasswordPage forgotPasswordPage1;
-    private pl.papuda.ess.client.home.panels.HomePage homePage1;
-    private pl.papuda.ess.client.home.panels.LogInPage logInPage1;
+    private pl.papuda.ess.client.pages.BudgetPage budgetPage1;
+    private pl.papuda.ess.client.pages.ForgotPasswordPage forgotPasswordPage1;
+    private pl.papuda.ess.client.pages.HomePage homePage1;
+    private pl.papuda.ess.client.pages.LogInPage logInPage1;
     private javax.swing.JPanel pnlHomeContainer;
     private javax.swing.JPanel pnlMain;
-    private pl.papuda.ess.client.home.panels.SignUpPage signUpPage1;
-    private pl.papuda.ess.client.home.panels.VerifyEmailPage verifyEmailPage1;
+    private pl.papuda.ess.client.pages.SignUpPage signUpPage1;
+    private pl.papuda.ess.client.pages.VerifyEmailPage verifyEmailPage1;
     // End of variables declaration//GEN-END:variables
 }

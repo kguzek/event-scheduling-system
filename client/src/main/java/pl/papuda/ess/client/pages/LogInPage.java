@@ -1,4 +1,4 @@
-package pl.papuda.ess.client.home.panels;
+package pl.papuda.ess.client.pages;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class LogInPage extends AppPanel {
         } finally {
             btnLogIn.setEnabled(true);
         }
-        System.out.println("Logged in as user #" + response.getUserId().toString());
+         System.out.println("Logged in as user #" + response.getUserId().toString());
         mainWindow.afterLoginVerified(response.getToken(), cbxRememberPassword.isSelected());
     }
 
