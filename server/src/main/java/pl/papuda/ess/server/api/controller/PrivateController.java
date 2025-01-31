@@ -22,11 +22,13 @@ import pl.papuda.ess.server.api.model.Event;
 import pl.papuda.ess.server.api.model.Task;
 import pl.papuda.ess.server.api.model.TaskStatus;
 import pl.papuda.ess.server.api.model.User;
+import pl.papuda.ess.server.api.model.body.EmailReminderRequest;
 import pl.papuda.ess.server.api.model.body.PermissionsResponse;
 import pl.papuda.ess.server.api.model.body.TaskStatusUpdateRequest;
 import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.TaskRepository;
 import pl.papuda.ess.server.api.repo.UserRepository;
+import pl.papuda.ess.server.api.service.EmailService;
 
 @RestController
 @RequestMapping("/api/v1/private")
@@ -38,6 +40,8 @@ public class PrivateController {
     private UserRepository userRepository;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/event")
     public ResponseEntity<List<Event>> getAllEvents() {
@@ -151,7 +155,7 @@ public class PrivateController {
 
     @PutMapping("/task/{id}/status")
     public ResponseEntity<?> updateTaskStatus(@PathVariable Long id, Principal principal,
-            @RequestBody TaskStatusUpdateRequest request) {
+                                              @RequestBody TaskStatusUpdateRequest request) {
         Optional<Task> taskData = taskRepository.findById(id);
         if (taskData.isEmpty()) {
             return ErrorResponse.generate("Task not found", HttpStatus.NOT_FOUND);
@@ -168,5 +172,10 @@ public class PrivateController {
         }
         task.setStatus(status);
         return ResponseEntity.ok(taskRepository.save(task));
+    }
+
+    @RequestMapping("/email/reminder")
+    public void sendReminderEmail(@RequestBody EmailReminderRequest request) {
+        emailService.sendEmail(request.getRecipient(), request.getSubject(), request.getBody());
     }
 }

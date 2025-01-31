@@ -10,8 +10,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import pl.papuda.ess.server.api.model.Role;
 import pl.papuda.ess.server.api.model.User;
@@ -38,14 +34,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Value("${API_URL}")
-    private String API_URL;
-
     @Value("classpath:/templates/verifyEmail.html")
     private Resource verifyEmailTemplate;
+
+    @Autowired
+    private EmailService emailService;
 
     private AuthenticationResponse getResponseFromUser(User user) {
         String token = jwtService.generateToken(user);
@@ -69,19 +62,6 @@ public class AuthenticationService {
         return getResponseFromUser(user);
     }
 
-    private void sendEmail(String recipientAddress, String subject, String content) {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-        try {
-            helper.setTo(recipientAddress);
-            helper.setSubject(subject + " | Event Scheduling System");
-            helper.setText(content.replace("{API_URL}", API_URL), true);
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            System.err.println(e);
-        }
-    }
-
     private String readResource(Resource resource) {
         try (Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
             return FileCopyUtils.copyToString(reader);
@@ -93,7 +73,7 @@ public class AuthenticationService {
     public void sendChallengeEmail(String recipientAddress, String token) {
         String template = readResource(verifyEmailTemplate);
         String content = template.replace("{EMAIL}", recipientAddress).replace("{TOKEN}", token);
-        sendEmail(recipientAddress, "Account Verification", content);
+        emailService.sendEmail(recipientAddress, "Account Verification", content);
     }
 
     public RedirectView verifyEmail(String email, String token) {

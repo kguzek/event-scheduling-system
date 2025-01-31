@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays;
+import javax.swing.JOptionPane;
 import pl.papuda.ess.client.Web;
 import pl.papuda.ess.client.interfaces.Observable;
 import pl.papuda.ess.client.interfaces.Observer;
@@ -12,6 +13,12 @@ import pl.papuda.ess.client.interfaces.Observer;
 public class EventObservable implements Observable {
 
     public static Map<String, List<Observer>> observerMap = new HashMap<>();
+
+    private void showErrorMessage(String errorMessage) {
+        System.err.println("Observer error message: " + errorMessage);
+        // eventsList1.setErrorText(errorMessage);
+        JOptionPane.showMessageDialog(null, errorMessage, "Problem performing action", JOptionPane.ERROR_MESSAGE);
+    }
 
     @Override
     public void subscribe(String endpoint, Observer listener) {
@@ -37,6 +44,10 @@ public class EventObservable implements Observable {
         List<Observer> observers = observerMap.get(endpoint);
         assert observers != null;
         for (Observer observer : observers) {
+            if (messageBody instanceof String errorMessage) {
+                showErrorMessage(errorMessage);
+                continue;
+            }
             observer.update(messageBody);
         }
     }

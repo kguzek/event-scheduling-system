@@ -1,9 +1,10 @@
 package pl.papuda.ess.client.eventObserver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pl.papuda.ess.client.interfaces.Observer;
 import pl.papuda.ess.client.services.EventService;
 
-public class EventDeletionObserver extends EventGenericObserver {
+public class EventDeletionObserver implements Observer {
 
     private final EventService eventService;
 
@@ -12,7 +13,7 @@ public class EventDeletionObserver extends EventGenericObserver {
     }
 
     @Override
-    void handleMessage(Object messageBody) {
+    public void update(Object messageBody) {
         ObjectMapper mapper = new ObjectMapper();
         Long eventId = mapper.convertValue(messageBody, Long.class);
         eventService.removeEvent(eventId);
