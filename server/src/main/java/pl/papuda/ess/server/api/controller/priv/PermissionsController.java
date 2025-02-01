@@ -11,7 +11,6 @@ import pl.papuda.ess.server.api.model.body.PermissionsResponse;
 import pl.papuda.ess.server.api.model.error.UnauthorizedException;
 import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.api.service.EmailService;
-import pl.papuda.ess.server.api.service.RestService;
 import pl.papuda.ess.server.common.ResponseUtilities;
 import pl.papuda.ess.server.common.RestResponse;
 
@@ -19,6 +18,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/private/permissions")
@@ -33,8 +33,6 @@ public class PermissionsController {
     private UserRepository userRepository;
     @Autowired
     private EmailService emailService;
-    @Autowired
-    private RestService restService;
 
     private boolean userRequestedElevationRecently(User user) {
         Long lastRequestTimestamp = userElevationRequestTimestamps.getOrDefault(user.getId(), 0L);
@@ -43,11 +41,22 @@ public class PermissionsController {
         return currentTimestamp - lastRequestTimestamp < ELEVATION_REQUEST_COOLDOWN_MILLIS;
     }
 
+    public User ensureUserLoggedIn(Principal principal) throws UnauthorizedException {
+        if (principal == null) {
+            throw new UnauthorizedException("You are not logged in");
+        }
+        Optional<User> userData = userRepository.findByUsername(principal.getName());
+        if (userData.isEmpty()) {
+            throw new UnauthorizedException("Invalid logged in username");
+        }
+        return userData.get();
+    }
+
     @GetMapping
     public ResponseEntity<?> getUserPermissions(Principal principal) {
         User user;
         try {
-            user = restService.ensureUserLoggedIn(principal);
+            user = ensureUserLoggedIn(principal);
         } catch (UnauthorizedException e) {
             return e.getResponse();
         }
@@ -60,7 +69,7 @@ public class PermissionsController {
     public ResponseEntity<RestResponse> requestStaffRole(Principal principal) {
         User user;
         try {
-            user = restService.ensureUserLoggedIn(principal);
+            user = ensureUserLoggedIn(principal);
         } catch (UnauthorizedException e) {
             return e.getResponse();
         }
