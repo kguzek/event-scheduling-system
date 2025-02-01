@@ -15,11 +15,9 @@ import java.security.Principal;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/private")
+@RequestMapping("/api/v1/private/task")
 public class TaskPrivateController {
 
-    @Autowired
-    private EventRepository eventRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -56,17 +54,17 @@ public class TaskPrivateController {
     }
 
 
-    @PostMapping("/task/{id}/assignee")
+    @PostMapping("/{id}/assignee")
     public ResponseEntity<?> volunteerAsTaskAssignee(@PathVariable Long id, Principal principal) {
         return setTaskAssignee(id, principal, true);
     }
 
-    @DeleteMapping("/task/{id}/assignee")
+    @DeleteMapping("/{id}/assignee")
     public ResponseEntity<?> quitAsTaskAssignee(@PathVariable Long id, Principal principal) {
         return setTaskAssignee(id, principal, false);
     }
 
-    @PutMapping("/task/{id}/status")
+    @PutMapping("/{id}/status")
     public ResponseEntity<?> updateTaskStatus(@PathVariable Long id, Principal principal,
                                               @RequestBody TaskStatusUpdateRequest request) {
         Optional<Task> taskData = taskRepository.findById(id);

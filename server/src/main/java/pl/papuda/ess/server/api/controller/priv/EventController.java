@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.papuda.ess.server.api.model.*;
+import pl.papuda.ess.server.api.model.body.EmailReminderRequest;
 import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.UserRepository;
+import pl.papuda.ess.server.api.service.EmailService;
 import pl.papuda.ess.server.common.RestResponse;
 
 import java.security.Principal;
@@ -15,13 +17,15 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/v1/private")
+@RequestMapping("/api/v1/private/event")
 public class EventController {
 
     @Autowired
     private EventRepository eventRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EmailService emailService;
 
     private ResponseEntity<?> setAttendanceStatus(Long eventId, Principal principal, boolean attending) {
         Optional<Event> eventData = eventRepository.findById(eventId);
@@ -54,12 +58,25 @@ public class EventController {
         return ResponseEntity.ok(eventRepository.save(event));
     }
 
-    @GetMapping("/event")
+
+    private ResponseEntity<RestResponse> getEmailResultResponse(boolean success) {
+        return success
+                ? RestResponse.ok("Email message sent successfully")
+                : RestResponse.generate("An unknown error occurred while sending the email message", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping("/reminder/email")
+    public ResponseEntity<RestResponse> sendReminderEmail(@RequestBody EmailReminderRequest request) {
+        boolean success = emailService.sendEmail(request.getRecipient(), request.getSubject(), request.getBody());
+        return getEmailResultResponse(success);
+    }
+
+    @GetMapping("/")
     public ResponseEntity<List<Event>> getAllEvents() {
         return ResponseEntity.ok(eventRepository.findAll());
     }
 
-    @GetMapping("/event/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getEvent(@PathVariable Long id) {
         Optional<Event> eventData = eventRepository.findById(id);
         if (eventData.isEmpty()) {
@@ -68,13 +85,15 @@ public class EventController {
         return ResponseEntity.ok(eventData.get());
     }
 
-    @PostMapping("/event/{id}/attendee")
+    @PostMapping("/{id}/attendee")
     public ResponseEntity<?> declareAttendance(@PathVariable Long id, Principal principal) {
         return setAttendanceStatus(id, principal, true);
     }
 
-    @DeleteMapping("/event/{id}/attendee")
+    @DeleteMapping("/{id}/attendee")
     public ResponseEntity<?> withdrawAttendance(@PathVariable Long id, Principal principal) {
         return setAttendanceStatus(id, principal, false);
     }
+
+
 }

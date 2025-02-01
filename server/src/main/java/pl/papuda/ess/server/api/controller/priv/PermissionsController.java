@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/private")
+@RequestMapping("/api/v1/private/permissions")
 public class PermissionsController {
 
     @Autowired
@@ -53,19 +53,7 @@ public class PermissionsController {
         return false;
     }
 
-    private ResponseEntity<RestResponse> getEmailResultResponse(boolean success) {
-        return success
-                ? RestResponse.ok("Email message sent successfully")
-                : RestResponse.generate("An unknown error occurred while sending the email message", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @RequestMapping("/email/reminder")
-    public ResponseEntity<RestResponse> sendReminderEmail(@RequestBody EmailReminderRequest request) {
-        boolean success = emailService.sendEmail(request.getRecipient(), request.getSubject(), request.getBody());
-        return getEmailResultResponse(success);
-    }
-
-    @GetMapping("/permissions")
+    @GetMapping("/")
     public ResponseEntity<?> getUserPermissions(Principal principal) {
         User user;
         try {
@@ -78,7 +66,7 @@ public class PermissionsController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/permissions/roles/staff")
+    @PostMapping("/roles/staff")
     public ResponseEntity<RestResponse> requestStaffRole(Principal principal) {
         User user;
         try {
