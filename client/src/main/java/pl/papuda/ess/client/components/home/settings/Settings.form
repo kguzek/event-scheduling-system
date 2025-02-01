@@ -28,9 +28,11 @@
                       <Component id="rdbNotificationMethodPopup" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rdbNotificationMethodEmail" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="rdbNotificationMethodEmailAndPopup" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="236" max="32767" attributes="0"/>
+              <EmptySpace pref="180" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -43,6 +45,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="rdbNotificationMethodPopup" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="rdbNotificationMethodEmail" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="rdbNotificationMethodEmailAndPopup" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="251" max="32767" attributes="0"/>
           </Group>
@@ -52,7 +55,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Notification method"/>
+        <Property name="text" type="java.lang.String" value="Preferred notification method"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JRadioButton" name="rdbNotificationMethodPopup">
@@ -60,7 +63,6 @@
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="rbgNotificationMethod"/>
         </Property>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="In-app popup"/>
       </Properties>
       <Events>
@@ -76,6 +78,17 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rdbNotificationMethodEmailActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="rdbNotificationMethodEmailAndPopup">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="rbgNotificationMethod"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Both"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rdbNotificationMethodEmailAndPopupActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import pl.papuda.ess.client.components.home.EventsList;
 import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
@@ -16,6 +17,7 @@ import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.interfaces.Observable;
 import pl.papuda.ess.client.interfaces.Observer;
 import pl.papuda.ess.client.interfaces.Strategy;
+import pl.papuda.ess.client.model.User;
 import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.tools.Time;
 import pl.papuda.ess.client.tools.AppPreferences;
@@ -40,7 +42,7 @@ public class EventService {
 
     private void createSubscriptions() {
         eventUpdateManager.subscribe("created", eventCreationObserver);
-        eventUpdateManager.subscribe("update", eventUpdateObserver);
+        eventUpdateManager.subscribe("updated", eventUpdateObserver);
         eventUpdateManager.subscribe("deleted", eventDeletionObserver);
     }
 
@@ -53,22 +55,51 @@ public class EventService {
     private void onEventUpdated(Event event) {
         updateEvents();
         eventsList.onEventUpdated();
-        String startTime = event.getStartTime();
+        String reminderTime = event.getReminderTime();
+        if (reminderTime == null) {
+            // No reminder notification is set
+            return;
+        }
         Long eventId = event.getId();
+        if (Time.getDifferenceMinutes(event.getStartTime(), Time.getCurrentInstant()) < 0) {
+            // Event has already started
+            return;
+        }
 
-        Time.scheduleAt(event.getStartTime(), () -> {
+        Time.scheduleAt(reminderTime, () -> {
+            System.out.println("Scheduled reminder fired for event " + event.getId());
             Event currentEvent = getEvent(eventId);
             if (currentEvent == null) {
                 // This event was deleted since the timer was set
                 return;
             }
-            if (!currentEvent.getStartTime().equals(startTime)) {
-                // The event start time has changed since this timer was set
+            if (!reminderTime.equals(currentEvent.getReminderTime())) {
+                // The event reminder time has changed since this timer was set
+                // This means a new scheduled reminder was set, and this one is not needed
+                return;
+            }
+            if (!isUserAttendingEvent(event, Web.user)) {
+                // The user has not opted-in to the reminder notification
                 return;
             }
             Strategy notificationStrategy = AppPreferences.getNotificationPreference();
-            notificationStrategy.sendEventNotification(event);
+            int startingIn = Time.getDifferenceMinutes(event.getStartTime(), Time.getCurrentInstant());
+            String message = startingIn < 0
+                    ? String.format("Event %s started %d minutes ago!", event.getTitle(), Math.abs(startingIn))
+                    : startingIn > 0
+                            ? String.format("Event %s is starting in %d minutes!", event.getTitle(), startingIn)
+                            : String.format("Event %s is starting now!", event.getTitle());
+            notificationStrategy.sendNotification("Event Starting", message);
         });
+    }
+    
+    public boolean isUserAttendingEvent(Event event, User user) {
+        for (User attendee : event.getAttendees()) {
+            if (attendee.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void startFetchEvents() {

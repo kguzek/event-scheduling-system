@@ -1,5 +1,6 @@
 package pl.papuda.ess.client.components.home.settings;
 
+import javax.swing.JRadioButton;
 import pl.papuda.ess.client.tools.AppPreferences;
 
 /**
@@ -13,6 +14,23 @@ public class Settings extends javax.swing.JPanel {
      */
     public Settings() {
         initComponents();
+        applySettings();
+    }
+    
+    private void setNotificationMethod(String method) {
+        AppPreferences.set("notificationMethod", method);
+    }
+    
+    private void applySettings() {
+        String notificationMethod = AppPreferences.read("notificationMethod", "popup");
+        JRadioButton radioButton = switch(notificationMethod) {
+            case "popup" -> rdbNotificationMethodPopup;
+            case "email" -> rdbNotificationMethodEmail;
+            case "emailAndPopup" -> rdbNotificationMethodEmailAndPopup;
+            default -> rdbNotificationMethodPopup;
+        };
+        System.out.println("Preferred notification method: " + notificationMethod);
+        radioButton.setSelected(true);
     }
 
     /**
@@ -28,11 +46,11 @@ public class Settings extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         rdbNotificationMethodPopup = new javax.swing.JRadioButton();
         rdbNotificationMethodEmail = new javax.swing.JRadioButton();
+        rdbNotificationMethodEmailAndPopup = new javax.swing.JRadioButton();
 
-        jLabel1.setText("Notification method");
+        jLabel1.setText("Preferred notification method");
 
         rbgNotificationMethod.add(rdbNotificationMethodPopup);
-        rdbNotificationMethodPopup.setSelected(true);
         rdbNotificationMethodPopup.setText("In-app popup");
         rdbNotificationMethodPopup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -48,6 +66,14 @@ public class Settings extends javax.swing.JPanel {
             }
         });
 
+        rbgNotificationMethod.add(rdbNotificationMethodEmailAndPopup);
+        rdbNotificationMethodEmailAndPopup.setText("Both");
+        rdbNotificationMethodEmailAndPopup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbNotificationMethodEmailAndPopupActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -59,8 +85,10 @@ public class Settings extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(rdbNotificationMethodPopup)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdbNotificationMethodEmail)))
-                .addContainerGap(236, Short.MAX_VALUE))
+                        .addComponent(rdbNotificationMethodEmail)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rdbNotificationMethodEmailAndPopup)))
+                .addContainerGap(180, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -70,24 +98,30 @@ public class Settings extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rdbNotificationMethodPopup)
-                    .addComponent(rdbNotificationMethodEmail))
+                    .addComponent(rdbNotificationMethodEmail)
+                    .addComponent(rdbNotificationMethodEmailAndPopup))
                 .addContainerGap(251, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void rdbNotificationMethodPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbNotificationMethodPopupActionPerformed
-        AppPreferences.set("notificationMethod", "popup");
+        setNotificationMethod("popup");
     }//GEN-LAST:event_rdbNotificationMethodPopupActionPerformed
 
     private void rdbNotificationMethodEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbNotificationMethodEmailActionPerformed
-        AppPreferences.set("notificationMethod", "email");
+        setNotificationMethod( "email");
     }//GEN-LAST:event_rdbNotificationMethodEmailActionPerformed
+
+    private void rdbNotificationMethodEmailAndPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbNotificationMethodEmailAndPopupActionPerformed
+        setNotificationMethod("emailAndPopup");
+    }//GEN-LAST:event_rdbNotificationMethodEmailAndPopupActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.ButtonGroup rbgNotificationMethod;
     private javax.swing.JRadioButton rdbNotificationMethodEmail;
+    private javax.swing.JRadioButton rdbNotificationMethodEmailAndPopup;
     private javax.swing.JRadioButton rdbNotificationMethodPopup;
     // End of variables declaration//GEN-END:variables
 }

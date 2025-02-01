@@ -2,13 +2,9 @@ package pl.papuda.ess.client.components.home;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,10 +73,11 @@ public class EventsList extends javax.swing.JPanel {
     }
 
     public void updateUserPermissions(String role) {
-        boolean isStaff = role.equals("STAFF");
-        boolean isAdmin = role.equals("ADMIN");
+        boolean isStaff = "STAFF".equals(role);
+        boolean isAdmin = "ADMIN".equals(role);
         boolean isStaffOrAdmin = isStaff || isAdmin;
         btnToggleEventView.setEnabled(isStaffOrAdmin);
+        showEventsList();
         for (Component child : pnlEventsList.getComponents()) {
             if (!(child instanceof EventListItem)) {
                 continue;
@@ -88,6 +85,24 @@ public class EventsList extends javax.swing.JPanel {
             EventListItem listItem = (EventListItem) child;
             listItem.updateUserPermissions(isStaff);
         }
+    }
+
+    private void switchView() {
+        txtEventCreateError.setText("");
+        eventId = null;
+        btnCreateEvent.setText("CREATE");
+    }
+
+    private void showEventsList() {
+        switchView();
+        showLayoutCard("eventsList");
+        btnToggleEventView.setText("Create event");
+    }
+
+    private void showEventEditor() {
+        switchView();
+        showLayoutCard("eventEditor");
+        btnToggleEventView.setText("Show events list");
     }
 
     String orEmptyString(String s) {
@@ -113,7 +128,7 @@ public class EventsList extends javax.swing.JPanel {
         iptEventInformation.setText(orEmptyString(location.getAdditionalInformation()));
         Integer budget = event.getBudgetCents();
         iptEventBudget.setValue(budget == null ? 0 : (budget / 100.0));
-        int diffMinutes = Time.getDifferenceMinutes(event.getStartTime(), event.getReminderTime());
+        int diffMinutes = Math.abs(Time.getDifferenceMinutes(event.getStartTime(), event.getReminderTime()));
         int selectedIndex = 0;
         if (diffMinutes != 0) {
             selectedIndex = Arrays.asList(reminderTimesMinutes).indexOf(diffMinutes);
@@ -127,19 +142,19 @@ public class EventsList extends javax.swing.JPanel {
         String eventDate = iptEventDate.getText();
         LocalDateTime eventStart, eventEnd = null;
         try {
-            eventStart = LocalDateTime.parse(eventDate + "T" + iptEventStartTime.getText(), Time.dateTimeFormat);
+            eventStart = LocalDateTime.parse(eventDate + "T" + iptEventStartTime.getText(), Time.DATE_TIME_FORMAT);
             if (cbxEventEndTime.isSelected()) {
-                eventEnd = LocalDateTime.parse(eventDate + "T" + iptEventEndTime.getText(), Time.dateTimeFormat);
+                eventEnd = LocalDateTime.parse(eventDate + "T" + iptEventEndTime.getText(), Time.DATE_TIME_FORMAT);
             }
         } catch (DateTimeParseException ex) {
             throw new Exception("Invalid event start or end date");
         }
         String additionalInformation = iptEventInformation.getText();
-        if (additionalInformation.equals("")) {
+        if ("".equals(additionalInformation)) {
             additionalInformation = null;
         }
         String feedbackMessage = iptEventFeedbackMessage.getText();
-        if (feedbackMessage.equals("")) {
+        if ("".equals(feedbackMessage)) {
             feedbackMessage = null;
         }
         String frequency = eventFrequencies[cbbEventFrequency.getSelectedIndex()];
@@ -579,15 +594,10 @@ public class EventsList extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCreateEventActionPerformed
 
     private void btnToggleEventViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToggleEventViewActionPerformed
-        txtEventCreateError.setText("");
-        eventId = null;
-        btnCreateEvent.setText("CREATE");
-        if (btnToggleEventView.getText().equals("Show events list")) {
-            showLayoutCard("eventsList");
-            btnToggleEventView.setText("Create event");
+        if ("Show events list".equals(btnToggleEventView.getText())) {
+            showEventsList();
         } else {
-            showLayoutCard("eventEditor");
-            btnToggleEventView.setText("Show events list");
+            showEventEditor();
         }
     }//GEN-LAST:event_btnToggleEventViewActionPerformed
 

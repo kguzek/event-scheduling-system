@@ -15,7 +15,7 @@ import uk.guzek.sac.SubscriptionHandler;
 public class StompClient extends uk.guzek.sac.StompClient {
 
     private boolean connected = false;
-    private boolean disconnected = false;
+    private boolean closed = false;
     private boolean requestedClosure = false;
 
     
@@ -40,8 +40,12 @@ public class StompClient extends uk.guzek.sac.StompClient {
 
     @Override
     public void onClose(int code, String reason, boolean remotely) {
+        if (requestedClosure && reason.isBlank()) {
+            reason = "app-requested closure";
+        }
         System.out.println("STOMP client closed " + (remotely ? "remotely" : "locally") + ": " + code + " | " + (reason.isBlank() ? "(unknown cause)" : reason));
-        disconnected = true;
+        closed = true;
+        connected = false;
         if (requestedClosure) {
             requestedClosure = false;
             return;
@@ -108,7 +112,7 @@ public class StompClient extends uk.guzek.sac.StompClient {
         return connected;
     }
 
-    public boolean isDisconnected() {
-        return disconnected;
+    public boolean wasClosed() {
+        return closed;
     }
 }

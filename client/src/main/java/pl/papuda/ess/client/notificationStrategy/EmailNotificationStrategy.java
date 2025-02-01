@@ -4,16 +4,13 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.interfaces.Strategy;
-import pl.papuda.ess.client.model.Event;
 
 public class EmailNotificationStrategy implements Strategy{
 
     @Override
-    public void sendEventNotification(Event event) {
+    public void sendNotification(String title, String message) {
         String email = Web.user.getEmail();
-        String startingIn = event.getStartTime();
-        String text = String.format("Event %s is starting at %s!", event.getTitle(), startingIn);
-        sendEmail(email, "Upcoming Event", text);
+        sendEmail(email, title, message);
     }
     
     private void sendEmail(String email, String subject, String message) {

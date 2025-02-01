@@ -104,11 +104,12 @@ public class MainWindow extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 51, 51));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setForeground(new java.awt.Color(51, 255, 0));
-        setMinimumSize(new java.awt.Dimension(1100, 750));
+        setMinimumSize(new java.awt.Dimension(300, 500));
         setSize(new java.awt.Dimension(900, 600));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
         pnlMain.setBackground(new java.awt.Color(0, 102, 102));
+        pnlMain.setMinimumSize(new java.awt.Dimension(0, 0));
         pnlMain.setPreferredSize(new java.awt.Dimension(800, 500));
         pnlMain.setLayout(new java.awt.CardLayout());
         pnlMain.add(logInPage1, "logIn");
@@ -142,20 +143,24 @@ public class MainWindow extends javax.swing.JFrame {
         try {
             response = Web.sendPostRequest(endpoint, json);
         } catch (IOException | InterruptedException ex) {
-            throw new LoginException("Network error, try again later");
+            throw new LoginException("Network error, please try again later");
         }
         int code = response.statusCode();
         if (code != 200) {
-            String errorMessage = "Invalid credentials";
-            if (code != 403) {
-                try {
-                    errorMessage = objectMapper.readValue(response.body(), ErrorResponse.class).getMessage();
-                } catch (JsonProcessingException ex) {
-                    Web.logException(ex);
-                    errorMessage = code + " response with unparsable body";
-                }
+            if (code == 403) {
+                throw new LoginException("Invalid credentials");
             }
-            throw new LoginException(errorMessage);
+            ErrorResponse errorResponse;
+            try {
+                errorResponse = objectMapper.readValue(response.body(), ErrorResponse.class);
+            } catch (JsonProcessingException ex) {
+                Web.logException(ex);
+                throw new LoginException(code + " response with unparsable body");
+            }
+            if (errorResponse.getError() != null) {
+                System.err.println("Error response info: " + errorResponse.getError());
+            }
+            throw new LoginException(errorResponse.getMessage());
         }
         try {
             return objectMapper.readValue(response.body(), LoginResponse.class);
@@ -171,6 +176,7 @@ public class MainWindow extends javax.swing.JFrame {
         System.out.println("Navigating to " + cardName + " page");
         logInPage1.setError("");
         signUpPage1.setError("");
+        setMinimumSize("home".equals(cardName) ? new java.awt.Dimension(1000, 750) : new java.awt.Dimension(300, 500));
     }
 
     /**

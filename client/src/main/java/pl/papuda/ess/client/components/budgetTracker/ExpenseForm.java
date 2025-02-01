@@ -120,15 +120,14 @@ public class ExpenseForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void setCurrentDatetime() {
-        LocalDateTime dateTime = LocalDateTime.now();
-        Date date = Date.from(dateTime.toInstant(Time.zoneOffset));
+        Date date = Time.getCurrentDate();
         iptExpenseDate.setValue(date);
         iptExpenseTime.setValue(date);
     }
 
     private LocalDateTime getExpenseDate() throws Exception {
         try {
-            return LocalDateTime.parse(iptExpenseDate.getText() + "T" + iptExpenseTime.getText(), Time.dateTimeFormat);
+            return LocalDateTime.parse(iptExpenseDate.getText() + "T" + iptExpenseTime.getText(), Time.DATE_TIME_FORMAT);
         } catch (DateTimeParseException ex) {
             throw new Exception("Invalid expense date or time");
         }

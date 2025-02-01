@@ -22,13 +22,11 @@ import uk.guzek.sac.auth.JwtAuth;
 
 public class Web {
 
-    private static final boolean PRODUCTION_ENVIRONMENT = false;
-
-    private static final String API_BASE = (PRODUCTION_ENVIRONMENT
-            ? "s://event-scheduling-system-aqc8hfexf7epekfq.polandcentral-01.azurewebsites.net"
-            : "://localhost:8080") + "/api/v1";
+    private static final boolean PRODUCTION_ENVIRONMENT = true;
+    private static final String LOCAL_URL = "://localhost:8080";
+    private static final String PRODUCTION_URL = "s://ps8o4ow0cssswww408cs0wc4.konrad.s.solvro.pl";
+    private static final String API_BASE = (PRODUCTION_ENVIRONMENT ? PRODUCTION_URL : LOCAL_URL) + "/api/v1";
     private static final String API_URL = "http" + API_BASE;
-
     private static final String API_URL_WS = "ws" + API_BASE;
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
@@ -119,7 +117,7 @@ public class Web {
         int status = response.statusCode();
         if (status == 401) {
             System.err.println("401 response fetching " + request.uri().toString());
-            // unsetAccessToken();
+            unsetAccessToken();
         }
         return response;
     }
@@ -162,7 +160,7 @@ public class Web {
                 while (stompClient == null) {
                     Thread.sleep(100);
                 }
-                if (stompClient.isDisconnected()) {
+                if (stompClient.wasClosed()) {
                     System.out.println("Reconnecting STOMP client");
                     initialiseStompClient();
                 }

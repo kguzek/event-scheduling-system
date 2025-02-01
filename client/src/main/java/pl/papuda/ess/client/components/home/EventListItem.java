@@ -102,7 +102,7 @@ public class EventListItem extends AppPanel {
         if (endTime != null) {
             timeText += " - " + formatTime(endTime);
         }
-        updateUserPermissions(Web.user.getRole().equals("STAFF"));
+        updateUserPermissions("STAFF".equals(Web.user.getRole()));
         lblEventTime.setText(timeText);
         lblEventAddress.setText(formatLocation(event.getLocation()));
         cbxToggleParticipation.setSelected(false);

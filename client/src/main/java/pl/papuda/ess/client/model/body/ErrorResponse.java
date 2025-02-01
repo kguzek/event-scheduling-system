@@ -5,8 +5,13 @@
 package pl.papuda.ess.client.model.body;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
+@NoArgsConstructor
 public class ErrorResponse {
+    @NonNull
     private String message;
+    private String error;
 }

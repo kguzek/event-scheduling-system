@@ -16,8 +16,8 @@ import java.util.Timer;
 
 public class Time {
 
-    public static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy'T'HH:mm");
-    public static final ZoneOffset zoneOffset = OffsetDateTime.now().getOffset();
+    public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy'T'HH:mm");
+    public static final ZoneOffset ZONE_OFFSET = OffsetDateTime.now().getOffset();
 
     public static Date parseTimestamp(String timestamp) {
         if (timestamp == null) {
@@ -33,17 +33,43 @@ public class Time {
         if (dateTime == null) {
             return null;
         }
-        return dateTime.atOffset(Time.zoneOffset).toString();
+        return dateTime.atOffset(ZONE_OFFSET).toString();
     }
-
-    public static int getDifferenceMinutes(String date1, String date2) {
-        if (date1 == null || date2 == null) {
+    
+    public static int getDifferenceMinutes(Instant instant1, Instant instant2) {
+        if (instant1 == null || instant2 == null) {
             return 0;
         }
-        Instant instant1 = Instant.parse(date1);
-        Instant instant2 = Instant.parse(date2);
-        Long diffSeconds = Math.abs(instant1.getEpochSecond() - instant2.getEpochSecond());
-        return (int) (diffSeconds / 60);
+        Long diffSeconds = instant1.getEpochSecond() - instant2.getEpochSecond();
+        int diff = (int) (diffSeconds / 60);
+        return diff;
+    }
+
+    public static int getDifferenceMinutes(String dateString1, Instant instant2) {
+        if (dateString1 == null || instant2 == null) {
+            return 0;
+        }
+        Instant instant1 = Instant.parse(dateString1);
+        return getDifferenceMinutes(instant1, instant2);
+    }
+
+    public static int getDifferenceMinutes(String dateString1, String dateString2) {
+        if (dateString1 == null || dateString2 == null) {
+            return 0;
+        }
+        Instant instant1 = Instant.parse(dateString1);
+        Instant instant2 = Instant.parse(dateString2);
+        return getDifferenceMinutes(instant1, instant2);
+    }
+    
+    public static Instant getCurrentInstant() {
+        LocalDateTime dateTime = LocalDateTime.now();
+        Instant now = dateTime.toInstant(ZONE_OFFSET);
+        return now;
+    }
+    
+    public static Date getCurrentDate() {
+        return Date.from(getCurrentInstant());
     }
 
     public static void scheduleAt(String startTime, Runnable callback) {
@@ -57,6 +83,7 @@ public class Time {
         };
 
         Date executionTime = parseTimestamp(startTime);
+        System.out.println("Scheduling event reminder for " + executionTime);
         timer.schedule(task, executionTime);
     }
 }

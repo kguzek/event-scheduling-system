@@ -34,7 +34,7 @@ public class HomePage extends AppPanel {
         Web.user = Web.readResponseBody(response, new TypeReference<User>() {
         });
         String role = Web.user.getRole();
-        if (role.equals("ADMIN")) {
+        if ("ADMIN".equals(role)) {
             addUsersList();
         } else {
             System.out.println("User permissions: " + Web.user);
