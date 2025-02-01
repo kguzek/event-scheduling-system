@@ -1,15 +1,17 @@
 package pl.papuda.ess.server.api.controller.priv;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.papuda.ess.server.api.model.*;
-import pl.papuda.ess.server.api.model.body.EmailReminderRequest;
 import pl.papuda.ess.server.api.model.body.PermissionsResponse;
 import pl.papuda.ess.server.api.model.error.UnauthorizedException;
 import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.api.service.EmailService;
+import pl.papuda.ess.server.common.ResponseUtilities;
 import pl.papuda.ess.server.common.RestResponse;
 
 import java.security.Principal;
@@ -26,6 +28,8 @@ public class PermissionsController {
     private UserRepository userRepository;
     @Autowired
     private EmailService emailService;
+    @Value("classpath:/templates/roleRequest.html")
+    private Resource roleRequestTemplate;
 
     private final Map<Long, Long> userElevationRequestTimestamps = new HashMap<>();
 
@@ -43,17 +47,13 @@ public class PermissionsController {
     }
 
     private boolean userRequestedElevationRecently(User user) {
-        Long lastRequestTimestamp = userElevationRequestTimestamps.get(user.getId());
-        if (lastRequestTimestamp == null) return false;
+        Long lastRequestTimestamp = userElevationRequestTimestamps.getOrDefault(user.getId(), 0L);
         Long currentTimestamp = System.currentTimeMillis();
-        if (currentTimestamp - lastRequestTimestamp < ELEVATION_REQUEST_COOLDOWN_MILLIS) {
-            return true;
-        }
-        userElevationRequestTimestamps.put(user.getId(), currentTimestamp);
-        return false;
+        userElevationRequestTimestamps.putIfAbsent(user.getId(), currentTimestamp);
+        return currentTimestamp - lastRequestTimestamp < ELEVATION_REQUEST_COOLDOWN_MILLIS;
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<?> getUserPermissions(Principal principal) {
         User user;
         try {
@@ -79,13 +79,14 @@ public class PermissionsController {
         }
 
         String subject = String.format("Staff Privilege Request for %s", user.getUsername());
-        String message = String.format("User %s is requesting to be granted the staff role. ", user.getUsername());
+        String template = ResponseUtilities.readResource(roleRequestTemplate);
+        String content = template.replace("{REQUESTING_USERNAME}", user.getUsername());
 
         List<User> adminUsers = userRepository.findByRole(Role.ADMIN);
         int sentEmails = 0;
         int numAdminUsers = adminUsers.size();
         for (User adminUser : adminUsers) {
-            boolean success = emailService.sendEmail(adminUser.getEmail(), subject, message);
+            boolean success = emailService.sendEmail(adminUser.getEmail(), subject, content);
             if (success) {
                 sentEmails++;
             }

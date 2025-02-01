@@ -3,9 +3,11 @@ package pl.papuda.ess.server.common;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.io.Resource;
+import org.springframework.util.FileCopyUtils;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,5 +39,13 @@ public class ResponseUtilities {
         PrintWriter writer = response.getWriter();
         writer.write(data);
         writer.flush();
+    }
+
+    public static String readResource(Resource resource) {
+        try (Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            return FileCopyUtils.copyToString(reader);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

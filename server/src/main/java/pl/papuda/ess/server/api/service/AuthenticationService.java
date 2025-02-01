@@ -1,10 +1,5 @@
 package pl.papuda.ess.server.api.service;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +18,7 @@ import pl.papuda.ess.server.api.model.body.AuthenticationRequest;
 import pl.papuda.ess.server.api.model.body.AuthenticationResponse;
 import pl.papuda.ess.server.api.model.body.RegistrationRequest;
 import pl.papuda.ess.server.api.repo.UserRepository;
+import pl.papuda.ess.server.common.ResponseUtilities;
 
 @Service
 @RequiredArgsConstructor
@@ -62,16 +57,8 @@ public class AuthenticationService {
         return getResponseFromUser(user);
     }
 
-    private String readResource(Resource resource) {
-        try (Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-            return FileCopyUtils.copyToString(reader);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     public void sendChallengeEmail(String recipientAddress, String token) {
-        String template = readResource(verifyEmailTemplate);
+        String template = ResponseUtilities.readResource(verifyEmailTemplate);
         String content = template.replace("{EMAIL}", recipientAddress).replace("{TOKEN}", token);
         emailService.sendEmail(recipientAddress, "Account Verification", content);
     }

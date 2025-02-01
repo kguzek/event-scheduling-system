@@ -71,7 +71,7 @@ public class EventController {
         return getEmailResultResponse(success);
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<Event>> getAllEvents() {
         return ResponseEntity.ok(eventRepository.findAll());
     }
