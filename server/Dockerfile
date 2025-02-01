@@ -1,7 +1,8 @@
 FROM maven:3.9.9-eclipse-temurin-21 AS build
 COPY pom.xml .
 RUN mvn dependency:go-offline
-COPY application.properties .
+# For Dockerfile usage it is recommended to use environment variable instead of application.properties
+# COPY application.properties .
 COPY src ./src
 RUN mvn clean install
 EXPOSE 8080
