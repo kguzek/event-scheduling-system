@@ -44,12 +44,16 @@
       .link-standard {
         color: white;
       }
+
+      .username {
+        color: teal;
+      }
     </style>
   </head>
   <body class="ess-body">
     <h2 class="ess-title">Staff Privilege Elevation Request</h2>
 
-    <p>User <span class="link-standard">{REQUESTING_USERNAME}</span> is requesting to be assigned the staff role.</p>
+    <p>User <span class="username">@{REQUESTING_USERNAME}</span> is requesting to be assigned the staff role.</p>
     <p>
       This will grant them the ability to create new events, as well as update and delete events that they have created.
       They will not be able to modify events created by other staff members.
