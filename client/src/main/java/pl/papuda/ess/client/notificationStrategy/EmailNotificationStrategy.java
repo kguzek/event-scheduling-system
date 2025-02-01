@@ -16,7 +16,7 @@ public class EmailNotificationStrategy implements Strategy{
     private void sendEmail(String email, String subject, String message) {
         String json = String.format("{\"recipient\":\"%s\",\"subject\":\"%s\",\"body\":\"%s\"}", email, subject, message);
         try {
-            Web.sendPostRequest("/private/email/reminder", json);
+            Web.sendPostRequest("/private/event/reminder/email", json);
         } catch (IOException | InterruptedException ex) {
             String errorMessage = String.format("Could not send email with subject '%s' to address <%s>.", subject, email);
             JOptionPane.showMessageDialog(null, errorMessage, "Could not send email", JOptionPane.ERROR_MESSAGE);

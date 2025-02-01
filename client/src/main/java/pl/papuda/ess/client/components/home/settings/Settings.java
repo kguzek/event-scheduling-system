@@ -1,13 +1,17 @@
 package pl.papuda.ess.client.components.home.settings;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import javax.swing.JRadioButton;
+import pl.papuda.ess.client.components.AppPanel;
 import pl.papuda.ess.client.tools.AppPreferences;
+import pl.papuda.ess.client.tools.Web;
 
 /**
  *
  * @author konrad
  */
-public class Settings extends javax.swing.JPanel {
+public class Settings extends AppPanel {
 
     /**
      * Creates new form Settings
@@ -16,21 +20,49 @@ public class Settings extends javax.swing.JPanel {
         initComponents();
         applySettings();
     }
-    
+
     private void setNotificationMethod(String method) {
         AppPreferences.set("notificationMethod", method);
     }
-    
+
     private void applySettings() {
         String notificationMethod = AppPreferences.read("notificationMethod", "popup");
-        JRadioButton radioButton = switch(notificationMethod) {
-            case "popup" -> rdbNotificationMethodPopup;
-            case "email" -> rdbNotificationMethodEmail;
-            case "emailAndPopup" -> rdbNotificationMethodEmailAndPopup;
-            default -> rdbNotificationMethodPopup;
+        JRadioButton radioButton = switch (notificationMethod) {
+            case "popup" ->
+                rdbNotificationMethodPopup;
+            case "email" ->
+                rdbNotificationMethodEmail;
+            case "emailAndPopup" ->
+                rdbNotificationMethodEmailAndPopup;
+            default ->
+                rdbNotificationMethodPopup;
         };
         System.out.println("Preferred notification method: " + notificationMethod);
         radioButton.setSelected(true);
+    }
+
+    private void requestStaffRole() {
+        btnRequestStaffRole.setEnabled(false);
+        HttpResponse response;
+        try {
+            response = Web.sendPostRequest("/private/permissions/roles/staff");
+        } catch (IOException | InterruptedException ex) {
+            showErrorPopup(ex.getMessage(), "Error requesting role elevation");
+            return;
+        } finally {
+            btnRequestStaffRole.setEnabled(true);
+        }
+        String message = Web.getErrorMessage(response);
+        if (response.statusCode() != 200) {
+            showErrorPopup(message, "Role elevation denied");
+            return;
+        }
+        showInfoPopup(message, "Role elevation requested");
+//        System.out.println("Successfully sent role elevation request emails");
+    }
+
+    public void onUserPermissionsEstablished(String role) {
+        btnRequestStaffRole.setEnabled("USER".equals(role));
     }
 
     /**
@@ -47,6 +79,8 @@ public class Settings extends javax.swing.JPanel {
         rdbNotificationMethodPopup = new javax.swing.JRadioButton();
         rdbNotificationMethodEmail = new javax.swing.JRadioButton();
         rdbNotificationMethodEmailAndPopup = new javax.swing.JRadioButton();
+        btnRequestStaffRole = new javax.swing.JButton();
+        lblUserRole = new javax.swing.JLabel();
 
         jLabel1.setText("Preferred notification method");
 
@@ -74,6 +108,16 @@ public class Settings extends javax.swing.JPanel {
             }
         });
 
+        btnRequestStaffRole.setText("Request staff privileges");
+        btnRequestStaffRole.setEnabled(false);
+        btnRequestStaffRole.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRequestStaffRoleActionPerformed(evt);
+            }
+        });
+
+        lblUserRole.setText("User role");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -87,7 +131,9 @@ public class Settings extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(rdbNotificationMethodEmail)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdbNotificationMethodEmailAndPopup)))
+                        .addComponent(rdbNotificationMethodEmailAndPopup))
+                    .addComponent(btnRequestStaffRole)
+                    .addComponent(lblUserRole))
                 .addContainerGap(180, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -100,7 +146,11 @@ public class Settings extends javax.swing.JPanel {
                     .addComponent(rdbNotificationMethodPopup)
                     .addComponent(rdbNotificationMethodEmail)
                     .addComponent(rdbNotificationMethodEmailAndPopup))
-                .addContainerGap(251, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(lblUserRole)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRequestStaffRole)
+                .addContainerGap(184, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -109,16 +159,22 @@ public class Settings extends javax.swing.JPanel {
     }//GEN-LAST:event_rdbNotificationMethodPopupActionPerformed
 
     private void rdbNotificationMethodEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbNotificationMethodEmailActionPerformed
-        setNotificationMethod( "email");
+        setNotificationMethod("email");
     }//GEN-LAST:event_rdbNotificationMethodEmailActionPerformed
 
     private void rdbNotificationMethodEmailAndPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbNotificationMethodEmailAndPopupActionPerformed
         setNotificationMethod("emailAndPopup");
     }//GEN-LAST:event_rdbNotificationMethodEmailAndPopupActionPerformed
 
+    private void btnRequestStaffRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRequestStaffRoleActionPerformed
+        new Thread(this::requestStaffRole).start();
+    }//GEN-LAST:event_btnRequestStaffRoleActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnRequestStaffRole;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblUserRole;
     private javax.swing.ButtonGroup rbgNotificationMethod;
     private javax.swing.JRadioButton rdbNotificationMethodEmail;
     private javax.swing.JRadioButton rdbNotificationMethodEmailAndPopup;

@@ -114,6 +114,7 @@ public class Web {
 
     private static HttpResponse<String> sendRequest(HttpRequest request) throws IOException, InterruptedException {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(String.format("Sending %s request to %s", request.method(), request.uri().toString()));
         int status = response.statusCode();
         if (status == 401) {
             System.err.println("401 response fetching " + request.uri().toString());

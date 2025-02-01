@@ -6,6 +6,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.swing.JOptionPane;
 import pl.papuda.ess.client.components.home.EventsList;
 import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.eventObserver.EventCreationObserver;
@@ -105,6 +106,10 @@ public class EventService {
     public void startFetchEvents() {
         new Thread(this::fetchEvents).start();
     }
+    
+    private void showErrorPopup(String message, String title) {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    }
 
     private void fetchEvents() {
         HttpResponse<String> response;
@@ -115,7 +120,7 @@ public class EventService {
             return;
         }
         if (response.statusCode() != 200) {
-            System.out.println("Response code " + response.statusCode());
+            showErrorPopup(Web.getErrorMessage(response), "Failed to fetch events list");
             return;
         }
         events = Web.readResponseBody(response, new TypeReference<List<Event>>() {

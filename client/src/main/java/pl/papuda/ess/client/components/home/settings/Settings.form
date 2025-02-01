@@ -31,6 +31,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rdbNotificationMethodEmailAndPopup" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="btnRequestStaffRole" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblUserRole" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="180" max="32767" attributes="0"/>
           </Group>
@@ -47,7 +49,11 @@
                   <Component id="rdbNotificationMethodEmail" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="rdbNotificationMethodEmailAndPopup" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="251" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="lblUserRole" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="btnRequestStaffRole" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="184" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -90,6 +96,20 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rdbNotificationMethodEmailAndPopupActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnRequestStaffRole">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Request staff privileges"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRequestStaffRoleActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblUserRole">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="User role"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

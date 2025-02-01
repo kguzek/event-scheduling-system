@@ -293,7 +293,7 @@ public class EventListItem extends AppPanel {
     }// GEN-LAST:event_pmiEventEditActionPerformed
 
     void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(null, message, "Problem updating attendance status", JOptionPane.ERROR_MESSAGE);
+        showErrorPopup(message, "Problem updating attendance status");
         if (!message.contains("attendance status is already at that value")) {
             cbxToggleParticipation.setSelected(!cbxToggleParticipation.isSelected());
         }

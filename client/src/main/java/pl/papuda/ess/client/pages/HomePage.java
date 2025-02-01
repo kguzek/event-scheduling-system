@@ -3,16 +3,15 @@ package pl.papuda.ess.client.pages;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.http.HttpResponse;
-
 import pl.papuda.ess.client.components.AppPanel;
 import pl.papuda.ess.client.components.home.EventsList;
 import pl.papuda.ess.client.components.home.UsersList;
 import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
-import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.model.User;
+import pl.papuda.ess.client.tools.Web;
 
 public class HomePage extends AppPanel {
-    
+
     private static final int NUM_HOME_TABS = 2;
 
     /**
@@ -21,19 +20,30 @@ public class HomePage extends AppPanel {
     public HomePage() {
         initComponents();
     }
-
+    
     public void getUserPermissions() {
         HttpResponse<String> response;
         try {
             response = Web.sendGetRequest("/private/permissions");
         } catch (IOException | InterruptedException ex) {
+            showErrorPopup("Could not check the user permissions. If the issue persists, try restarting the application.", "User validation blocked");
             Web.unsetAccessToken();
             switchPage("logIn");
+            return;
+        }
+        if (response.statusCode() != 200) {
+            Web.unsetAccessToken();
+            switchPage("logIn");
+            showErrorPopup(Web.getErrorMessage(response), "User validation failed");
             return;
         }
         Web.user = Web.readResponseBody(response, new TypeReference<User>() {
         });
         String role = Web.user.getRole();
+        onUserPermissionsEstablished(role);
+    }
+    
+    private void onUserPermissionsEstablished(String role) {
         if ("ADMIN".equals(role)) {
             addUsersList();
         } else {
@@ -41,6 +51,7 @@ public class HomePage extends AppPanel {
         }
         lblUsernameInfo.setText(Web.user.getUsername() + " (" + role + ")");
         eventsList1.updateUserPermissions(role);
+        settings1.onUserPermissionsEstablished(role);
     }
 
     public EventsList getEventsList() {
