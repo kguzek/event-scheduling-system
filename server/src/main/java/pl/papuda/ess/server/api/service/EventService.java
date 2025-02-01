@@ -102,10 +102,10 @@ public class EventService {
             eventObj = mergeEvents(previousEvent, newEvent);
         } catch (InvalidObjectException e) {
             e.printStackTrace();
-            return new StompResponse<String>(false, e.getMessage());
+            return new StompResponse<>(false, e.getMessage());
         }
         Event savedEvent = eventRepository.save(eventObj);
-        return new StompResponse<Event>(true, savedEvent);
+        return new StompResponse<>(true, savedEvent);
     }
 
     public void deleteEvent(Event event) {
