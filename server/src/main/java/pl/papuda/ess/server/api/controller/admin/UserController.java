@@ -1,10 +1,13 @@
 package pl.papuda.ess.server.api.controller.admin;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pl.papuda.ess.server.api.service.EmailService;
+import pl.papuda.ess.server.common.ResponseUtilities;
 import pl.papuda.ess.server.common.RestResponse;
 import pl.papuda.ess.server.api.model.Role;
 import pl.papuda.ess.server.api.model.User;
@@ -25,6 +30,10 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private EmailService emailService;
+    @Value("classpath:/templates/userPromoted.html")
+    private Resource userPromotedTemplate;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -46,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user, Principal principal) {
         Optional<User> userData = userRepo.findById(id);
         if (userData.isEmpty()) {
             return RestResponse.notFound("User");
@@ -59,6 +68,11 @@ public class UserController {
         Role role = user.getRole();
         if (role == null) {
             return RestResponse.badRequest("User role not provided in request body");
+        }
+        if (userObj.getRole().equals(Role.USER) && role.equals(Role.STAFF)) {
+            String template = ResponseUtilities.readResource(userPromotedTemplate);
+            String content = template.replace("{GRANTING_USERNAME}", principal.getName());
+            emailService.sendEmail(userObj.getEmail(), "New Privileges Granted", content);
         }
         userObj.setEmail(email);
         userObj.setRole(role);

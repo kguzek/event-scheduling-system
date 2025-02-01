@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Invalid Token | Event Scheduling System</title>
+    <title>Email Confirmation</title>
     <style>
       html {
         background-color: #333;
@@ -18,6 +18,7 @@
         margin: 0 40px;
         height: 100vh;
         padding: 30px 20px;
+        max-width: 500px;
       }
 
       .ess-title {
@@ -43,19 +44,31 @@
       .link-standard {
         color: white;
       }
+
+      .username {
+        color: teal;
+      }
     </style>
   </head>
   <body class="ess-body">
-    <h2 class="ess-title">400 Bad Request</h2>
-    <h4>Invalid Token</h4>
+    <h2 class="ess-title">Staff Privilege Elevation Granted</h2>
+
+    <p>You have been promoted by <span class="username">@{GRANTING_USERNAME}</span> to the role of staff member.</p>
     <p>
-      Unfortunately, the email verification token is invalid. If you are trying
-      to verify your email address, perform the operation again.
+      This has given you the ability to create new events, as well as update and delete events that you have created.
+      You will not be able to modify events created by other staff members.
     </p>
+    <p>
+      To create new events, the "Create Event" button will now be enabled for you at your next login.
+      To modify existing events, click the three dots in the top-right corner of the event card.
+    </p>
+    <br />
+    <small>
+      You are receiving this email because your account was updated by an administrator of the Event Scheduling System.
+    </small>
     <hr />
     <div class="ess-container">
-      <footer>2025 &copy; <a href="https://github.com/kguzek/event-scheduling-system" class="link-standard">Event Scheduling System</a></footer>
+      <footer>{CURRENT_YEAR} &copy; <a href="https://github.com/kguzek/event-scheduling-system" class="link-standard">Event Scheduling System</a></footer>
     </div>
   </body>
 </html>
-
