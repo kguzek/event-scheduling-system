@@ -53,7 +53,7 @@ public class PermissionsController {
         return false;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> getUserPermissions(Principal principal) {
         User user;
         try {
