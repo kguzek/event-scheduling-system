@@ -63,6 +63,7 @@ public class AuthenticationController {
         try {
             return ResponseEntity.ok(authenticationService.authenticate(request));
         } catch (Error ex) {
+            System.err.println("Bad request on /auth/login");
             return ErrorResponse.generate(ex.getMessage());
         }
     }

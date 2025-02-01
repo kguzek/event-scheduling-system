@@ -21,6 +21,9 @@ public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(CsrfConfigurer::disable)
@@ -32,6 +35,10 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/v1/staff/**").hasAuthority("STAFF")
                                 .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
                                 .anyRequest().denyAll())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
                 .sessionManagement(sesMan -> sesMan.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
