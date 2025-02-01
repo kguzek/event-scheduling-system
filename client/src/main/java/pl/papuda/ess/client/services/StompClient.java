@@ -9,32 +9,44 @@ import java.util.Map;
 import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import pl.papuda.ess.client.model.body.StompResponse;
+import uk.guzek.sac.AuthType;
 import uk.guzek.sac.SubscriptionHandler;
 
 public class StompClient extends uk.guzek.sac.StompClient {
-    
+
     private boolean connected = false;
     private boolean disconnected = false;
+    private boolean requestedClosure = false;
 
-    public StompClient(URI serverUri, Map<String, String> headers, String host) {
-        super(serverUri, headers, host);
+    
+    public StompClient(URI serverUri, AuthType authType, String host) {
+        super(serverUri, authType, host);
     }
     
     @Override
     public void onStompFrame(String frame, Map<String, String> headers, String body) {
-        System.out.println("STOMP client received " + frame + " frame: " + body);
+        System.out.println("STOMP client received " + frame + " frame: " + (body.isBlank() ? "(no body)" : body));
     }
-    
-    
+
+    @Override
+    public void close() {
+        requestedClosure = true;
+        super.close();
+    }
+
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(null, message, "Connection error", JOptionPane.WARNING_MESSAGE);
     }
 
     @Override
     public void onClose(int code, String reason, boolean remotely) {
-        System.out.println("STOMP client closed " + (remotely ? "remotely" : "locally") + ": " + code + " " + reason + " | ");
+        System.out.println("STOMP client closed " + (remotely ? "remotely" : "locally") + ": " + code + " | " + (reason.isBlank() ? "(unknown cause)" : reason));
         disconnected = true;
-        
+        if (requestedClosure) {
+            requestedClosure = false;
+            return;
+        }
+
         if (remotely) {
             showErrorDialog("Connection to the server lost. The connection will attempt to be re-established when performing an action.");
         } else {
@@ -46,32 +58,32 @@ public class StompClient extends uk.guzek.sac.StompClient {
     public void onError(Exception ex) {
         System.err.println("STOMP client error: " + ex);
     }
-    
+
     @Override
-    public int subscribe(String destination,  SubscriptionHandler handler) {
-        System.out.println("subscribed to " + destination);
+    public int subscribe(String destination, SubscriptionHandler handler) {
+        System.out.println("Subscribed to " + destination);
         return super.subscribe(destination, handler);
     }
-    
+
     @Override
     public void sendText(String text, String destination) {
         super.sendText(text, destination);
-        System.out.println("sending '" + text + "' to " + destination);
+        System.out.println("Sending '" + text + "' to " + destination);
     }
-    
+
     @Override
     public void sendJson(Object object, String destination) throws JsonProcessingException {
         super.sendJson(object, destination);
-        System.out.println("sending JSON to " + destination);
+        System.out.println("Sending JSON to " + destination);
     }
-    
+
     @Override
     public void onConnected() {
         super.onConnected();
         connected = true;
         System.out.println("STOMP client connected!");
         ObjectMapper mapper = new ObjectMapper();
-        
+
         for (Map.Entry<String, Consumer<Object>> entry : Web.getSubscriptions()) {
             String destination = entry.getKey();
             Consumer<Object> handler = entry.getValue();
@@ -91,11 +103,11 @@ public class StompClient extends uk.guzek.sac.StompClient {
             });
         }
     }
-    
+
     public boolean isConnected() {
         return connected;
     }
-    
+
     public boolean isDisconnected() {
         return disconnected;
     }

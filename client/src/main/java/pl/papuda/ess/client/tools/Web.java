@@ -15,15 +15,14 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import pl.papuda.ess.client.services.StompClient;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.User;
-import uk.guzek.sac.AuthType;
+import uk.guzek.sac.auth.JwtAuth;
 
 public class Web {
 
-    private static final boolean PRODUCTION_ENVIRONMENT = true;
+    private static final boolean PRODUCTION_ENVIRONMENT = false;
 
     private static final String API_BASE = (PRODUCTION_ENVIRONMENT
             ? "s://event-scheduling-system-aqc8hfexf7epekfq.polandcentral-01.azurewebsites.net"
@@ -40,19 +39,20 @@ public class Web {
 
     public static User user = null;
 
-    public static final Preferences prefs = Preferences.userNodeForPackage(Web.class);
-
     public static void unsetAccessToken(boolean clearStoredData) {
         unsetAccessToken();
         if (clearStoredData) {
-            Web.prefs.remove("accessToken");
-            Web.prefs.remove("tokenGenerationDate");
+            AppPreferences.unset("accessToken");
+            AppPreferences.unset("tokenGenerationDate");
         }
     }
 
     public static void unsetAccessToken() {
         accessToken = null;
         user = null;
+        if (stompClient != null && stompClient.isConnected()) {
+            stompClient.close();
+        }
     }
 
     public static void logException(Exception ex) {
@@ -61,7 +61,7 @@ public class Web {
 
     public static void initialiseStompClient() {
         URI stompServerUri = URI.create(API_URL_WS + "/private/stomp");
-        stompClient = new StompClient(stompServerUri, AuthType.jwt(accessToken), API_URL);
+        stompClient = new StompClient(stompServerUri, new JwtAuth(accessToken), API_URL);
         stompClient.connect();
     }
 
@@ -72,9 +72,9 @@ public class Web {
         }
         if (remember) {
             System.out.println("Saving access token to preferences");
-            prefs.put("accessToken", accessToken);
+            AppPreferences.set("accessToken", accessToken);
             String generationDate = new Date().getTime() + "";
-            prefs.put("tokenGenerationDate", generationDate);
+            AppPreferences.set("tokenGenerationDate", generationDate);
         }
     }
 

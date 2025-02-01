@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.components.home.EventsList;
 import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.eventObserver.EventCreationObserver;
@@ -13,10 +12,13 @@ import pl.papuda.ess.client.eventObserver.EventDeletionObserver;
 import pl.papuda.ess.client.eventObserver.EventObservable;
 import pl.papuda.ess.client.eventObserver.EventUpdateObserver;
 import pl.papuda.ess.client.pages.HomePage;
+import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.interfaces.Observable;
 import pl.papuda.ess.client.interfaces.Observer;
-
-import pl.papuda.ess.client.model.Event;
+import pl.papuda.ess.client.interfaces.Strategy;
+import pl.papuda.ess.client.tools.Web;
+import pl.papuda.ess.client.tools.Time;
+import pl.papuda.ess.client.tools.AppPreferences;
 
 public class EventService {
 
@@ -48,6 +50,27 @@ public class EventService {
         eventsList.updateEventsList(events);
     }
 
+    private void onEventUpdated(Event event) {
+        updateEvents();
+        eventsList.onEventUpdated();
+        String startTime = event.getStartTime();
+        Long eventId = event.getId();
+
+        Time.scheduleAt(event.getStartTime(), () -> {
+            Event currentEvent = getEvent(eventId);
+            if (currentEvent == null) {
+                // This event was deleted since the timer was set
+                return;
+            }
+            if (!currentEvent.getStartTime().equals(startTime)) {
+                // The event start time has changed since this timer was set
+                return;
+            }
+            Strategy notificationStrategy = AppPreferences.getNotificationPreference();
+            notificationStrategy.sendEventNotification(event);
+        });
+    }
+
     public void startFetchEvents() {
         new Thread(this::fetchEvents).start();
     }
@@ -73,14 +96,22 @@ public class EventService {
         awaitingDeletion = true;
     }
 
+    public Event getEvent(Long id) {
+        for (Event event : events) {
+            if (event.getId().equals(id)) {
+                return event;
+            }
+        }
+        return null;
+    }
+
     public boolean isAwaitingDeletion() {
         return awaitingDeletion;
     }
 
     public void addEvent(Event event) {
         events.add(event);
-        updateEvents();
-        eventsList.onEventUpdated();
+        onEventUpdated(event);
     }
 
     public void removeEvent(Long eventId) {
@@ -97,8 +128,7 @@ public class EventService {
                 continue;
             }
             events.set(i, event);
-            updateEvents();
-            eventsList.onEventUpdated();
+            onEventUpdated(event);
             return;
         }
         System.err.println("No event with id " + eventId);

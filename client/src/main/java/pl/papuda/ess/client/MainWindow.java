@@ -14,6 +14,7 @@ import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.body.LoginResponse;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.services.EventService;
+import pl.papuda.ess.client.tools.AppPreferences;
 
 public class MainWindow extends javax.swing.JFrame {
 
@@ -52,8 +53,8 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     private void loadSettings() {
-        String token = Web.prefs.get("accessToken", "");
-        String tokenGenerationDate = Web.prefs.get("tokenGenerationDate", "");
+        String token = AppPreferences.read("accessToken", "");
+        String tokenGenerationDate = AppPreferences.read("tokenGenerationDate", "");
         if ("".equals(token) || "".equals(tokenGenerationDate)) {
             return;
         }
@@ -62,7 +63,7 @@ public class MainWindow extends javax.swing.JFrame {
             generationDate = Long.valueOf(tokenGenerationDate);
         } catch (NumberFormatException ex) {
             System.out.println("Removing malformatted token generation date " + tokenGenerationDate);
-            Web.prefs.remove("tokenGenerationDate");
+            AppPreferences.unset("tokenGenerationDate");
             return;
         }
         if (generationDate <= 0) {

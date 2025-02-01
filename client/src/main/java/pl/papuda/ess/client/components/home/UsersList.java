@@ -29,7 +29,7 @@ public class UsersList extends javax.swing.JPanel {
             lblUsersLoading.setText("An error occurred while obtaining the users.");
             return;
         }
-        if (users.size() == 0) {
+        if (users.isEmpty()) {
             lblUsersLoading.setText("There are no users to display!");
             return;
         }

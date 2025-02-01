@@ -33,7 +33,7 @@
     <dependency>
       <groupId>uk.guzek</groupId>
       <artifactId>stomp-auth-client</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

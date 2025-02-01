@@ -90,33 +90,6 @@ public class EventsList extends javax.swing.JPanel {
         }
     }
 
-    private String formatDateTime(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            return null;
-        }
-        return dateTime.atOffset(Time.zoneOffset).toString();
-    }
-
-    int getDifferenceMinutes(String date1, String date2) {
-        if (date1 == null || date2 == null) {
-            return 0;
-        }
-        Instant instant1 = Instant.parse(date1);
-        Instant instant2 = Instant.parse(date2);
-        Long diffSeconds = Math.abs(instant1.getEpochSecond() - instant2.getEpochSecond());
-        return (int) (diffSeconds / 60);
-    }
-
-    Date parseTimestamp(String timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
-        TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(timestamp);
-        Instant instant = Instant.from(ta);
-        Date date = Date.from(instant);
-        return date;
-    }
-
     String orEmptyString(String s) {
         return s == null ? "" : s;
     }
@@ -129,9 +102,9 @@ public class EventsList extends javax.swing.JPanel {
         showLayoutCard("eventEditor");
         iptEventTitle.setText(event.getTitle());
         iptEventFeedbackMessage.setText(event.getFeedbackMessage());
-        iptEventDate.setValue(parseTimestamp(event.getStartTime()));
-        iptEventStartTime.setValue(parseTimestamp(event.getStartTime()));
-        iptEventEndTime.setValue(parseTimestamp(event.getEndTime()));
+        iptEventDate.setValue(Time.parseTimestamp(event.getStartTime()));
+        iptEventStartTime.setValue(Time.parseTimestamp(event.getStartTime()));
+        iptEventEndTime.setValue(Time.parseTimestamp(event.getEndTime()));
         Location location = event.getLocation();
         iptEventStreet.setText(location.getStreet());
         iptEventCode.setText(location.getCode());
@@ -140,7 +113,7 @@ public class EventsList extends javax.swing.JPanel {
         iptEventInformation.setText(orEmptyString(location.getAdditionalInformation()));
         Integer budget = event.getBudgetCents();
         iptEventBudget.setValue(budget == null ? 0 : (budget / 100.0));
-        int diffMinutes = getDifferenceMinutes(event.getStartTime(), event.getReminderTime());
+        int diffMinutes = Time.getDifferenceMinutes(event.getStartTime(), event.getReminderTime());
         int selectedIndex = 0;
         if (diffMinutes != 0) {
             selectedIndex = Arrays.asList(reminderTimesMinutes).indexOf(diffMinutes);
@@ -191,9 +164,9 @@ public class EventsList extends javax.swing.JPanel {
         Location location = Location.builder().street(iptEventStreet.getText()).city(iptEventCity.getText())
                 .code(iptEventCode.getText()).country(iptEventCountry.getText()).additionalInformation(additionalInformation).build();
         PartialEvent event = PartialEvent.builder().title(iptEventTitle.getText())
-                .organiserName("John Doe").startTime(formatDateTime(eventStart)).endTime(formatDateTime(eventEnd))
+                .organiserName("John Doe").startTime(Time.formatDateTime(eventStart)).endTime(Time.formatDateTime(eventEnd))
                 .location(location).frequency(frequency).feedbackMessage(feedbackMessage)
-                .reminderTime(formatDateTime(eventReminder)).budgetCents(budgetCents).build();
+                .reminderTime(Time.formatDateTime(eventReminder)).budgetCents(budgetCents).build();
         return event;
     }
 
