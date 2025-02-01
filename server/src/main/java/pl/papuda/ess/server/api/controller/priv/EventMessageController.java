@@ -1,4 +1,4 @@
-package pl.papuda.ess.server.api.controller;
+package pl.papuda.ess.server.api.controller.priv;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import pl.papuda.ess.server.api.service.EventService;
 
 @Controller
 @MessageMapping("/event")
-public class EventController {
+public class EventMessageController {
 
     @Autowired
     private EventRepository eventRepository;

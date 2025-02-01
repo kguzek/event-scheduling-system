@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import pl.papuda.ess.server.api.model.ErrorResponse;
+import pl.papuda.ess.server.common.RestResponse;
 import pl.papuda.ess.server.api.model.Event;
 import pl.papuda.ess.server.api.model.Task;
 import pl.papuda.ess.server.api.model.TaskStatus;
@@ -29,7 +28,7 @@ import pl.papuda.ess.server.api.repo.UserRepository;
 
 @RestController
 @RequestMapping("/api/v1/staff/task")
-public class TaskController {
+public class TaskStaffController {
 
     @Autowired
     private TaskRepository taskRepository;
@@ -47,7 +46,7 @@ public class TaskController {
     public ResponseEntity<?> getTask(@PathVariable Long id) {
         Optional<Task> taskData = taskRepository.findById(id);
         if (taskData.isEmpty()) {
-            return ErrorResponse.generate("Task not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("Task");
         }
         return ResponseEntity.ok(taskData.get());
     }
@@ -74,16 +73,16 @@ public class TaskController {
     public ResponseEntity<?> createTask(@RequestBody TaskCreationRequest request) {
         Long eventId = request.getEventId();
         if (eventId == null) {
-            return ErrorResponse.generate("Request body must contain parent event id");
+            return RestResponse.badRequest("Request body must contain parent event id");
         }
         Optional<Event> eventData = eventRepository.findById(eventId);
         if (eventData.isEmpty()) {
-            return ErrorResponse.generate("Event not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("Event");
         }
         Event event = eventData.get();
         Task task = mergeTasks(new Task(), request);
         if (task == null) {
-            return ErrorResponse.generate("Invalid assignee user id");
+            return RestResponse.badRequest("Invalid assignee user id");
         }
         task.setEvent(event);
         Task savedTask = taskRepository.save(task);
@@ -98,11 +97,11 @@ public class TaskController {
     public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody TaskCreationRequest request) {
         Optional<Task> taskData = taskRepository.findById(id);
         if (taskData.isEmpty()) {
-            return ErrorResponse.generate("Task not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("Task");
         }
         Task task = mergeTasks(taskData.get(), request);
         if (task == null) {
-            return ErrorResponse.generate("Invalid assignee user id");
+            return RestResponse.badRequest("Invalid assignee user id");
         }
         return ResponseEntity.ok(taskRepository.save(task));
     }
@@ -114,8 +113,7 @@ public class TaskController {
             Task task = taskData.get();
             Event event = task.getEvent();
             if (!event.getCreator().getUsername().equals(principal.getName())) {
-                return ErrorResponse.generate("You cannot remove tasks for events that were not created by you",
-                        HttpStatus.FORBIDDEN);
+                return RestResponse.forbidden("You cannot remove tasks for events that were not created by you");
             }
             List<Task> tasks = event.getTasks();
             tasks.removeAll(List.of(task));

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import pl.papuda.ess.server.api.model.ErrorResponse;
+import pl.papuda.ess.server.common.RestResponse;
 import pl.papuda.ess.server.api.model.Event;
 import pl.papuda.ess.server.api.model.Resource;
 import pl.papuda.ess.server.api.model.body.ResourceCreationRequest;
@@ -41,7 +40,7 @@ public class ResourceController {
     public ResponseEntity<?> getResource(@PathVariable Long id) {
         Optional<Resource> resourceData = resourceRepository.findById(id);
         if (resourceData.isEmpty()) {
-            return ErrorResponse.generate("Resource not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("Resource");
         }
         return ResponseEntity.ok(resourceData.get());
     }
@@ -62,11 +61,11 @@ public class ResourceController {
     public ResponseEntity<?> createResource(@RequestBody ResourceCreationRequest request) {
         Long eventId = request.getEventId();
         if (eventId == null) {
-            return ErrorResponse.generate("Request body must contain parent event id");
+            return RestResponse.badRequest("Request body must contain parent event id");
         }
         Optional<Event> eventData = eventRepository.findById(eventId);
         if (eventData.isEmpty()) {
-            return ErrorResponse.generate("Event not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("Event");
         }
         Event event = eventData.get();
         Resource resource = mergeResources(new Resource(), request);
@@ -83,11 +82,11 @@ public class ResourceController {
     public ResponseEntity<?> updateResource(@PathVariable Long id, @RequestBody ResourceCreationRequest request) {
         Optional<Resource> resourceData = resourceRepository.findById(id);
         if (resourceData.isEmpty()) {
-            return ErrorResponse.generate("Resource not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("Resource");
         }
         Resource resource = mergeResources(resourceData.get(), request);
         if (resource == null) {
-            return ErrorResponse.generate("Invalid assignee user id");
+            return RestResponse.badRequest("Invalid assignee user id");
         }
         return ResponseEntity.ok(resourceRepository.save(resource));
     }
@@ -99,8 +98,7 @@ public class ResourceController {
             Resource resource = resourceData.get();
             Event event = resource.getEvent();
             if (!event.getCreator().getUsername().equals(principal.getName())) {
-                return ErrorResponse.generate("You cannot remove resources for events that were not created by you",
-                        HttpStatus.FORBIDDEN);
+                return RestResponse.forbidden("You cannot remove resources for events that were not created by you");
             }
             List<Resource> resources = event.getResources();
             resources.removeAll(List.of(resource));

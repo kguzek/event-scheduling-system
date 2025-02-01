@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import lombok.RequiredArgsConstructor;
-import pl.papuda.ess.server.api.model.ErrorResponse;
+import pl.papuda.ess.server.common.RestResponse;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.AuthenticationRequest;
 import pl.papuda.ess.server.api.model.body.EmailChallengeRequest;
@@ -37,23 +37,23 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegistrationRequest request) {
         if (!passwordPattern.matcher(request.getPassword()).matches()) {
-            return ErrorResponse
-                    .generate(
+            return RestResponse
+                    .badRequest(
                             "Password must be minimum 8 characters long, and contain a capital letter and a special character");
         }
         String username = request.getUsername();
         if (username == null || username.isEmpty()) {
-            return ErrorResponse.generate("Username cannot be empty");
+            return RestResponse.badRequest("Username cannot be empty");
         }
         String email = request.getEmail();
         if (email == null || email.isEmpty()) {
-            return ErrorResponse.generate("Email cannot be empty");
+            return RestResponse.badRequest("Email cannot be empty");
         }
         if (userRepository.findByEmail(email).isPresent()) {
-            return ErrorResponse.generate(String.format("An account for '%s' already exists.", email));
+            return RestResponse.badRequest(String.format("An account for '%s' already exists.", email));
         }
         if (userRepository.findByUsername(username).isPresent()) {
-            return ErrorResponse.generate(String.format("Username '%s' is taken", username));
+            return RestResponse.badRequest(String.format("Username '%s' is taken", username));
         }
         return ResponseEntity.ok(authenticationService.register(request));
     }
@@ -64,7 +64,7 @@ public class AuthenticationController {
             return ResponseEntity.ok(authenticationService.authenticate(request));
         } catch (Error ex) {
             System.err.println("Bad request on /auth/login");
-            return ErrorResponse.generate(ex.getMessage());
+            return RestResponse.badRequest(ex.getMessage());
         }
     }
 
@@ -85,11 +85,11 @@ public class AuthenticationController {
     public ResponseEntity<?> checkEmailVerified(@RequestParam String email) {
         Optional<User> userData = userRepository.findByEmail(email);
         if (userData.isEmpty()) {
-            return ErrorResponse.generate("Invalid email");
+            return RestResponse.badRequest("Invalid email");
         }
         User user = userData.get();
         return user.isEmailVerified()
                 ? ResponseEntity.ok().build()
-                : ErrorResponse.generate("Email not verified");
+                : RestResponse.badRequest("Email not verified");
     }
 }

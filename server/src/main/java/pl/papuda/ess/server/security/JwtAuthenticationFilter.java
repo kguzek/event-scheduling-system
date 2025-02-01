@@ -22,7 +22,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import pl.papuda.ess.server.api.model.ErrorResponse;
+import pl.papuda.ess.server.common.RestResponse;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.api.service.JwtService;
@@ -99,7 +99,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setHeader("WWW-Authenticate", "Bearer realm=/api/v1/auth/");
         // System.out.println("Denying request: " + denialMessage);
-        response.getWriter().write(convertObjectToJson(new ErrorResponse(denialMessage)));
+        response.getWriter().write(convertObjectToJson(new RestResponse(denialMessage)));
     }
 
     public String convertObjectToJson(Object object) throws JsonProcessingException {

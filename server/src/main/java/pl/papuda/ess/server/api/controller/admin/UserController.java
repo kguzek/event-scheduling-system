@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import pl.papuda.ess.server.api.model.ErrorResponse;
+import pl.papuda.ess.server.common.RestResponse;
 import pl.papuda.ess.server.api.model.Role;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.repo.UserRepository;
@@ -41,7 +40,7 @@ public class UserController {
     public ResponseEntity<?> getUser(@PathVariable Long id) {
         Optional<User> userData = userRepo.findById(id);
         if (userData.isEmpty()) {
-            return ErrorResponse.generate("User not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("User");
         }
         return ResponseEntity.ok(userData.get());
     }
@@ -50,16 +49,16 @@ public class UserController {
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
         Optional<User> userData = userRepo.findById(id);
         if (userData.isEmpty()) {
-            return ErrorResponse.generate("User not found", HttpStatus.NOT_FOUND);
+            return RestResponse.notFound("User");
         }
         User userObj = userData.get();
         String email = user.getEmail();
         if (email == null) {
-            return ErrorResponse.generate("User email not provided in request body");
+            return RestResponse.badRequest("User email not provided in request body");
         }
         Role role = user.getRole();
         if (role == null) {
-            return ErrorResponse.generate("User role not provided in request body");
+            return RestResponse.badRequest("User role not provided in request body");
         }
         userObj.setEmail(email);
         userObj.setRole(role);
