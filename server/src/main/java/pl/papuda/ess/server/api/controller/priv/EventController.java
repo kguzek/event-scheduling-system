@@ -5,10 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.papuda.ess.server.api.model.*;
-import pl.papuda.ess.server.api.model.body.EmailReminderRequest;
 import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.UserRepository;
-import pl.papuda.ess.server.api.service.EmailService;
 import pl.papuda.ess.server.common.RestResponse;
 
 import java.security.Principal;
@@ -23,7 +21,6 @@ public class EventController {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-    private final EmailService emailService;
 
     private ResponseEntity<?> setAttendanceStatus(Long eventId, Principal principal, boolean attending) {
         Optional<Event> eventData = eventRepository.findById(eventId);
@@ -54,19 +51,6 @@ public class EventController {
         // eventRepository.save(event);
         // return ResponseEntity.ok(userRepository.save(user));
         return ResponseEntity.ok(eventRepository.save(event));
-    }
-
-
-    private ResponseEntity<RestResponse> getEmailResultResponse(boolean success) {
-        return success
-                ? RestResponse.ok("Email message sent successfully")
-                : RestResponse.generate("An unknown error occurred while sending the email message", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @PostMapping("/reminder/email")
-    public ResponseEntity<RestResponse> sendReminderEmail(@RequestBody EmailReminderRequest request) {
-        boolean success = emailService.sendEmail(request.getRecipient(), request.getSubject(), request.getBody());
-        return getEmailResultResponse(success);
     }
 
     @GetMapping
