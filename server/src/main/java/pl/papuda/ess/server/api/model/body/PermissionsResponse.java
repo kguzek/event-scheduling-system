@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.papuda.ess.server.api.model.NotificationMethod;
 
 @Data
 @Builder
@@ -14,4 +15,5 @@ public class PermissionsResponse {
     private String username;
     private String email;
     private String role;
+    private NotificationMethod preferredNotificationMethod;
 }

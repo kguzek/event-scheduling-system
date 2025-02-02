@@ -33,6 +33,9 @@ public class UserPrivateController {
         if (userData.isEmpty()) {
             return RestResponse.notFound("User");
         }
+        if (request.getPreferredNotificationMethod() == null) {
+            return RestResponse.badRequest("Missing preferredNotificationMethod");
+        }
         User userObj = userData.get();
         userObj.setPreferredNotificationMethod(request.getPreferredNotificationMethod());
         return ResponseEntity.ok(userRepository.save(userObj));
