@@ -12,6 +12,7 @@ import java.util.Locale;
 import javax.swing.JOptionPane;
 
 import pl.papuda.ess.client.tools.Web;
+import pl.papuda.ess.client.tools.Time;
 import pl.papuda.ess.client.components.AppPanel;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
@@ -88,6 +89,15 @@ public class EventListItem extends AppPanel {
         }
         return text;
     }
+    
+    private String formatEventReminder(Event event) {
+        int differenceMinutes = Time.getDifferenceMinutes(event.getReminderTime(), event.getStartTime());
+        String formatted = Time.formatDifferenceMinutes(differenceMinutes);
+        if ("now".equals(formatted)) {
+            return "at time of event";
+        }
+        return formatted.replaceFirst("ago$", "before").replaceFirst("^in", "after") + " event";
+    }
 
     private void initEvent() {
         LocalDate eventDate = Instant.parse(event.getStartTime()).atZone(zone).toLocalDate();
@@ -96,6 +106,7 @@ public class EventListItem extends AppPanel {
         lblEventTitle.setText(event.getTitle());
         String dateText = eventDate.format(dateFormat);
         lblEventDate.setText(dateText);
+        lblEventReminder.setText(event.getReminderTime() == null ? "no reminder" : formatEventReminder(event));
         updateParticipantsText();
         String timeText = formatTime(event.getStartTime());
         String endTime = event.getEndTime();
@@ -139,6 +150,8 @@ public class EventListItem extends AppPanel {
         lblEventFrequency = new javax.swing.JLabel();
         lblDateTimeSeparator = new javax.swing.JLabel();
         cbxToggleParticipation = new javax.swing.JCheckBox();
+        lblReminderTimeSeparator = new javax.swing.JLabel();
+        lblEventReminder = new javax.swing.JLabel();
 
         pmiEventEdit.setText("Edit event");
         pmiEventEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -211,53 +224,61 @@ public class EventListItem extends AppPanel {
             }
         });
 
+        lblReminderTimeSeparator.setForeground(new java.awt.Color(132, 132, 132));
+        lblReminderTimeSeparator.setText("•");
+
+        lblEventReminder.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lblEventReminder.setForeground(new java.awt.Color(164, 164, 164));
+        lblEventReminder.setText("no reminder");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lblEventTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(lblEventAddress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(lblEventFrequency, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                                .addComponent(lblEventDate)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(lblDateTimeSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(lblEventTime)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)))
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(layout.createSequentialGroup()
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                .addComponent(btnEventOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(0, 0, 0))
-                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(cbxToggleParticipation)))))
-                                .addContainerGap())
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblEventTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblEventAddress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblEventFrequency, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblEventDate)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblDateTimeSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventTime)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblReminderTimeSeparator)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEventReminder)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnEventOptions, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbxToggleParticipation, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lblEventDate)
-                                        .addComponent(lblEventTime)
-                                        .addComponent(btnEventOptions)
-                                        .addComponent(lblDateTimeSeparator))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblEventTitle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                                .addComponent(lblEventAddress)
-                                .addGap(8, 8, 8)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lblEventFrequency)
-                                        .addComponent(cbxToggleParticipation))
-                                .addContainerGap())
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEventDate)
+                    .addComponent(lblEventTime)
+                    .addComponent(btnEventOptions)
+                    .addComponent(lblDateTimeSeparator)
+                    .addComponent(lblReminderTimeSeparator)
+                    .addComponent(lblEventReminder))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblEventTitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(lblEventAddress)
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEventFrequency)
+                    .addComponent(cbxToggleParticipation))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -329,8 +350,10 @@ public class EventListItem extends AppPanel {
     private javax.swing.JLabel lblEventAddress;
     private javax.swing.JLabel lblEventDate;
     private javax.swing.JLabel lblEventFrequency;
+    private javax.swing.JLabel lblEventReminder;
     private javax.swing.JLabel lblEventTime;
     private javax.swing.JLabel lblEventTitle;
+    private javax.swing.JLabel lblReminderTimeSeparator;
     private javax.swing.JPopupMenu pmEventOptions;
     private javax.swing.JMenuItem pmiEventBudget;
     private javax.swing.JMenuItem pmiEventDelete;

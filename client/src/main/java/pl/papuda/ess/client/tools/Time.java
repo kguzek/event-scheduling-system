@@ -35,7 +35,7 @@ public class Time {
         }
         return dateTime.atOffset(ZONE_OFFSET).toString();
     }
-    
+
     public static int getDifferenceMinutes(Instant instant1, Instant instant2) {
         if (instant1 == null || instant2 == null) {
             return 0;
@@ -61,13 +61,21 @@ public class Time {
         Instant instant2 = Instant.parse(dateString2);
         return getDifferenceMinutes(instant1, instant2);
     }
-    
+
+    public static String formatDifferenceMinutes(int differenceMinutes) {
+        int absoluteValue = Math.abs(differenceMinutes);
+        String quantity = absoluteValue == 1 ? "1 minute" : (absoluteValue + " minutes");
+        return differenceMinutes == 0
+                ? "now"
+                : String.format(differenceMinutes > 0 ? "in %s" : "%s ago", quantity);
+    }
+
     public static Instant getCurrentInstant() {
         LocalDateTime dateTime = LocalDateTime.now();
         Instant now = dateTime.toInstant(ZONE_OFFSET);
         return now;
     }
-    
+
     public static Date getCurrentDate() {
         return Date.from(getCurrentInstant());
     }

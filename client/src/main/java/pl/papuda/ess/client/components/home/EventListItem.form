@@ -71,8 +71,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="lblEventTitle" pref="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="lblEventAddress" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lblEventAddress" alignment="1" max="32767" attributes="0"/>
                           <Component id="lblEventFrequency" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lblEventDate" min="-2" max="-2" attributes="0"/>
@@ -80,10 +80,13 @@
                               <Component id="lblDateTimeSeparator" min="-2" pref="5" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="lblEventTime" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="29" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lblReminderTimeSeparator" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lblEventReminder" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="btnEventOptions" alignment="1" min="-2" pref="19" max="-2" attributes="0"/>
                           <Component id="cbxToggleParticipation" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -103,6 +106,8 @@
                   <Component id="lblEventTime" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnEventOptions" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="lblDateTimeSeparator" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblReminderTimeSeparator" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblEventReminder" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblEventTitle" min="-2" max="-2" attributes="0"/>
@@ -206,6 +211,25 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbxToggleParticipationActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblReminderTimeSeparator">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="84" green="84" red="84" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="&#x2022;"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblEventReminder">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="2"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="a4" green="a4" red="a4" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="no reminder"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -112,9 +112,17 @@ public class Web {
             return "Unknown error (" + code + " response)";
         }
     }
-
+    
     private static HttpRequest.Builder createRequest(String endpoint) {
+        return createRequest(endpoint, null, null);
+    }
+
+    private static HttpRequest.Builder createRequest(String endpoint, String method, String json) {
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(API_URL + endpoint));
+        if (method != null && json != null){ 
+            builder = builder.method(method, HttpRequest.BodyPublishers.ofString(json))
+                .setHeader("Content-Type", "application/json");
+        }
         if (endpoint.startsWith("/auth/")) {
             return builder;
         }
@@ -143,24 +151,23 @@ public class Web {
 
     public static HttpResponse<String> sendPostRequest(String endpoint, String json)
             throws IOException, InterruptedException {
-        HttpRequest request = createRequest(endpoint)
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .setHeader("Content-Type", "application/json")
-                .build();
+        HttpRequest request = createRequest(endpoint, "POST", json).build();
         return sendRequest(request);
     }
 
     public static HttpResponse<String> sendPutRequest(String endpoint, String json)
             throws IOException, InterruptedException {
-        HttpRequest request = createRequest(endpoint)
-                .PUT(HttpRequest.BodyPublishers.ofString(json))
-                .setHeader("Content-Type", "application/json")
-                .build();
+        HttpRequest request = createRequest(endpoint, "PUT", json).build();
         return sendRequest(request);
     }
 
     public static HttpResponse<String> sendDeleteRequest(String endpoint) throws IOException, InterruptedException {
         HttpRequest request = createRequest(endpoint).DELETE().build();
+        return sendRequest(request);
+    }
+    
+    public static HttpResponse<String> sendPatchRequest(String endpoint, String json) throws IOException, InterruptedException {
+        HttpRequest request = createRequest(endpoint, "PATCH", json).build();
         return sendRequest(request);
     }
 
