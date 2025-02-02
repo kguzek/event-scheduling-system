@@ -12,7 +12,7 @@ import pl.papuda.ess.client.interfaces.Observer;
 
 public class EventObservable implements Observable {
 
-    public static Map<String, List<Observer>> observerMap = new HashMap<>();
+    private static Map<String, List<Observer>> observerMap = new HashMap<>();
 
     private void showErrorMessage(String errorMessage) {
         System.err.println("Observer error message: " + errorMessage);
