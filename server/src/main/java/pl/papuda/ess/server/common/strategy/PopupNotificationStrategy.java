@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import pl.papuda.ess.server.api.model.Event;
+import pl.papuda.ess.server.api.model.body.websocket.StompResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +15,6 @@ public class PopupNotificationStrategy implements NotificationStrategy {
     public void sendNotification(Event event, String message) {
         String path = String.format("/topic/events/%d/reminder", event.getId());
         System.out.println("Broadcasting notification to " + path);
-        messagingTemplate.convertAndSend(path, message);
+        messagingTemplate.convertAndSend(path, new StompResponse<>(true, message));
     }
 }
