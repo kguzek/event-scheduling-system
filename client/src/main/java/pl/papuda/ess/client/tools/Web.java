@@ -42,6 +42,10 @@ public class Web {
         return PREFERRED_API_BASE;
     }
     
+    public static boolean isCustomApiUrlSet() {
+        return !PREFERRED_API_BASE.equals(API_BASE);
+    }
+    
     public static void unsetAccessToken(boolean clearStoredData) {
         unsetAccessToken();
         if (clearStoredData) {

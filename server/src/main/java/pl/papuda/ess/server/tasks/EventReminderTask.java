@@ -33,12 +33,13 @@ public class EventReminderTask {
         Date roundedTime = new Date();
         roundedTime.setTime((long) Math.floor(roundedTime.getTime() / 60_000.0) * 60_000);
 
-        System.out.printf("Rounded time: %s%n", roundedTime);
+        System.out.printf("Running event reminder CRON job at %s%n", roundedTime);
+        System.out.printf("Current exact time: %s%n", LocalDateTime.now());
         List<Event> allEvents = eventRepository.findAll();
         for (Event event : allEvents) {
-            System.out.printf("Event %s start time: %s%n", event.getId(), event.getStartTime());
+            System.out.printf("Event %s reminder time: %s%n", event.getId(), event.getReminderTime());
         }
-        List<Event> events = eventRepository.findAllByReminderTime(new Date());
+        List<Event> events = eventRepository.findAllByReminderTime(roundedTime);
         for (Event event : events) {
             notifyEventAttendees(event);
         }

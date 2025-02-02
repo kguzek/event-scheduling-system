@@ -73,7 +73,7 @@ public class Settings extends AppPanel {
     private void updateApiUrl(String newUrl) {
         if (newUrl.isBlank()) {
             AppPreferences.unset("apiUrl");
-            showInfoPopup("The API URL has been reset to its default value. Restart the application for it to take effect.", "Success");
+            showInfoPopup("The API URL has been reset to its default value.\nRestart the application for it to take effect.", "Success");
             return;
         }
         Matcher matcher = URL_PATTERN.matcher(newUrl);
@@ -82,7 +82,7 @@ public class Settings extends AppPanel {
             return;
         }
         AppPreferences.set("apiUrl", newUrl);
-        String message = String.format("The API URL has been set to %s. Restart the application for it to take effect.", newUrl);
+        String message = String.format("The API URL has been set to %s.\nRestart the application for it to take effect.", newUrl);
         showInfoPopup(message, "Success");
     }
 

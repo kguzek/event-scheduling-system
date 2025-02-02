@@ -8,6 +8,7 @@ import pl.papuda.ess.client.components.home.EventsList;
 import pl.papuda.ess.client.components.home.UsersList;
 import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.model.User;
+import pl.papuda.ess.client.tools.AppPreferences;
 import pl.papuda.ess.client.tools.Web;
 
 public class HomePage extends AppPanel {
@@ -26,9 +27,18 @@ public class HomePage extends AppPanel {
         try {
             response = Web.sendGetRequest("/private/permissions");
         } catch (IOException | InterruptedException ex) {
-            showErrorPopup("Could not check the user permissions. If the issue persists, try restarting the application.", "User validation blocked");
             Web.unsetAccessToken();
             switchPage("logIn");
+            if (Web.isCustomApiUrlSet()) {
+                String message = String.format("Could not check the user permissions.\nThe custom API located at %s may be unreachable.\nReset API URL to default setting?", Web.getApiUrl());
+                boolean shouldResetApiUrl = showOptionPopup(message, "User validation blocked");
+                if (shouldResetApiUrl) {
+                    AppPreferences.unset("apiUrl");
+                    showInfoPopup("The API URL has been reset to its default setting.\nRestart the application for it to take effect.", "Success");
+                }
+            } else {
+                showErrorPopup("Could not check the user permissions.\nIf the issue persists, try restarting the application.", "User validation blocked");
+            }
             return;
         }
         if (response.statusCode() != 200) {
