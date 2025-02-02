@@ -1,5 +1,6 @@
 package pl.papuda.ess.server.api.controller.priv;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/private/permissions")
 public class PermissionsController {
 
@@ -31,12 +33,6 @@ public class PermissionsController {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final UserService userService;
-
-    public PermissionsController(UserRepository userRepository, EmailService emailService, UserService userService) {
-        this.userRepository = userRepository;
-        this.emailService = emailService;
-        this.userService = userService;
-    }
 
     private boolean userRequestedElevationRecently(User user) {
         Long lastRequestTimestamp = userElevationRequestTimestamps.getOrDefault(user.getId(), 0L);

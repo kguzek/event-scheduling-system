@@ -1,5 +1,6 @@
 package pl.papuda.ess.server.api.controller.priv;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,11 @@ import java.util.Optional;
 
 @RestController
 @MessageMapping("/api/v1/private/user")
+@RequiredArgsConstructor
 public class UserPrivateController {
+
     private final UserService userService;
     private final UserRepository userRepository;
-
-    public UserPrivateController(UserService userService, UserRepository userRepository) {
-        this.userService = userService;
-        this.userRepository = userRepository;
-    }
 
     @PatchMapping("/me")
     public ResponseEntity<?> updateUser(@RequestBody UserPatchRequest request, Principal principal) {

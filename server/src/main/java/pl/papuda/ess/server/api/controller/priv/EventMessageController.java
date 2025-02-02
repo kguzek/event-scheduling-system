@@ -3,6 +3,7 @@ package pl.papuda.ess.server.api.controller.priv;
 import java.security.Principal;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -17,15 +18,11 @@ import pl.papuda.ess.server.api.service.EventService;
 
 @Controller
 @MessageMapping("/event")
+@RequiredArgsConstructor
 public class EventMessageController {
 
     private final EventRepository eventRepository;
     private final EventService eventService;
-
-    public EventMessageController(EventRepository eventRepository, EventService eventService) {
-        this.eventRepository = eventRepository;
-        this.eventService = eventService;
-    }
 
     @MessageMapping("/create")
     @SendTo("/topic/events/created")

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.repo.UserRepository;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/user")
 public class UserAdminController {
 
@@ -32,11 +34,6 @@ public class UserAdminController {
 
     @Value("classpath:/templates/userPromoted.html")
     private Resource userPromotedTemplate;
-
-    public UserAdminController(UserRepository userRepo, EmailService emailService) {
-        this.userRepo = userRepo;
-        this.emailService = emailService;
-    }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {

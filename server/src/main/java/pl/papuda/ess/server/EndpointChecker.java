@@ -1,18 +1,18 @@
 package pl.papuda.ess.server;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.List;
 
+@Component
+@RequiredArgsConstructor
 public class EndpointChecker {
     private final DispatcherServlet servlet;
-
-    public EndpointChecker(DispatcherServlet servlet) {
-        this.servlet = servlet;
-    }
 
     public boolean doesEndpointExist(HttpServletRequest request) {
         List<HandlerMapping> handlerMappings = servlet.getHandlerMappings();

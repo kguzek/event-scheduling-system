@@ -3,16 +3,7 @@ package pl.papuda.ess.server.common;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import lombok.Data;
-
-@Data
-public class RestResponse {
-
-    private String message;
-
-    public RestResponse(String message) {
-        this.message = message;
-    }
+public record RestResponse(String message) {
 
     public static ResponseEntity<RestResponse> ok(String message) {
         return generate(message, HttpStatus.OK);

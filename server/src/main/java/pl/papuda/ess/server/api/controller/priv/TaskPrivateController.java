@@ -1,5 +1,6 @@
 package pl.papuda.ess.server.api.controller.priv;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +14,12 @@ import java.security.Principal;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/private/task")
 public class TaskPrivateController {
 
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
-
-    public TaskPrivateController(UserRepository userRepository, TaskRepository taskRepository) {
-        this.userRepository = userRepository;
-        this.taskRepository = taskRepository;
-    }
 
     private ResponseEntity<?> setTaskAssignee(Long taskId, Principal principal, boolean volunteering) {
         Optional<Task> taskData = taskRepository.findById(taskId);

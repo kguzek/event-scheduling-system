@@ -1,30 +1,26 @@
 package pl.papuda.ess.server.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.servlet.DispatcherServlet;
 import pl.papuda.ess.server.EndpointChecker;
 import pl.papuda.ess.server.common.ResponseUtilities;
 
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class AuthenticationEntryPoint implements org.springframework.security.web.AuthenticationEntryPoint {
 
     private final EndpointChecker endpointChecker;
 
-    public AuthenticationEntryPoint(DispatcherServlet servlet) {
-        this.endpointChecker = new EndpointChecker(servlet);
-    }
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException)
-            throws IOException, ServletException {
+            throws IOException/*, ServletException*/ {
         String data;
         if (!endpointChecker.doesEndpointExist(request)) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

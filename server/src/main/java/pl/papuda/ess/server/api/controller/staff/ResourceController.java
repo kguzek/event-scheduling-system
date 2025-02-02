@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,16 +23,12 @@ import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.ResourceRepository;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/staff/resource")
 public class ResourceController {
 
     private final ResourceRepository resourceRepository;
     private final EventRepository eventRepository;
-
-    public ResourceController(ResourceRepository resourceRepository, EventRepository eventRepository) {
-        this.resourceRepository = resourceRepository;
-        this.eventRepository = eventRepository;
-    }
 
     @GetMapping
     public ResponseEntity<List<Resource>> getAllResources() {

@@ -22,9 +22,8 @@ public class EventReminderTask {
 
     public EventReminderTask(EventRepository eventRepository, EmailService emailService) {
         this.eventRepository = eventRepository;
-        emailNotificationStrategy = new EmailNotificationStrategy(emailService);
-        popupNotificationStrategy = new PopupNotificationStrategy();
-
+        this.emailNotificationStrategy = new EmailNotificationStrategy(emailService);
+        this.popupNotificationStrategy = new PopupNotificationStrategy();
     }
 
     public void runReminderCheck() {

@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,16 +23,12 @@ import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.ExpenseRepository;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/staff/expense")
 public class ExpenseController {
 
     private final ExpenseRepository expenseRepository;
     private final EventRepository eventRepository;
-
-    public ExpenseController(ExpenseRepository expenseRepository, EventRepository eventRepository) {
-        this.expenseRepository = expenseRepository;
-        this.eventRepository = eventRepository;
-    }
 
     @GetMapping
     public ResponseEntity<List<Expense>> getAllExpenses() {

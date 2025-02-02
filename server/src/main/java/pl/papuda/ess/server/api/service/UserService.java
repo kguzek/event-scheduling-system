@@ -1,5 +1,6 @@
 package pl.papuda.ess.server.api.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.error.UnauthorizedException;
@@ -9,12 +10,10 @@ import java.security.Principal;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
 
     public User ensureUserLoggedIn(Principal principal) throws UnauthorizedException {
         if (principal == null) {

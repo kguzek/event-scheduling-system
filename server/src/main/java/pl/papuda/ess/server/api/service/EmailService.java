@@ -2,26 +2,49 @@ package pl.papuda.ess.server.api.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Properties;
 
 @Service
-@RequiredArgsConstructor
 public class EmailService {
 
     @Value("${API_URL}")
     private String API_URL;
 
-    private JavaMailSender mailSender;
+    @Value("${EMAIL_ADDRESS}")
+    String emailAddress;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    @Value("${EMAIL_PASSWORD}")
+    String emailPassword;
+
+    @Value("${EMAIL_SMTP_HOST}")
+    String emailHost;
+
+    @Value("${EMAIL_SMTP_PORT}")
+    int emailPort;
+
+    private JavaMailSender createMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(emailHost);
+        mailSender.setPort(emailPort);
+        mailSender.setUsername(emailAddress);
+        mailSender.setPassword(emailPassword);
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        // props.put("mail.debug", "true");
+        return mailSender;
     }
+
+    private final JavaMailSender mailSender = createMailSender();
 
     private String substitutePlaceholders(String content) {
         String currentYear = String.valueOf(LocalDate.now().getYear());

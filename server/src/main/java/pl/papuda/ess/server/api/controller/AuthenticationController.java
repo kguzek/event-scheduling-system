@@ -25,8 +25,8 @@ import pl.papuda.ess.server.api.service.AuthenticationService;
 import pl.papuda.ess.server.api.service.JwtService;
 
 @RestController
-@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 
     private final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[#?!@$ %^&*-]).{8,}$");
