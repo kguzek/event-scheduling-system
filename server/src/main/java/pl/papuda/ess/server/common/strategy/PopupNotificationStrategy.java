@@ -12,7 +12,7 @@ public class PopupNotificationStrategy implements NotificationStrategy {
     private final SimpMessagingTemplate messagingTemplate;
 
     public void sendNotification(Event event, String message) {
-        String path = String.format("/topic/notification/reminder/%d", event.getId());
+        String path = String.format("/topic/events/%d/reminder", event.getId());
         messagingTemplate.convertAndSend(path, message);
     }
 }
