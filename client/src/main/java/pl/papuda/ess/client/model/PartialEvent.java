@@ -15,9 +15,8 @@ public class PartialEvent {
     private String endTime;
     private Location location;
     private String frequency;
-    private Integer budgetCents;
-    private Task[] tasks;
+    private String status;
     private String reminderTime;
     private String feedbackMessage;
-    private String status;
+    private Integer budgetCents;
 }

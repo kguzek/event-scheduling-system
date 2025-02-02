@@ -23,11 +23,12 @@ import uk.guzek.sac.auth.JwtAuth;
 public class Web {
 
     private static final boolean PRODUCTION_ENVIRONMENT = true;
-    private static final String LOCAL_URL = "://localhost:8080";
-    private static final String PRODUCTION_URL = "s://ps8o4ow0cssswww408cs0wc4.konrad.s.solvro.pl";
-    private static final String API_BASE = (PRODUCTION_ENVIRONMENT ? PRODUCTION_URL : LOCAL_URL) + "/api/v1";
-    private static final String API_URL = "http" + API_BASE;
-    private static final String API_URL_WS = "ws" + API_BASE;
+    private static final String LOCAL_URL = "http://localhost:8080";
+    private static final String PRODUCTION_URL = "https://ps8o4ow0cssswww408cs0wc4.konrad.s.solvro.pl";
+    private static final String API_BASE = PRODUCTION_ENVIRONMENT ? PRODUCTION_URL : LOCAL_URL;
+    private static final String PREFERRED_API_BASE = AppPreferences.read("apiUrl", API_BASE);
+    private static final String API_URL = PREFERRED_API_BASE + "/api/v1";
+    private static final String API_URL_WS = API_URL.replaceFirst("^http", "ws");
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static StompClient stompClient = null;
@@ -37,6 +38,10 @@ public class Web {
 
     public static User user = null;
 
+    public static String getApiUrl() {
+        return PREFERRED_API_BASE;
+    }
+    
     public static void unsetAccessToken(boolean clearStoredData) {
         unsetAccessToken();
         if (clearStoredData) {

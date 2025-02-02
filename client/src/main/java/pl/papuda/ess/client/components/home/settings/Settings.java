@@ -2,6 +2,8 @@ package pl.papuda.ess.client.components.home.settings;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JRadioButton;
 import pl.papuda.ess.client.components.AppPanel;
 import pl.papuda.ess.client.tools.AppPreferences;
@@ -13,6 +15,8 @@ import pl.papuda.ess.client.tools.Web;
  */
 public class Settings extends AppPanel {
 
+    private static final Pattern URL_PATTERN = Pattern.compile("^https?://.+[^/]$");
+    
     /**
      * Creates new form Settings
      */
@@ -39,6 +43,7 @@ public class Settings extends AppPanel {
         };
         System.out.println("Preferred notification method: " + notificationMethod);
         radioButton.setSelected(true);
+        iptApiUrl.setText(Web.getApiUrl());
     }
 
     private void requestStaffRole() {
@@ -64,6 +69,22 @@ public class Settings extends AppPanel {
     public void onUserPermissionsEstablished(String role) {
         btnRequestStaffRole.setEnabled("USER".equals(role));
     }
+    
+    private void updateApiUrl(String newUrl) {
+        if (newUrl.isBlank()) {
+            AppPreferences.unset("apiUrl");
+            showInfoPopup("The API URL has been reset to its default value. Restart the application for it to take effect.", "Success");
+            return;
+        }
+        Matcher matcher = URL_PATTERN.matcher(newUrl);
+        if (!matcher.find()) {
+            showErrorPopup("The specified URL must start with http:// or https:// and cannot end with a slash.", "Invalid URL");
+            return;
+        }
+        AppPreferences.set("apiUrl", newUrl);
+        String message = String.format("The API URL has been set to %s. Restart the application for it to take effect.", newUrl);
+        showInfoPopup(message, "Success");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -81,6 +102,10 @@ public class Settings extends AppPanel {
         rdbNotificationMethodEmailAndPopup = new javax.swing.JRadioButton();
         btnRequestStaffRole = new javax.swing.JButton();
         lblUserRole = new javax.swing.JLabel();
+        lblApiUrl = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        iptApiUrl = new javax.swing.JTextField();
+        btnUpdateApiUrl = new javax.swing.JButton();
 
         jLabel1.setText("Preferred notification method");
 
@@ -118,6 +143,18 @@ public class Settings extends AppPanel {
 
         lblUserRole.setText("User role");
 
+        lblApiUrl.setText("API URL (requires restart)");
+
+        iptApiUrl.setText("https://asdfsd");
+        iptApiUrl.setToolTipText("The API URL to use by the application");
+
+        btnUpdateApiUrl.setText("Update");
+        btnUpdateApiUrl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateApiUrlActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -125,16 +162,25 @@ public class Settings extends AppPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(jSeparator1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(rdbNotificationMethodPopup)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(rdbNotificationMethodPopup)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rdbNotificationMethodEmail)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rdbNotificationMethodEmailAndPopup))
+                            .addComponent(btnRequestStaffRole)
+                            .addComponent(lblUserRole)
+                            .addComponent(lblApiUrl))
+                        .addGap(0, 174, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(iptApiUrl)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdbNotificationMethodEmail)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdbNotificationMethodEmailAndPopup))
-                    .addComponent(btnRequestStaffRole)
-                    .addComponent(lblUserRole))
-                .addContainerGap(180, Short.MAX_VALUE))
+                        .addComponent(btnUpdateApiUrl)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,7 +196,15 @@ public class Settings extends AppPanel {
                 .addComponent(lblUserRole)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRequestStaffRole)
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblApiUrl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(iptApiUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUpdateApiUrl))
+                .addContainerGap(101, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -170,10 +224,18 @@ public class Settings extends AppPanel {
         new Thread(this::requestStaffRole).start();
     }//GEN-LAST:event_btnRequestStaffRoleActionPerformed
 
+    private void btnUpdateApiUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateApiUrlActionPerformed
+        updateApiUrl(iptApiUrl.getText());
+    }//GEN-LAST:event_btnUpdateApiUrlActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRequestStaffRole;
+    private javax.swing.JButton btnUpdateApiUrl;
+    private javax.swing.JTextField iptApiUrl;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblApiUrl;
     private javax.swing.JLabel lblUserRole;
     private javax.swing.ButtonGroup rbgNotificationMethod;
     private javax.swing.JRadioButton rdbNotificationMethodEmail;
