@@ -43,15 +43,20 @@ public class EventReminderTask {
         }
     }
 
-    private long getTimeUntilEvent(Event event) {
+    private String getTimeUntilEvent(Event event) {
         LocalDateTime eventLocalDateTime = event.getStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        Duration duration = Duration.between(eventLocalDateTime, LocalDateTime.now());
-        return Math.round(duration.getSeconds() / 60.0);
+        Duration duration = Duration.between(LocalDateTime.now(), eventLocalDateTime);
+        int minutesUntilEvent = (int) Math.round(duration.getSeconds() / 60.0);
+        return switch (minutesUntilEvent) {
+            case 0 -> "now";
+            case 1 -> "in 1 minute";
+            default -> String.format("in %d minutes", minutesUntilEvent);
+        };
     }
 
     private void notifyEventAttendees(Event event) {
         String title = event.getTitle();
-        String message = String.format("Event %s is starting in %d - don't miss out!", title, getTimeUntilEvent(event));
+        String message = String.format("Event %s is starting %s – don't miss out! Start time: %s", title, getTimeUntilEvent(event), event.getStartTime());
         Set<User> attendees = event.getAttendees();
         System.out.printf("Notifying %d attendees of event with id %d%n", attendees.size(), event.getId());
         for (User user : attendees) {
