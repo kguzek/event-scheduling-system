@@ -61,10 +61,18 @@ public class Time {
         Instant instant2 = Instant.parse(dateString2);
         return getDifferenceMinutes(instant1, instant2);
     }
+    
+    public static String formatQuantityHours(int differenceHours) {
+        return differenceHours == 1 ? "1 hour" : (differenceHours + " hours");
+    }
 
     public static String formatDifferenceMinutes(int differenceMinutes) {
         int absoluteValue = Math.abs(differenceMinutes);
-        String quantity = absoluteValue == 1 ? "1 minute" : (absoluteValue + " minutes");
+        String quantity = absoluteValue >= 60 
+                ? formatQuantityHours(absoluteValue / 60) 
+                : absoluteValue == 1 
+                ? "1 minute" 
+                : (absoluteValue + " minutes");
         return differenceMinutes == 0
                 ? "now"
                 : String.format(differenceMinutes > 0 ? "in %s" : "%s ago", quantity);

@@ -37,6 +37,9 @@ public class EventObservable implements Observable {
         List<Observer> observers = observerMap.get(endpoint);
         assert observers != null;
         observers.remove(listener);
+        if (observers.isEmpty()) {
+            Web.unsubscribeStompResource("/topic/events/" + endpoint);
+        }
     }
 
     @Override
@@ -44,7 +47,7 @@ public class EventObservable implements Observable {
         List<Observer> observers = observerMap.get(endpoint);
         assert observers != null;
         for (Observer observer : observers) {
-            if (messageBody instanceof String errorMessage) {
+            if (!endpoint.endsWith("/reminder") && messageBody instanceof String errorMessage) {
                 showErrorMessage(errorMessage);
                 continue;
             }

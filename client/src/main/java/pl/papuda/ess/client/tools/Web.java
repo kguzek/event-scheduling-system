@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pl.papuda.ess.client.services.StompClient;
 import pl.papuda.ess.client.model.body.ErrorResponse;
 import pl.papuda.ess.client.model.User;
@@ -33,7 +31,6 @@ public class Web {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static StompClient stompClient = null;
     private static final Map<String, Consumer<Object>> subscriptions = new HashMap<>();
-
     private static String accessToken = null;
 
     public static User user = null;
@@ -62,10 +59,6 @@ public class Web {
         }
     }
 
-    public static void logException(Exception ex) {
-        Logger.getLogger(Web.class.getName()).log(Level.SEVERE, null, ex);
-    }
-
     public static void initialiseStompClient() {
         URI stompServerUri = URI.create(API_URL_WS + "/private/stomp");
         stompClient = new StompClient(stompServerUri, new JwtAuth(accessToken), API_URL);
@@ -92,8 +85,7 @@ public class Web {
         try {
             obj = objectMapper.readValue(body, cls);
         } catch (JsonProcessingException ex) {
-            logException(ex);
-            System.out.println("Could not parse request body: " + body);
+            System.err.println("Could not parse request body: " + body + " exception: " + ex.getMessage());
             return null;
         }
         return obj;
@@ -108,7 +100,7 @@ public class Web {
             ErrorResponse error = objectMapper.readValue(body, ErrorResponse.class);
             return error.getMessage();
         } catch (JsonProcessingException ex) {
-            logException(ex);
+            System.err.println("JSON parse error: " + ex.getMessage());
             return "Unknown error (" + code + " response)";
         }
     }
@@ -209,8 +201,16 @@ public class Web {
     }
 
     public static void subscribeStompResource(String destination, Consumer<Object> handler) {
-        subscriptions.put(destination, handler);
-        System.out.println("Scheduling subscription to " + destination);
+        if (stompClient != null && stompClient.isConnected()) {
+            stompClient.subscribe(destination, handler);
+        } else {
+            System.out.println("Scheduling subscription to " + destination);
+            subscriptions.put(destination, handler);
+        }
+    }
+    
+    public static void unsubscribeStompResource(String destination) {
+        stompClient.unsubscribe(destination);
     }
 
     public static Set<Map.Entry<String, Consumer<Object>>> getSubscriptions() {

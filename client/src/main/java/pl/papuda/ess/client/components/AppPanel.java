@@ -7,13 +7,16 @@ import pl.papuda.ess.client.MainWindow;
 
 public class AppPanel extends JPanel {
 
+    private MainWindow mainWindow = null;
+    
     protected MainWindow getMainWindow() {
-        return (MainWindow) getTopLevelAncestor();
+        if (mainWindow != null) return mainWindow;
+        mainWindow = (MainWindow) getTopLevelAncestor();
+        return mainWindow;
     }
-
+    
     protected void switchPage(String page) {
-        MainWindow mainWindow = getMainWindow();
-        mainWindow.showLayoutCard(page);
+        getMainWindow().showLayoutCard(page);
     }
 
     protected void showErrorPopup(String message, String title) {

@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
+import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 
 import pl.papuda.ess.client.tools.Web;
@@ -16,7 +17,7 @@ import pl.papuda.ess.client.tools.Time;
 import pl.papuda.ess.client.components.AppPanel;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
-import pl.papuda.ess.client.model.User;
+import pl.papuda.ess.client.services.EventService;
 
 public class EventListItem extends AppPanel {
 
@@ -24,18 +25,14 @@ public class EventListItem extends AppPanel {
     private final ZoneId zone = ZoneId.systemDefault();
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("E, dd'/'MM'/'yyyy");
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
+    private final Consumer<Event> editEvent;
+    private final EventService eventService;
 
-    private final EditEvent editEvent;
-
-    public interface EditEvent {
-
-        public void call(Event event);
-    }
-
-    public EventListItem(Event event, EditEvent editEvent) {
+    public EventListItem(Event event, Consumer<Event> editEvent, EventService eventService) {
         initComponents();
         this.event = event;
         this.editEvent = editEvent;
+        this.eventService = eventService;
         initEvent();
     }
 
@@ -117,10 +114,8 @@ public class EventListItem extends AppPanel {
         lblEventTime.setText(timeText);
         lblEventAddress.setText(formatLocation(event.getLocation()));
         cbxToggleParticipation.setSelected(false);
-        for (User participant : event.getAttendees()) {
-            if (participant.getId().equals(Web.user.getId())) {
-                cbxToggleParticipation.setSelected(true);
-            }
+        if (eventService.isUserAttendingEvent(event, Web.user)) {
+            cbxToggleParticipation.setSelected(true);
         }
     }
 
@@ -296,7 +291,7 @@ public class EventListItem extends AppPanel {
             Long eventId = event.getId();
             String endpoint = "/event/delete/" + eventId;
             Web.sendStompText(endpoint, "");
-            getMainWindow().eventService.attemptRemoveEvent();
+            eventService.attemptRemoveEvent();
             pmiEventDelete.setEnabled(true);
         }).start();
     }//GEN-LAST:event_pmiEventDeleteActionPerformed
@@ -310,7 +305,7 @@ public class EventListItem extends AppPanel {
     }// GEN-LAST:event_btnEventOptionsActionPerformed
 
     private void pmiEventEditActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pmiEventEditActionPerformed
-        editEvent.call(event);
+        editEvent.accept(event);
     }// GEN-LAST:event_pmiEventEditActionPerformed
 
     void showErrorMessage(String message) {
@@ -319,8 +314,8 @@ public class EventListItem extends AppPanel {
             cbxToggleParticipation.setSelected(!cbxToggleParticipation.isSelected());
         }
     }
-
-    private void cbxToggleParticipationActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCheckBox1ActionPerformed
+    
+    private void toggleEventParticipation() {
         new Thread(() -> {
             HttpResponse<String> response;
             String endpoint = "/private/event/" + event.getId() + "/attendee";
@@ -328,19 +323,28 @@ public class EventListItem extends AppPanel {
             try {
                 response = addingParticipance ? Web.sendPostRequest(endpoint) : Web.sendDeleteRequest(endpoint);
             } catch (IOException | InterruptedException ex) {
-                Web.logException(ex);
+                System.err.println("Attendance status error: " + ex.getMessage());
                 showErrorMessage("A network error occurred while changing the attendance status for that event. Please try again later.");
                 return;
             }
-            if (response.statusCode() == 200) {
-                event = Web.readResponseBody(response, new TypeReference<Event>() {
-                });
-                updateParticipantsText();
-            } else {
+            if (response.statusCode() != 200) {
                 String errorMessage = Web.getErrorMessage(response);
                 showErrorMessage(errorMessage);
+                return;
+            }
+            event = Web.readResponseBody(response, new TypeReference<Event>() {
+            });
+            updateParticipantsText();
+            if (addingParticipance) {
+                eventService.subscribeToEvent(event);
+            } else {
+                eventService.unsubscribeFromEvent(event);
             }
         }).start();
+    }
+
+    private void cbxToggleParticipationActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jCheckBox1ActionPerformed
+        toggleEventParticipation();
     }// GEN-LAST:event_jCheckBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

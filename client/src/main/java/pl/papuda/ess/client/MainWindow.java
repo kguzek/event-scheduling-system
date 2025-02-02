@@ -18,15 +18,14 @@ import pl.papuda.ess.client.tools.AppPreferences;
 
 public class MainWindow extends javax.swing.JFrame {
 
-    public final EventService eventService;
-
+    public EventService eventService;
+    
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
         initComponents();
-        // Custom code
-        this.eventService = new EventService(homePage1);
+        eventService = new EventService(homePage1);
         this.getContentPane().setBackground(this.getBackground());
         loadSettings();
     }
@@ -154,7 +153,7 @@ public class MainWindow extends javax.swing.JFrame {
             try {
                 errorResponse = objectMapper.readValue(response.body(), ErrorResponse.class);
             } catch (JsonProcessingException ex) {
-                Web.logException(ex);
+                System.err.println("JSON parse exception at login: " + ex);
                 throw new LoginException(code + " response with unparsable body");
             }
             if (errorResponse.getError() != null) {

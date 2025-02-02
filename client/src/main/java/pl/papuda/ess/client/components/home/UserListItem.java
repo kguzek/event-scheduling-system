@@ -5,7 +5,7 @@ import java.net.http.HttpResponse;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
-import javax.swing.text.AbstractDocument;
+import javax.swing.JRadioButton;
 import pl.papuda.ess.client.tools.Web;
 import pl.papuda.ess.client.model.User;
 
@@ -33,19 +33,16 @@ public class UserListItem extends javax.swing.JPanel {
         lblUserUuid.setText(user.getId().toString());
         lblUsername.setText(user.getUsername());
         String role = user.getRole();
-        switch (role) {
-            case "USER":
-                rdbUserRoleUser.setSelected(true);
-                break;
-            case "STAFF":
-                rdbUserRoleStaff.setSelected(true);
-                break;
-            case "ADMIN":
-                rdbUserRoleAdmin.setSelected(true);
-                break;
-            default:
-                System.err.println("Unknown user type: " + role);
-                break;
+        JRadioButton radioButton = switch (role) {
+            case "USER" -> rdbUserRoleUser;
+            case "STAFF" -> rdbUserRoleStaff;
+            case "ADMIN" -> rdbUserRoleAdmin;
+            default -> null;
+        };
+        if (radioButton == null) {
+            System.err.println("Unknown user type: " + role);
+        } else {
+            radioButton.setSelected(true);
         }
     }
 

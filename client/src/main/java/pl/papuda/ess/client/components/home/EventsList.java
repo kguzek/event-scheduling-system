@@ -13,6 +13,7 @@ import pl.papuda.ess.client.tools.Time;
 import pl.papuda.ess.client.model.Event;
 import pl.papuda.ess.client.model.Location;
 import pl.papuda.ess.client.model.PartialEvent;
+import pl.papuda.ess.client.services.EventService;
 
 public class EventsList extends javax.swing.JPanel {
 
@@ -62,11 +63,11 @@ public class EventsList extends javax.swing.JPanel {
         btnToggleEventViewActionPerformed(null);
     }
 
-    public void updateEventsList(List<Event> events) {
+    public void updateEventsList(List<Event> events, EventService eventService) {
         pnlEventsList.removeAll();
         for (Event event : events) {
 //            System.out.println("Adding event " + event.getTitle());
-            pnlEventsList.add(new EventListItem(event, this::editEvent));
+            pnlEventsList.add(new EventListItem(event, this::editEvent, eventService));
         }
         repaint();
         revalidate();

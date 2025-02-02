@@ -10,6 +10,7 @@ import pl.papuda.ess.client.components.home.EventsList;
 import pl.papuda.ess.client.components.home.calendar.CalendarCustom;
 import pl.papuda.ess.client.eventObserver.EventCreationObserver;
 import pl.papuda.ess.client.eventObserver.EventDeletionObserver;
+import pl.papuda.ess.client.eventObserver.EventNotificationObserver;
 import pl.papuda.ess.client.eventObserver.EventObservable;
 import pl.papuda.ess.client.eventObserver.EventUpdateObserver;
 import pl.papuda.ess.client.pages.HomePage;
@@ -30,6 +31,7 @@ public class EventService {
     private final Observer eventCreationObserver = new EventCreationObserver(this);
     private final Observer eventUpdateObserver = new EventUpdateObserver(this);
     private final Observer eventDeletionObserver = new EventDeletionObserver(this);
+    private final Observer eventNotificationObserver = new EventNotificationObserver();
 
     public EventService(HomePage homePage) {
         eventsList = homePage.getEventsList();
@@ -46,10 +48,10 @@ public class EventService {
     public void updateEvents() {
         // repaint to reflect event data
         calendarCustom.updateCalendar(events);
-        eventsList.updateEventsList(events);
+        eventsList.updateEventsList(events, this);
     }
 
-    private void onEventUpdated(Event event) {
+    private void onEventUpdated() {
         updateEvents();
         eventsList.onEventUpdated();
     }
@@ -70,6 +72,18 @@ public class EventService {
     private void showErrorPopup(String message, String title) {
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
+    
+    private String getEventNotificationEndpoint(Event event) {
+        return String.format("%d/reminder", event.getId());
+    }
+    
+    public void subscribeToEvent(Event event) {
+        eventUpdateManager.subscribe(getEventNotificationEndpoint(event), eventNotificationObserver);
+    }
+    
+    public void unsubscribeFromEvent(Event event) {
+        eventUpdateManager.unsubscribe(getEventNotificationEndpoint(event), eventNotificationObserver);
+    }
 
     private void fetchEvents() {
         HttpResponse<String> response;
@@ -86,6 +100,11 @@ public class EventService {
         events = Web.readResponseBody(response, new TypeReference<List<Event>>() {
         });
         updateEvents();
+        for (Event event : events) {
+            if (isUserAttendingEvent(event, Web.user)) {
+                subscribeToEvent(event);
+            }
+        }
     }
 
     public void attemptRemoveEvent() {
@@ -107,7 +126,7 @@ public class EventService {
 
     public void addEvent(Event event) {
         events.add(event);
-        onEventUpdated(event);
+        onEventUpdated();
     }
 
     public void removeEvent(Long eventId) {
@@ -124,7 +143,7 @@ public class EventService {
                 continue;
             }
             events.set(i, event);
-            onEventUpdated(event);
+            onEventUpdated();
             return;
         }
         System.err.println("No event with id " + eventId);
