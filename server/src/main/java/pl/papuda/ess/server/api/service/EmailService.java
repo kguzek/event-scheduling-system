@@ -29,7 +29,7 @@ public class EmailService {
     @Value("${EMAIL_SMTP_PORT}")
     int emailPort;
 
-    private JavaMailSender createMailSender() {
+    private JavaMailSender getMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(emailHost);
         mailSender.setPort(emailPort);
@@ -44,14 +44,13 @@ public class EmailService {
         return mailSender;
     }
 
-    private final JavaMailSender mailSender = createMailSender();
-
     private String substitutePlaceholders(String content) {
         String currentYear = String.valueOf(LocalDate.now().getYear());
         return content.replace("{API_URL}", API_URL).replace("{CURRENT_YEAR}", currentYear);
     }
 
     public boolean sendEmail(String recipientAddress, String subject, String content) {
+        JavaMailSender mailSender = getMailSender();
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
         String substitutedContent = substitutePlaceholders(content);

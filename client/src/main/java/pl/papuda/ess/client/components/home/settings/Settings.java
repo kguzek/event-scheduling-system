@@ -18,7 +18,7 @@ import pl.papuda.ess.client.tools.Web;
 public class Settings extends AppPanel {
 
     private static final Pattern URL_PATTERN = Pattern.compile("^https?://.+[^/]$");
-    
+
     /**
      * Creates new form Settings
      */
@@ -42,9 +42,10 @@ public class Settings extends AppPanel {
             showErrorPopup(Web.getErrorMessage(response), "Operation failed");
             return;
         }
-        Web.user = Web.readResponseBody(response, new TypeReference<User>() {});
+        Web.user = Web.readResponseBody(response, new TypeReference<User>() {
+        });
         showInfoPopup("Successfully changed preferred notification method to " + method, "Success");
-        
+
     }
 
     private void applySettings() {
@@ -53,7 +54,7 @@ public class Settings extends AppPanel {
 
     public void onUserPermissionsEstablished(String role) {
         btnRequestStaffRole.setEnabled("USER".equals(role));
-        
+
         String notificationMethod = Web.user.getPreferredNotificationMethod();
         if (notificationMethod == null) {
             System.err.println("User preferred notification method is null");
@@ -67,10 +68,11 @@ public class Settings extends AppPanel {
             case "POPUP_AND_EMAIL" ->
                 rdbNotificationMethodEmailAndPopup;
             default ->
-                rdbNotificationMethodEmailAndPopup;
+                null;
         };
-        System.out.println("Preferred notification method: " + notificationMethod);
-        radioButton.setSelected(true);
+        if (radioButton != null) {
+            radioButton.setSelected(true);
+        }
     }
 
     private void requestStaffRole() {
@@ -92,7 +94,7 @@ public class Settings extends AppPanel {
         showInfoPopup(message, "Role elevation requested");
 //        System.out.println("Successfully sent role elevation request emails");
     }
-    
+
     private void updateApiUrl(String newUrl) {
         if (newUrl.isBlank()) {
             AppPreferences.unset("apiUrl");
