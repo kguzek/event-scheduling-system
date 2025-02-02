@@ -1,28 +1,26 @@
-package pl.papuda.ess.server.tasks;
+package pl.papuda.ess.server.api.service;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import pl.papuda.ess.server.api.model.Event;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.repo.EventRepository;
-import pl.papuda.ess.server.api.service.EmailService;
+import pl.papuda.ess.server.common.strategy.EmailNotificationStrategy;
+import pl.papuda.ess.server.common.strategy.PopupNotificationStrategy;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 
-@Component
-public class EventReminderTask {
+@Service
+@RequiredArgsConstructor
+public class ScheduledTaskService {
 
     private final EventRepository eventRepository;
-    private final NotificationStrategy emailNotificationStrategy;
-    private final NotificationStrategy popupNotificationStrategy;
-
-    public EventReminderTask(EventRepository eventRepository, EmailService emailService) {
-        this.eventRepository = eventRepository;
-        this.emailNotificationStrategy = new EmailNotificationStrategy(emailService);
-        this.popupNotificationStrategy = new PopupNotificationStrategy();
-    }
+    private final EmailNotificationStrategy emailNotificationStrategy;
+    private final PopupNotificationStrategy popupNotificationStrategy;
 
     /** Returns the current date truncated to the minute start, in UTC */
     private ZonedDateTime currentMinuteStart() {
@@ -30,7 +28,8 @@ public class EventReminderTask {
         return ZonedDateTime.of(nowTruncated, ZoneId.systemDefault());
     }
 
-    public void runReminderCheck() {
+    @Scheduled(cron = "${EVENT_REMINDER_CRON_RATE}")
+    protected void runReminderCheck() {
         ZonedDateTime roundedTime = currentMinuteStart();
         List<Event> events = eventRepository.findAllByReminderTime(roundedTime);
         if (events.isEmpty()) {
@@ -55,21 +54,20 @@ public class EventReminderTask {
     }
 
     private void notifyEventAttendees(Event event) {
-        String title = event.getTitle();
-        String message = String.format("Event %s is starting %s – don't miss out! Start time: %s", title, getTimeUntilEvent(event), event.getStartTime());
+        String message = String.format("Event %s is starting %s – don't miss out! Start time: %s", event.getTitle(), getTimeUntilEvent(event), event.getStartTime());
         Set<User> attendees = event.getAttendees();
         System.out.printf("Notifying %d attendees of event with id %d%n", attendees.size(), event.getId());
         for (User user : attendees) {
             switch (user.getPreferredNotificationMethod()) {
                 case EMAIL:
-                    emailNotificationStrategy.sendNotification(user, title, message);
+                    emailNotificationStrategy.sendNotification(event, message);
                     break;
                 case POPUP:
-                    popupNotificationStrategy.sendNotification(user, title, message);
+                    popupNotificationStrategy.sendNotification(event, message);
                     break;
                 case POPUP_AND_EMAIL:
-                    popupNotificationStrategy.sendNotification(user, title, message);
-                    emailNotificationStrategy.sendNotification(user, title, message);
+                    popupNotificationStrategy.sendNotification(event, message);
+                    emailNotificationStrategy.sendNotification(event, message);
                     break;
                 default:
                     System.err.println("Unsupported notification method: " + user.getPreferredNotificationMethod());

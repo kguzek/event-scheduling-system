@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,7 +19,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import lombok.RequiredArgsConstructor;
 import pl.papuda.ess.server.api.repo.UserRepository;
-import pl.papuda.ess.server.tasks.EventReminderTask;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,7 +27,6 @@ import pl.papuda.ess.server.tasks.EventReminderTask;
 public class ApplicationConfig implements WebSocketMessageBrokerConfigurer {
 
     private final UserRepository userRepository;
-    private final EventReminderTask eventReminder;
 
     @Bean
     UserDetailsService userDetailsService() {
@@ -64,10 +61,5 @@ public class ApplicationConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(@NonNull MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
-    }
-
-    @Scheduled(cron = "${EVENT_REMINDER_CRON_RATE}")
-    public void scheduleEventReminderTask() {
-        eventReminder.runReminderCheck();
     }
 }
