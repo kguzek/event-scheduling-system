@@ -6,10 +6,8 @@ import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.service.EmailService;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 
@@ -26,12 +24,14 @@ public class EventReminderTask {
         this.popupNotificationStrategy = new PopupNotificationStrategy();
     }
 
+    /** Returns the current date truncated to the minute start, in UTC */
+    private ZonedDateTime currentMinuteStart() {
+        LocalDateTime nowTruncated = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        return ZonedDateTime.of(nowTruncated, ZoneId.systemDefault());
+    }
+
     public void runReminderCheck() {
-
-        // Get date at the start of this minute
-        Date roundedTime = new Date();
-        roundedTime.setTime((long) Math.floor(roundedTime.getTime() / 60_000.0) * 60_000);
-
+        ZonedDateTime roundedTime = currentMinuteStart();
         System.out.printf("Running event reminder CRON job at %s%n", roundedTime);
         System.out.printf("Current exact time: %s%n", LocalDateTime.now());
         List<Event> allEvents = eventRepository.findAll();

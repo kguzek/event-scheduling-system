@@ -1,6 +1,6 @@
 package pl.papuda.ess.server.api.model.body;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,12 +15,12 @@ import pl.papuda.ess.server.api.model.Location;
 public class EventCreationRequest {
     private String title;
     private String organiserName;
-    private Date startTime;
-    private Date endTime;
+    private ZonedDateTime startTime;
+    private ZonedDateTime endTime;
     private Location location;
     private Frequency frequency;
     private EventStatus status;
-    private Date reminderTime;
+    private ZonedDateTime reminderTime;
     private String feedbackMessage;
     private Integer budgetCents;
 }

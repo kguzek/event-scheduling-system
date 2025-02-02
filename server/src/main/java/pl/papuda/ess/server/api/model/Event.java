@@ -1,6 +1,6 @@
 package pl.papuda.ess.server.api.model;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -34,13 +34,13 @@ public class Event {
     private Long id;
     private String title;
     private String organiserName;
-    private Date startTime;
-    private Date endTime;
+    private ZonedDateTime startTime;
+    private ZonedDateTime endTime;
     private Location location;
     private Frequency frequency;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user.id")
+    @JoinColumn(name = "user_id")
     private User creator;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToMany(fetch = FetchType.EAGER)
@@ -56,7 +56,7 @@ public class Event {
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @OneToMany(fetch = FetchType.EAGER)
     private List<Task> tasks;
-    private Date reminderTime;
+    private ZonedDateTime reminderTime;
     private String feedbackMessage;
     private EventStatus status;
 }

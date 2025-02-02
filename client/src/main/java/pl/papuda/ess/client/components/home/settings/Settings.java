@@ -1,11 +1,13 @@
 package pl.papuda.ess.client.components.home.settings;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JRadioButton;
 import pl.papuda.ess.client.components.AppPanel;
+import pl.papuda.ess.client.model.User;
 import pl.papuda.ess.client.tools.AppPreferences;
 import pl.papuda.ess.client.tools.Web;
 
@@ -26,7 +28,8 @@ public class Settings extends AppPanel {
     }
 
     private void setNotificationMethod(String method) {
-        String json = "{\"notificationMethod\":\"" + method + "\"}";
+        String json = "{\"preferredNotificationMethod\":\"" + method + "\"}";
+        System.out.println("Patching with: " + json);
         HttpResponse<String> response;
         try {
             response = Web.sendPatchRequest("/private/user/me", json);
@@ -39,13 +42,35 @@ public class Settings extends AppPanel {
             showErrorPopup(Web.getErrorMessage(response), "Operation failed");
             return;
         }
+        Web.user = Web.readResponseBody(response, new TypeReference<User>() {});
         showInfoPopup("Successfully changed preferred notification method to " + method, "Success");
-        Web.user.setPreferredNotificationMethod(method);
         
     }
 
     private void applySettings() {
         iptApiUrl.setText(Web.getApiUrl());
+    }
+
+    public void onUserPermissionsEstablished(String role) {
+        btnRequestStaffRole.setEnabled("USER".equals(role));
+        
+        String notificationMethod = Web.user.getPreferredNotificationMethod();
+        if (notificationMethod == null) {
+            System.err.println("User preferred notification method is null");
+            notificationMethod = "POPUP_AND_EMAIL";
+        }
+        JRadioButton radioButton = switch (notificationMethod) {
+            case "POPUP" ->
+                rdbNotificationMethodPopup;
+            case "EMAIL" ->
+                rdbNotificationMethodEmail;
+            case "POPUP_AND_EMAIL" ->
+                rdbNotificationMethodEmailAndPopup;
+            default ->
+                rdbNotificationMethodEmailAndPopup;
+        };
+        System.out.println("Preferred notification method: " + notificationMethod);
+        radioButton.setSelected(true);
     }
 
     private void requestStaffRole() {
@@ -66,27 +91,6 @@ public class Settings extends AppPanel {
         }
         showInfoPopup(message, "Role elevation requested");
 //        System.out.println("Successfully sent role elevation request emails");
-    }
-
-    public void onUserPermissionsEstablished(String role) {
-        btnRequestStaffRole.setEnabled("USER".equals(role));
-        
-        String notificationMethod = Web.user.getPreferredNotificationMethod();
-        if (notificationMethod == null) {
-            notificationMethod = "POPUP_AND_EMAIL";
-        }
-        JRadioButton radioButton = switch (notificationMethod) {
-            case "POPUP" ->
-                rdbNotificationMethodPopup;
-            case "EMAIL" ->
-                rdbNotificationMethodEmail;
-            case "POPUP_AND_EMAIL" ->
-                rdbNotificationMethodEmailAndPopup;
-            default ->
-                rdbNotificationMethodEmailAndPopup;
-        };
-        System.out.println("Preferred notification method: " + notificationMethod);
-        radioButton.setSelected(true);
     }
     
     private void updateApiUrl(String newUrl) {

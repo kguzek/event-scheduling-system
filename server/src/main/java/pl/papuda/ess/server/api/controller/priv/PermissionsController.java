@@ -42,7 +42,7 @@ public class PermissionsController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getUserPermissions(Principal principal) {
+    public ResponseEntity<?> getUserPermissionsAndPreferences(Principal principal) {
         User user;
         try {
             user = userService.ensureUserLoggedIn(principal);
@@ -50,7 +50,7 @@ public class PermissionsController {
             return e.getResponse();
         }
         PermissionsResponse response = PermissionsResponse.builder().id(user.getId()).email(user.getEmail())
-                .username(user.getUsername()).role(user.getRole().name()).build();
+                .username(user.getUsername()).role(user.getRole().name()).preferredNotificationMethod(user.getPreferredNotificationMethod()).build();
         return ResponseEntity.ok(response);
     }
 

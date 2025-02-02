@@ -2,11 +2,11 @@ package pl.papuda.ess.server.api.service;
 
 import java.io.InvalidObjectException;
 import java.security.Principal;
+import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,21 +17,19 @@ import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class EventService {
 
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    protected Event mergeEvents(Event oldEvent, EventCreationRequest newEvent) throws InvalidObjectException {
+    public Event mergeEvents(Event oldEvent, EventCreationRequest newEvent) throws InvalidObjectException {
         String title = newEvent.getTitle();
         String organiser = newEvent.getOrganiserName();
-        Date startTime = newEvent.getStartTime();
-        Date endTime = newEvent.getEndTime();
-        Date reminderTime = newEvent.getReminderTime();
+        ZonedDateTime startTime = newEvent.getStartTime();
+        ZonedDateTime endTime = newEvent.getEndTime();
+        ZonedDateTime reminderTime = newEvent.getReminderTime();
         String feedbackMessage = newEvent.getFeedbackMessage();
         Frequency frequency = newEvent.getFrequency();
         Location location = newEvent.getLocation();
@@ -54,12 +52,12 @@ public class EventService {
         return oldEvent;
     }
 
-    private User getUserFromPrincipal(Principal principal) {
+    public User getUserFromPrincipal(Principal principal) {
         Optional<User> user = userRepository.findByUsername(principal.getName());
         return user.orElse(null);
     }
 
-    private StompResponse<String> ensureUserIsStaff(User user) {
+    public StompResponse<String> ensureUserIsStaff(User user) {
         String errorMessage = null;
         if (user == null) {
             errorMessage = "You must be logged in to perform that action.";
@@ -73,23 +71,12 @@ public class EventService {
         return new StompResponse<>(false, errorMessage);
     }
 
-    public StompResponse<?> createEvent(Principal principal, EventCreationRequest event) {
-        User creator = getUserFromPrincipal(principal);
-        StompResponse<String> staffResponse = ensureUserIsStaff(creator);
-        if (staffResponse != null)
-            return staffResponse;
-        Event eventObj;
-        try {
-            eventObj = mergeEvents(new Event(), event);
-        } catch (InvalidObjectException e) {
-            e.printStackTrace();
-            return new StompResponse<String>(false, e.getMessage());
-        }
+    public StompResponse<Event> createEvent(Event eventObj, User creator) {
         eventObj.setCreator(creator);
         eventObj.setAttendees(Collections.emptySet());
         eventObj.setExpenses(Collections.emptyList());
         Event savedEvent = eventRepository.save(eventObj);
-        return new StompResponse<Event>(true, savedEvent);
+        return new StompResponse<>(true, savedEvent);
     }
 
     @Transactional
@@ -101,7 +88,7 @@ public class EventService {
         try {
             eventObj = mergeEvents(previousEvent, newEvent);
         } catch (InvalidObjectException e) {
-            e.printStackTrace();
+            System.err.println("Invalid event structure: " + e.getMessage());
             return new StompResponse<>(false, e.getMessage());
         }
         Event savedEvent = eventRepository.save(eventObj);
