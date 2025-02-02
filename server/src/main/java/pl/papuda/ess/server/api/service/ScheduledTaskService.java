@@ -35,7 +35,7 @@ public class ScheduledTaskService {
         if (events.isEmpty()) {
             return;
         }
-        System.out.printf("CRON job at %s%n found %d candidate events", roundedTime, events.size());
+        System.out.printf("CRON job reminding about %d events at %s%n", events.size(), roundedTime);
         System.out.printf("Current exact time: %s%n", LocalDateTime.now());
         for (Event event : events) {
             notifyEventAttendees(event);

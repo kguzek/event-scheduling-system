@@ -13,6 +13,7 @@ public class PopupNotificationStrategy implements NotificationStrategy {
 
     public void sendNotification(Event event, String message) {
         String path = String.format("/topic/events/%d/reminder", event.getId());
+        System.out.println("Broadcasting notification to " + path);
         messagingTemplate.convertAndSend(path, message);
     }
 }
