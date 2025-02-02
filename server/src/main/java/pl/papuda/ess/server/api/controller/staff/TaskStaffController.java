@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,15 +27,13 @@ import pl.papuda.ess.server.api.repo.TaskRepository;
 import pl.papuda.ess.server.api.repo.UserRepository;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/staff/task")
 public class TaskStaffController {
 
-    @Autowired
-    private TaskRepository taskRepository;
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final TaskRepository taskRepository;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {

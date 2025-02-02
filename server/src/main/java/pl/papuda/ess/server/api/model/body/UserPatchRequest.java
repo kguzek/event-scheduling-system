@@ -9,5 +9,5 @@ import pl.papuda.ess.server.api.model.NotificationMethod;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPatchRequest {
-    private NotificationMethod notificationMethod;
+    private NotificationMethod preferredNotificationMethod;
 }

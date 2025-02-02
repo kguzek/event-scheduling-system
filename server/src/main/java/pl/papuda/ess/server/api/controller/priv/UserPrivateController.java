@@ -2,7 +2,6 @@ package pl.papuda.ess.server.api.controller.priv;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.UserPatchRequest;
@@ -15,8 +14,8 @@ import java.security.Principal;
 import java.util.Optional;
 
 @RestController
-@MessageMapping("/api/v1/private/user")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/private/user")
 public class UserPrivateController {
 
     private final UserService userService;
@@ -35,7 +34,7 @@ public class UserPrivateController {
             return RestResponse.notFound("User");
         }
         User userObj = userData.get();
-        userObj.setPreferredNotificationMethod(request.getNotificationMethod());
+        userObj.setPreferredNotificationMethod(request.getPreferredNotificationMethod());
         return ResponseEntity.ok(userRepository.save(userObj));
     }
 }
