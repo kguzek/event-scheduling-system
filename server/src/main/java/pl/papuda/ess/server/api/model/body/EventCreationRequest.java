@@ -22,4 +22,5 @@ public class EventCreationRequest {
     private EventStatus status;
     private Date reminderTime;
     private String feedbackMessage;
+    private Integer budgetCents;
 }

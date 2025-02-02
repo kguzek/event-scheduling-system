@@ -42,6 +42,7 @@ public class User implements UserDetails {
     // @ManyToMany(fetch = FetchType.LAZY)
     // @JsonManagedReference
     // private Set<Event> attendedEvents;
+    private NotificationMethod preferredNotificationMethod;
 
     @Override
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

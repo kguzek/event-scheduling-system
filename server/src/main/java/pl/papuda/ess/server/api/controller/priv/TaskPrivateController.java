@@ -1,12 +1,10 @@
 package pl.papuda.ess.server.api.controller.priv;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.papuda.ess.server.api.model.*;
 import pl.papuda.ess.server.api.model.body.TaskStatusUpdateRequest;
-import pl.papuda.ess.server.api.repo.EventRepository;
 import pl.papuda.ess.server.api.repo.TaskRepository;
 import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.common.RestResponse;
@@ -18,10 +16,13 @@ import java.util.Optional;
 @RequestMapping("/api/v1/private/task")
 public class TaskPrivateController {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
+
+    public TaskPrivateController(UserRepository userRepository, TaskRepository taskRepository) {
+        this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
+    }
 
     private ResponseEntity<?> setTaskAssignee(Long taskId, Principal principal, boolean volunteering) {
         Optional<Task> taskData = taskRepository.findById(taskId);

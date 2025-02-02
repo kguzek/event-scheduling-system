@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +25,13 @@ import pl.papuda.ess.server.api.repo.ResourceRepository;
 @RequestMapping("/api/v1/staff/resource")
 public class ResourceController {
 
-    @Autowired
-    private ResourceRepository resourceRepository;
-    @Autowired
-    private EventRepository eventRepository;
+    private final ResourceRepository resourceRepository;
+    private final EventRepository eventRepository;
+
+    public ResourceController(ResourceRepository resourceRepository, EventRepository eventRepository) {
+        this.resourceRepository = resourceRepository;
+        this.eventRepository = eventRepository;
+    }
 
     @GetMapping
     public ResponseEntity<List<Resource>> getAllResources() {
@@ -85,7 +87,7 @@ public class ResourceController {
             return RestResponse.notFound("Resource");
         }
         Resource resource = mergeResources(resourceData.get(), request);
-        if (resource == null) {
+        if (!request.getEventId().equals(resource.getEvent().getId())) {
             return RestResponse.badRequest("Invalid assignee user id");
         }
         return ResponseEntity.ok(resourceRepository.save(resource));

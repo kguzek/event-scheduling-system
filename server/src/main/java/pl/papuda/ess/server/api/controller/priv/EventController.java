@@ -1,6 +1,5 @@
 package pl.papuda.ess.server.api.controller.priv;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +19,15 @@ import java.util.Set;
 @RequestMapping("/api/v1/private/event")
 public class EventController {
 
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private EmailService emailService;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+
+    public EventController(EventRepository eventRepository, UserRepository userRepository, EmailService emailService) {
+        this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+    }
 
     private ResponseEntity<?> setAttendanceStatus(Long eventId, Principal principal, boolean attending) {
         Optional<Event> eventData = eventRepository.findById(eventId);

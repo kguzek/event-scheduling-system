@@ -2,7 +2,6 @@ package pl.papuda.ess.server.api.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 
-import lombok.RequiredArgsConstructor;
+import pl.papuda.ess.server.api.model.NotificationMethod;
 import pl.papuda.ess.server.api.model.Role;
 import pl.papuda.ess.server.api.model.User;
 import pl.papuda.ess.server.api.model.body.AuthenticationRequest;
@@ -21,19 +20,24 @@ import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.common.ResponseUtilities;
 
 @Service
-@RequiredArgsConstructor
 public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
 
     @Value("classpath:/templates/verifyEmail.html")
     private Resource verifyEmailTemplate;
 
-    @Autowired
-    private EmailService emailService;
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, EmailService emailService, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.emailService = emailService;
+        this.authenticationManager = authenticationManager;
+    }
 
     private AuthenticationResponse getResponseFromUser(User user) {
         String token = jwtService.generateToken(user);
@@ -42,7 +46,8 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegistrationRequest request) {
         User user = User.builder().email(request.getEmail()).username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword())).role(Role.USER).emailVerified(false).build();
+                .password(passwordEncoder.encode(request.getPassword())).role(Role.USER).emailVerified(false)
+                .preferredNotificationMethod(NotificationMethod.POPUP_AND_EMAIL).build();
         userRepository.save(user);
         return getResponseFromUser(user);
     }

@@ -1,6 +1,5 @@
 package pl.papuda.ess.server.api.controller.priv;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -11,6 +10,7 @@ import pl.papuda.ess.server.api.model.body.PermissionsResponse;
 import pl.papuda.ess.server.api.model.error.UnauthorizedException;
 import pl.papuda.ess.server.api.repo.UserRepository;
 import pl.papuda.ess.server.api.service.EmailService;
+import pl.papuda.ess.server.api.service.UserService;
 import pl.papuda.ess.server.common.ResponseUtilities;
 import pl.papuda.ess.server.common.RestResponse;
 
@@ -18,7 +18,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/private/permissions")
@@ -29,10 +28,15 @@ public class PermissionsController {
 
     @Value("classpath:/templates/roleRequest.html")
     private Resource roleRequestTemplate;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private EmailService emailService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final UserService userService;
+
+    public PermissionsController(UserRepository userRepository, EmailService emailService, UserService userService) {
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+        this.userService = userService;
+    }
 
     private boolean userRequestedElevationRecently(User user) {
         Long lastRequestTimestamp = userElevationRequestTimestamps.getOrDefault(user.getId(), 0L);
@@ -41,22 +45,11 @@ public class PermissionsController {
         return currentTimestamp - lastRequestTimestamp < ELEVATION_REQUEST_COOLDOWN_MILLIS;
     }
 
-    public User ensureUserLoggedIn(Principal principal) throws UnauthorizedException {
-        if (principal == null) {
-            throw new UnauthorizedException("You are not logged in");
-        }
-        Optional<User> userData = userRepository.findByUsername(principal.getName());
-        if (userData.isEmpty()) {
-            throw new UnauthorizedException("Invalid logged in username");
-        }
-        return userData.get();
-    }
-
     @GetMapping
     public ResponseEntity<?> getUserPermissions(Principal principal) {
         User user;
         try {
-            user = ensureUserLoggedIn(principal);
+            user = userService.ensureUserLoggedIn(principal);
         } catch (UnauthorizedException e) {
             return e.getResponse();
         }
@@ -69,7 +62,7 @@ public class PermissionsController {
     public ResponseEntity<RestResponse> requestStaffRole(Principal principal) {
         User user;
         try {
-            user = ensureUserLoggedIn(principal);
+            user = userService.ensureUserLoggedIn(principal);
         } catch (UnauthorizedException e) {
             return e.getResponse();
         }

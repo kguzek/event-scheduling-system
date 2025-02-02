@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +25,18 @@ import pl.papuda.ess.server.api.repo.UserRepository;
 
 @RestController
 @RequestMapping("/api/v1/admin/user")
-public class UserController {
+public class UserAdminController {
 
-    @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private EmailService emailService;
+    private final UserRepository userRepo;
+    private final EmailService emailService;
+
     @Value("classpath:/templates/userPromoted.html")
     private Resource userPromotedTemplate;
+
+    public UserAdminController(UserRepository userRepo, EmailService emailService) {
+        this.userRepo = userRepo;
+        this.emailService = emailService;
+    }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
