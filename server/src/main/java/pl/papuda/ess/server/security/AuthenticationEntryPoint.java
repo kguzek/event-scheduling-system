@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import pl.papuda.ess.server.EndpointChecker;
+import pl.papuda.ess.server.config.EndpointChecker;
 import pl.papuda.ess.server.common.ResponseUtilities;
 
 import java.io.IOException;

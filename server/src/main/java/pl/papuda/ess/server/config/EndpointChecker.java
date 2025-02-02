@@ -1,4 +1,4 @@
-package pl.papuda.ess.server;
+package pl.papuda.ess.server.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

@@ -17,11 +17,13 @@ public class EventReminderTask {
     private final EventRepository eventRepository;
     private final NotificationStrategy emailNotificationStrategy;
     private final NotificationStrategy popupNotificationStrategy;
+    private final EmailService emailService;
 
     public EventReminderTask(EventRepository eventRepository, EmailService emailService) {
         this.eventRepository = eventRepository;
         this.emailNotificationStrategy = new EmailNotificationStrategy(emailService);
         this.popupNotificationStrategy = new PopupNotificationStrategy();
+        this.emailService = emailService;
     }
 
     /** Returns the current date truncated to the minute start, in UTC */
@@ -33,6 +35,7 @@ public class EventReminderTask {
     public void runReminderCheck() {
         ZonedDateTime roundedTime = currentMinuteStart();
         List<Event> events = eventRepository.findAllByReminderTime(roundedTime);
+        emailService.sendEmail("konrad@guzek.uk", "TEST", "Hello there Konrad!");
         if (events.isEmpty()) {
             return;
         }
